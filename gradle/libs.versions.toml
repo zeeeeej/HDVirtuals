@@ -16,11 +16,25 @@ junit = "4.13.2"
 kotlin = "1.9.22"
 ktor = "2.3.9"
 logback = "1.5.3"
+ksp = "1.9.21-1.0.15" # ksp
+kotlinpoet-ksp = "1.12.0"
+kotlinpoet = "1.15.2"
+nexus-publish = "2.0.0-rc-1" # publish lib
+kotlinx-datetime = "0.5.0"
+kotlinx-serialization = "1.6.0"
+coreI18n = "1.0.0-alpha01"
+kotlinx-coroutines = "1.8.0"
+#sqlDelight = "1.5.5"
+sqlDelight2 = "2.0.1"
+sqlite = "3.42.0.0"
 
 [libraries]
+# test
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+# android
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-junit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso-core" }
@@ -28,12 +42,52 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+
+# compose 有BOM 还需要吗？
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+# ktor
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# publish
+nexus-publish = { module = "io.github.gradle-nexus.publish-plugin:io.github.gradle-nexus.publish-plugin.gradle.plugin", version.ref = "nexus-publish" }  # publish lib
+
+# ksp
+ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet-ksp" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+
+# kotlinx
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+androidx-core-i18n = { group = "androidx.core", name = "core-i18n", version.ref = "coreI18n" }
+
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+
+#sqlDelight
+#sqlDelight-runtime = {module = "com.squareup.sqldelight:runtime", version.ref = "sqlDelight" }
+#sqlDelight-driver-android = {module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
+#sqlDelight-driver-native = {module = "com.squareup.sqldelight:native-driver", version.ref = "sqlDelight" }
+#sqlDelight-driver-sqlite = {module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
+
+sqlDelight2-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight2" }
+sqlDelight2-adapter = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqlDelight2" }
+sqlDelight2-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight2" }
+sqlDelight2-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight2" }
+sqlDelight2-driver-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight2" }
+#sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
+
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -42,3 +96,7 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+# sqlDelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
+sqlDelight2 = { id = "app.cash.sqldelight", version.ref = "sqlDelight2" }
