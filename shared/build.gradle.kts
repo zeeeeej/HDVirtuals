@@ -32,6 +32,13 @@ kotlin {
 
             // - local lib
             implementation(projects.hdcommon)
+            implementation(projects.hdcontext)
+            implementation(projects.hdresource)
+            implementation(projects.hdmqtt)
+            implementation(projects.hdhttp)
+            implementation(projects.hdserial)
+            implementation(projects.hddb)
+            implementation(projects.hdble)
         }
 
 

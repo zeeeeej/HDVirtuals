@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.yunext.kmp.common.util.hdMD5
 import com.yunext.kmp.common.util.hdRandomString
+import com.yunext.kmp.context.hdContext
 import kotlinx.coroutines.launch
 
 @Composable
@@ -39,10 +40,59 @@ fun DemoScreen() {
             style = TextStyle(color = Color.White),
             modifier = Modifier.padding(12.dp, 8.dp).weight(1f)
         )
+        LibModuleDemo(listLibModules) { module ->
+            when (module) {
+                HDBle -> {
+                    text = "todo ${module.moduleName}"
+                }
+
+                HDCommon -> {
+                    coroutineScope.launch {
+                        text = "md:${hdMD5(text)} ,random:${hdRandomString(4)}"
+                    }
+                }
+
+                HDContext -> {
+                    coroutineScope.launch {
+                        runCatching {
+                            hdContext.context
+                        }.onFailure {
+                            text = "hdContext:${it}"
+                        }.onSuccess {
+                            text = it.toString()
+                        }
+                    }
+
+
+                }
+
+                HDDb -> {
+                    text = "todo ${module.moduleName}"
+                }
+
+                HDHttp -> {
+                    text = "todo ${module.moduleName}"
+                }
+
+                HDMqtt -> {
+                    text = "todo ${module.moduleName}"
+                }
+
+                HDResource -> {
+                    text = "todo ${module.moduleName}"
+                }
+
+                HDSerial -> {
+                    text = "todo ${module.moduleName}"
+                }
+            }
+        }
         Row(
             modifier = Modifier.horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
+
+
             Button(onClick = {
                 coroutineScope.launch {
                     text = "md:${hdMD5(text)} ,random:${hdRandomString(4)}"
@@ -50,28 +100,81 @@ fun DemoScreen() {
             }) {
                 Text("hdcommon")
             }
-            Button(onClick = {
-                coroutineScope.launch {
-                    text = "md:${hdMD5(text)} ,random:${hdRandomString(4)}"
-                }
-            }) {
-                Text("DemoScreen")
-            }
-            Button(onClick = {
-                coroutineScope.launch {
-                    text = "md:${hdMD5(text)} ,random:${hdRandomString(4)}"
-                }
-            }) {
-                Text("DemoScreen")
-            }
-            Button(onClick = {
-                coroutineScope.launch {
-                    text = "md:${hdMD5(text)} ,random:${hdRandomString(4)}"
-                }
-            }) {
-                Text("DemoScreen")
-            }
+
         }
 
     }
+}
+
+@Composable
+private fun LibModuleDemo(list: List<LibModule>, onClick: (LibModule) -> Unit) {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        items(items = list, key = { it.moduleName }) {
+            LibModuleItem(it) {
+                onClick(it)
+            }
+        }
+    }
+}
+
+@Composable
+private fun LibModuleItem(module: LibModule, onClick: () -> Unit) {
+    Button(onClick = {
+        onClick()
+    }) {
+        Text(module.moduleName)
+    }
+}
+
+private val LibModules: Set<LibModule> by lazy {
+    setOf(
+        HDBle, HDCommon, HDContext, HDHttp, HDMqtt, HDResource, HDDb, HDSerial
+    )
+}
+
+val listLibModules: List<LibModule>
+    get() = LibModules.toList()
+
+sealed interface LibModule {
+    val moduleName: String
+}
+
+private data object HDCommon : LibModule {
+    override val moduleName: String
+        get() = ":hdcommon"
+}
+
+private data object HDContext : LibModule {
+    override val moduleName: String
+        get() = ":hdcontext"
+}
+
+private data object HDBle : LibModule {
+    override val moduleName: String
+        get() = ":hdble"
+}
+
+private data object HDHttp : LibModule {
+    override val moduleName: String
+        get() = ":hdhttp"
+}
+
+private data object HDMqtt : LibModule {
+    override val moduleName: String
+        get() = ":hdmqtt"
+}
+
+private data object HDSerial : LibModule {
+    override val moduleName: String
+        get() = ":hbserial"
+}
+
+private data object HDResource : LibModule {
+    override val moduleName: String
+        get() = ":hdsource"
+}
+
+private data object HDDb : LibModule {
+    override val moduleName: String
+        get() = ":hddb"
 }
