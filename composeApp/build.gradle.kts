@@ -22,9 +22,20 @@ kotlin {
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
+//        iosTarget.binaries.framework {
+//            baseName = "ComposeApp"
+//            isStatic = true
+//        }
+
+        // fix ios can't link sqlite https://github.com/cashapp/sqldelight/issues/1442
+        with(iosTarget){
+            binaries.framework {
+                baseName = "ComposeApp"
+                isStatic = false
+            }
+            compilations.all {
+                kotlinOptions.freeCompilerArgs += arrayOf("-linker-options", "-lsqlite3")
+            }
         }
     }
     
