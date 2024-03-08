@@ -26,6 +26,9 @@ import androidx.compose.ui.unit.dp
 import com.yunext.kmp.common.util.hdMD5
 import com.yunext.kmp.common.util.hdRandomString
 import com.yunext.kmp.context.hdContext
+import com.yunext.kmp.db.datasource.DemoDataSource
+import com.yunext.kmp.db.datasource.impl.DemoDataSourceImpl
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -34,6 +37,9 @@ fun DemoScreen() {
         drawRect(Color.Black)
     }) {
         var text by remember { mutableStateOf("DemoScreen") }
+        val demoDataSource: DemoDataSource by remember {
+            mutableStateOf(DemoDataSourceImpl())
+        }
         val coroutineScope = rememberCoroutineScope()
         Text(
             text,
@@ -67,7 +73,15 @@ fun DemoScreen() {
                 }
 
                 HDDb -> {
-                    text = "todo ${module.moduleName}"
+                    coroutineScope.launch {
+                        text = "start test db"
+                        delay(2000)
+                        text = "db ..."
+                        demoDataSource.add()
+                        val all = demoDataSource.findAll()
+                        delay(2000)
+                        text = "db result[${all.size}]:$all"
+                    }
                 }
 
                 HDHttp -> {

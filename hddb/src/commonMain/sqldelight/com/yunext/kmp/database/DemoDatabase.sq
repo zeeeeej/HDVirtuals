@@ -1,0 +1,21 @@
+CREATE TABLE hd_user (
+  player_number INTEGER PRIMARY KEY NOT NULL,
+  full_name TEXT NOT NULL
+);
+
+CREATE INDEX hockeyPlayer_full_name ON hd_user(full_name);
+
+INSERT INTO hd_user (player_number, full_name)
+VALUES (15, 'hd');
+
+selectAll:
+SELECT *
+FROM hd_user;
+
+insert:
+INSERT INTO hd_user(player_number, full_name)
+VALUES (?, ?);
+
+insertFullPlayerObject:
+INSERT INTO hd_user(player_number, full_name)
+VALUES ?;

@@ -13,8 +13,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-import hdvirtuals.composeapp.generated.resources.Res
-import hdvirtuals.composeapp.generated.resources.compose_multiplatform
+import org.jetbrains.compose.resources.DrawableResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -31,7 +30,8 @@ fun App() {
             AnimatedVisibility(showContent) {
                 val greeting = remember { Greeting().greet() }
                 Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
+                    //Image(painterResource(Res.drawable.compose_multiplatform), null)
+                    Image(painterResource(DrawableResource("compose-multiplatform.xml")), null)
                     Text("Compose: $greeting")
                 }
             }

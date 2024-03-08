@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.sqlDelight2)
     //id("module.publication")
 }
 
@@ -31,6 +32,18 @@ kotlin {
                 implementation(libs.kotlin.test)
             }
         }
+
+        androidMain.dependencies {
+            api(libs.sqlDelight2.driver.android)
+        }
+
+        iosMain.dependencies {
+            api(libs.sqlDelight2.driver.native)
+        }
+
+        jvmMain.dependencies {
+            api(libs.sqlDelight2.driver.sqlite)
+        }
     }
 }
 
@@ -40,4 +53,16 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
+}
+
+sqldelight {
+    databases {
+        create("DemoDatabase") {
+            packageName.set("com.yunext.kmp.database")
+            //dialect("app.cash.sqldelight:sqlite-3-24-dialect:2.0.1")
+        }
+        //linkSqlite = true
+
+    }
+
 }
