@@ -39,12 +39,23 @@ kotlin {
             implementation(projects.hdserial)
             implementation(projects.hddb)
             implementation(projects.hdble)
+            implementation(projects.hdui)
+
+            // voyager
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.screenModel)
+            implementation(libs.voyager.bottomSheetNavigator)
+            implementation(libs.voyager.tabNavigator)
+            implementation(libs.voyager.transitions)
+            implementation(libs.voyager.koin)
+
         }
 
 
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+//            implementation(libs.voyager.hilt)
         }
 
         iosMain.dependencies {

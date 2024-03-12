@@ -25,6 +25,8 @@ kotlin {
             dependencies {
                 //put your multiplatform dependencies here
                 implementation(projects.hdcontext)
+                implementation(libs.sqlite.stately.common)
+                implementation(libs.sqlite.stately.concurrency)
             }
         }
         val commonTest by getting {

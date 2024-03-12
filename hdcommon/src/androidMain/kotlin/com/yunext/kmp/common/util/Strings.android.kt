@@ -39,7 +39,7 @@ actual fun hdMD5(text: String, upperCase: Boolean): String? {
 
 private const val BASE = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-actual fun hdRandomString(length: Int): String {
+actual fun hdUUID(length: Int): String {
     require(length > 0) {
         "hdRandomString length must > 0"
     }

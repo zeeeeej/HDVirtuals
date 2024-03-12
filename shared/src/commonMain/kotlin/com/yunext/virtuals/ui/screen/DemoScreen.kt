@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,12 +25,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.yunext.kmp.common.util.hdMD5
-import com.yunext.kmp.common.util.hdRandomString
+import com.yunext.kmp.common.util.hdUUID
 import com.yunext.kmp.context.hdContext
 import com.yunext.kmp.db.datasource.DemoDataSource
 import com.yunext.kmp.db.datasource.impl.DemoDataSourceImpl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.yunext.kmp.http.testKtor
 
 @Composable
 fun DemoScreen() {
@@ -44,7 +46,9 @@ fun DemoScreen() {
         Text(
             text,
             style = TextStyle(color = Color.White),
-            modifier = Modifier.padding(12.dp, 8.dp).weight(1f)
+            modifier = Modifier.padding(12.dp, 8.dp)
+                .verticalScroll(rememberScrollState())
+                .weight(1f)
         )
         LibModuleDemo(listLibModules) { module ->
             when (module) {
@@ -54,7 +58,7 @@ fun DemoScreen() {
 
                 HDCommon -> {
                     coroutineScope.launch {
-                        text = "md:${hdMD5(text)} ,random:${hdRandomString(4)}"
+                        text = "md:${hdMD5(text)} ,random:${hdUUID(4)}"
                     }
                 }
 
@@ -85,7 +89,14 @@ fun DemoScreen() {
                 }
 
                 HDHttp -> {
-                    text = "todo ${module.moduleName}"
+                    coroutineScope.launch {
+                        text = "start test http"
+                        delay(2000)
+                        text = "http ..."
+                        val http = testKtor()
+                        delay(2000)
+                        text = "http result:${http}"
+                    }
                 }
 
                 HDMqtt -> {
@@ -109,7 +120,7 @@ fun DemoScreen() {
 
             Button(onClick = {
                 coroutineScope.launch {
-                    text = "md:${hdMD5(text)} ,random:${hdRandomString(4)}"
+                    text = "md:${hdMD5(text)} ,random:${hdUUID(4)}"
                 }
             }) {
                 Text("hdcommon")

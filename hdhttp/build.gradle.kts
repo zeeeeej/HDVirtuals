@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinSerialization)
     //id("module.publication")
 }
 
@@ -24,12 +25,33 @@ kotlin {
             dependencies {
                 //put your multiplatform dependencies here
                 implementation(projects.hdcontext)
+
+                api(libs.kotlinx.datetime)
+                api(libs.kotlinx.coroutines.core)
+                api(libs.ktor.client.core)
+                api(libs.ktor.client.cio)
+                api(libs.ktor.client.content.negotiation)
+                api(libs.ktor.serialization.kotlinx.json)
+
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
             }
+        }
+
+        androidMain.dependencies {
+            api(libs.kotlinx.coroutines.android)
+            api(libs.ktor.client.okhttp)
+        }
+
+        iosMain.dependencies {
+            api(libs.ktor.client.darwin)
+        }
+
+        jvmMain.dependencies{
+            api(libs.ktor.client.okhttp)
         }
     }
 }
