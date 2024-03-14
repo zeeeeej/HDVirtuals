@@ -1,11 +1,24 @@
+package com.yunext.virtuals
+
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
+import com.yunext.kmp.common.logger.HDLogger
+import com.yunext.virtuals.ui.initHDRes
 import com.yunext.virtuals.ui.screen.VoyagerApp
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+private val initApp:CoroutineScope.()->Unit = {
+    launch {
+        HDLogger.debug = true
+        initHDRes(HDResProviderImpl)
+    }
+}
 
 @Composable
-@Preview
 fun App() {
+
     MaterialTheme {
 //        var showContent by remember { mutableStateOf(false) }
 //        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -25,6 +38,16 @@ fun App() {
 //        }
 //        VoyagerDemoApp()
 //        SplashScreen()
-        VoyagerApp()
+        var hasInit by remember {
+            mutableStateOf(false)
+        }
+
+        LaunchedEffect(Unit) {
+            initApp()
+            hasInit = true
+        }
+        AnimatedVisibility(hasInit) {
+            VoyagerApp()
+        }
     }
 }

@@ -16,7 +16,7 @@ junit = "4.13.2"
 kotlin = "1.9.22"
 ktor = "2.3.9"
 logback = "1.5.3"
-ksp = "1.9.21-1.0.15" # ksp
+ksp = "1.9.22-1.0.17" # ksp
 kotlinpoet-ksp = "1.12.0"
 kotlinpoet = "1.15.2"
 nexus-publish = "2.0.0-rc-1" # publish lib
@@ -83,6 +83,7 @@ nexus-publish = { module = "io.github.gradle-nexus.publish-plugin:io.github.grad
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet-ksp" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 
 # kotlinx
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
@@ -91,6 +92,9 @@ androidx-core-i18n = { group = "androidx.core", name = "core-i18n", version.ref 
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+# https://github.com/Kotlin/kotlinx.coroutines/blob/master/ui/coroutines-guide-ui.md
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-javax = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-javax", version.ref = "kotlinx-coroutines" }
 
 #sqlDelight
 #sqlDelight-runtime = {module = "com.squareup.sqldelight:runtime", version.ref = "sqlDelight" }

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -33,6 +34,7 @@ kotlin {
                 baseName = "ComposeApp"
                 isStatic = false
             }
+
             compilations.all {
                 kotlinOptions.freeCompilerArgs += arrayOf("-linker-options", "-lsqlite3")
             }
@@ -45,11 +47,13 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
@@ -57,7 +61,9 @@ kotlin {
             //
             implementation(projects.hdcontext)
             implementation(projects.hdcommon)
+            implementation(projects.hdresource)
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
@@ -108,4 +114,9 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+dependencies {
+    ksp(projects.hdresourceKsp)
+    implementation(projects.hdresource)
 }

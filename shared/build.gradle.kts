@@ -26,6 +26,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
@@ -49,6 +50,8 @@ kotlin {
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.koin)
 
+            api(libs.kotlinx.coroutines.core)
+
         }
 
 
@@ -56,6 +59,7 @@ kotlin {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
 //            implementation(libs.voyager.hilt)
+            api(libs.kotlinx.coroutines.android)
         }
 
         iosMain.dependencies {
@@ -63,7 +67,7 @@ kotlin {
         }
 
         jvmMain.dependencies {
-
+            api(libs.kotlinx.coroutines.swing)
         }
     }
 }

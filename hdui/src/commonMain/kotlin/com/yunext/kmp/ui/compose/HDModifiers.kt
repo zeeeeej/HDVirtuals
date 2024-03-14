@@ -30,10 +30,11 @@ import com.yunext.kmp.resource.color.app_background_brush
 import kotlinx.coroutines.CoroutineScope
 
 
-fun Modifier.hdBorder(width: Dp = 4.dp) = this.border(width, hdRandomColor())
+fun Modifier.hdBorder(debug: Boolean = false,width: Dp = 4.dp, ) =
+    if (debug) this.border(width, hdRandomColor()) else this
 
 @Stable
-fun Modifier.xplBackground(color: () -> Color): Modifier {
+fun Modifier.hdBackground(color: () -> Color = { hdRandomColor() }): Modifier {
 //    return this then BackgroundModifier(
 //        color = color,
 //        rtlAware = true,

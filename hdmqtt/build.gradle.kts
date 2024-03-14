@@ -1,7 +1,10 @@
+import com.android.build.gradle.internal.ide.kmp.KotlinAndroidSourceSetMarker.Companion.android
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     //id("module.publication")
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -24,6 +27,9 @@ kotlin {
             dependencies {
                 //put your multiplatform dependencies here
                 implementation(projects.hdcontext)
+                implementation(projects.hdcommon)
+
+                implementation(libs.kotlinx.serialization.json)
             }
         }
         val commonTest by getting {
