@@ -18,6 +18,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
@@ -45,6 +46,22 @@ fun Modifier.hdBackground(color: () -> Color = { hdRandomColor() }): Modifier {
 //    )
     return this.drawWithContent {
         drawRect(color())
+        drawContent()
+    }
+}
+
+@Stable
+fun Modifier.hdBackgroundBrush(brush: () -> Brush ): Modifier {
+//    return this then BackgroundModifier(
+//        color = color,
+//        rtlAware = true,
+//        inspectorInfo = debugInspectorInfo {
+//            name = "color"
+//            properties["color"] = color
+//        }
+//    )
+    return this.drawWithContent {
+        drawRect(brush())
         drawContent()
     }
 }

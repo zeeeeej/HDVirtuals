@@ -46,7 +46,7 @@ fun CHLoadingDialog(
         securePolicy = SecureFlagPolicy.Inherit
     ),
     debug: Boolean = false,
-    dimAmount: Float,
+    dimAmount: Float = .5f,
     onDismissRequest: () -> Unit,
 ) {
     CHDialog(properties, dimAmount = dimAmount, onDismissRequest = onDismissRequest) {

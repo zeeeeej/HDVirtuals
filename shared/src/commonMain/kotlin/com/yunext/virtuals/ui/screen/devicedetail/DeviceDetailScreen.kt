@@ -1,22 +1,34 @@
 package com.yunext.virtuals.ui.screen.devicedetail
 
-import HDDebugText
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.core.screen.ScreenKey
-import com.yunext.kmp.ui.compose.hdBackground
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.yunext.virtuals.ui.data.DeviceAndState
+import com.yunext.virtuals.ui.data.MenuData
+import com.yunext.virtuals.ui.screen.configwifi.ConfigWiFiScreen
+import com.yunext.virtuals.ui.screen.logger.LoggerScreen
+import com.yunext.virtuals.ui.screen.setting.SettingScreen
 
-data class DeviceDetailScreen(private val deviceAndState: DeviceAndState) :Screen {
+data class DeviceDetailScreen(private val deviceAndState: DeviceAndState) : Screen {
 
 
     @Composable
     override fun Content() {
-        Box(Modifier.fillMaxSize().hdBackground()) {
-            HDDebugText("设备详情:$deviceAndState")
-        }
+        // Old() // 传统TabRow实现
+        // TabNavigationScreen() // 参考嵌套tab
+        val navigator = LocalNavigator.currentOrThrow
+        DeviceDetailScreeImpl(device = deviceAndState, onLeft = {
+            navigator.pop()
+        }, onMenuClick = {
+                 when(it){
+                     MenuData.ConfigWiFi -> navigator.push(ConfigWiFiScreen())
+                     MenuData.Setting ->  navigator.push(SettingScreen())
+                     MenuData.Logger ->  navigator.push(LoggerScreen())
+                     MenuData.UpdateTsl -> {
+                         // TODO update tsl
+                     }
+                 }
+        })
     }
 }

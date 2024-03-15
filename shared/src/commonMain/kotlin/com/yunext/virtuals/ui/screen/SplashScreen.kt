@@ -42,9 +42,9 @@ internal class SplashScreen : Screen {
             val navigator = LocalNavigator.currentOrThrow
             LaunchedEffect(Unit) {
                 launch {
-                    delay(1000)
+                    delay(500)
                     show = true
-                    delay(1000)
+                    delay(500)
                     navigator.replace(DeviceListScreen())
                 }
             }

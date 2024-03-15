@@ -11,10 +11,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.yunext.kmp.ui.compose.hdBackground
 import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
-import com.yunext.virtuals.ui.data.DeviceAndState
-import com.yunext.virtuals.ui.data.Effect
 import com.yunext.virtuals.ui.data.processing
 import com.yunext.virtuals.ui.screen.adddevice.AddDeviceScreen
 import com.yunext.virtuals.ui.screen.devicedetail.DeviceDetailScreen
@@ -34,7 +31,7 @@ class DeviceListScreen : Screen {
         }
 
         Box(Modifier.fillMaxSize()) {
-            TwinsHomePage(
+            DeviceListScreenImpl(
                 modifier = Modifier.fillMaxSize(),
                 list = state.list,
                 onRefresh = {

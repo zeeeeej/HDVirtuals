@@ -40,7 +40,7 @@ import com.yunext.virtuals.ui.screen.LocalPaddingValues
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @Composable
-fun TwinsHomePage(
+fun DeviceListScreenImpl(
     modifier: Modifier = Modifier,
     list: List<DeviceAndState>,
 //    effect: Effect,
