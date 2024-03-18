@@ -29,10 +29,17 @@ sqlDelight2 = "2.0.1"
 sqlite = "3.42.0.0"
 statelyCommon = "1.2.5"
 voyager = "1.0.0"
-
+#DI
 koin = "3.4.3"
 koin-compose = "1.0.4"
 hilt = "2.49"
+#MQTT
+mqtt3 = "1.2.5"
+mqtt3-service = "1.1.1"
+mqtt3-jvm-jdk15on = "1.70"
+#Android Lifecycle
+android-lifecycle = "2.4.0"
+
 
 [libraries]
 # test
@@ -117,7 +124,19 @@ sqlite-stately-concurrency = { module = "co.touchlab:stately-concurrency", versi
 #hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 #hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 #pluginHilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
-
+#MQTT
+mqtt3-client = { module = "org.eclipse.paho:org.eclipse.paho.client.mqttv3", version.ref = "mqtt3" }
+mqtt3-android-service = { module = "org.eclipse.paho:org.eclipse.paho.android.service", version.ref = "mqtt3-service" }
+mqtt3-jvm-jdk15on = { module = "org.bouncycastle:bcpkix-jdk15on", version.ref = "mqtt3-jvm-jdk15on" }
+#Android Lifecycle
+android-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "android-lifecycle" }
+android-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "android-lifecycle" }
+android-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "android-lifecycle" }
+android-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "android-lifecycle" }
+android-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "android-lifecycle" }
+android-lifecycle-compiler = { module = "androidx.lifecycle:lifecycle-compiler", version.ref = "android-lifecycle" }
+android-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "android-lifecycle" }
+android-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "android-lifecycle" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

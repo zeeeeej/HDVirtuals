@@ -28,6 +28,17 @@ kotlin {
                 implementation(libs.kotlin.test)
             }
         }
+
+        androidMain.dependencies{
+            implementation(libs.android.lifecycle.service)
+            implementation(libs.android.lifecycle.common.java8)
+            implementation(libs.android.lifecycle.process)
+            implementation(libs.android.lifecycle.compiler)
+            implementation(libs.android.lifecycle.runtime.ktx)
+            implementation(libs.android.lifecycle.livedata.ktx)
+            implementation(libs.android.lifecycle.viewmodel.ktx)
+            implementation(libs.android.lifecycle.viewmodel.savedstate)
+        }
     }
 }
 

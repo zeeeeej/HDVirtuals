@@ -1,15 +1,24 @@
 package com.yunext.virtuals
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.yunext.kmp.common.logger.HDLogger
+import com.yunext.virtuals.bridge.OrientationType
+import com.yunext.virtuals.bridge.changeKeyBoardType
+import com.yunext.virtuals.bridge.orientationTypeStateFlow
+import com.yunext.virtuals.bridge.text
 import com.yunext.virtuals.ui.initHDRes
 import com.yunext.virtuals.ui.screen.VoyagerApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-private val initApp:CoroutineScope.()->Unit = {
+private val initApp: CoroutineScope.() -> Unit = {
     launch {
         HDLogger.debug = true
         initHDRes(HDResProviderImpl)
@@ -49,5 +58,23 @@ fun App() {
         AnimatedVisibility(hasInit) {
             VoyagerApp()
         }
+
+        val orientationType by orientationTypeStateFlow.collectAsState()
+        var curOrientationType: OrientationType by remember { mutableStateOf(OrientationType.Port) }
+
+        LaunchedEffect(orientationType) {
+            curOrientationType = orientationType
+        }
+        Button(onClick = {
+            changeKeyBoardType(
+                when (curOrientationType) {
+                    OrientationType.Port -> OrientationType.Land
+                    OrientationType.Land -> OrientationType.Port
+                }, true
+            )
+        }, modifier = Modifier.padding(start = 100.dp, top = 50.dp)) {
+            Text("->${curOrientationType.text}")
+        }
     }
 }
+

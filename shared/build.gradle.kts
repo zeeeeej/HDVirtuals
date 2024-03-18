@@ -67,6 +67,8 @@ kotlin {
         }
 
         jvmMain.dependencies {
+            // Note:If you are targeting Desktop, you should provide the dependency org.jetbrains.kotlinx:kotlinx-coroutines-swing, the screenModelScope depends on Dispatchers.Main provided by this library on Desktop. We don't include it because this library is incompatible with IntelliJ Plugin, see. If you are targeting Desktop for IntelliJ plugins, this library does not require to be provied.
+            // See:https://voyager.adriel.cafe/screenmodel/coroutines-integration
             api(libs.kotlinx.coroutines.swing)
         }
     }
