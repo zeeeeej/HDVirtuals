@@ -2,7 +2,7 @@ package com.yunext.virtuals.data.device
 
 import com.yunext.kmp.common.util.hdMD5
 import com.yunext.kmp.mqtt.protocol.ProtocolMQTTRule
-import com.yunext.kmp.mqtt.data.MQTTParam
+import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.virtuals.data.ProjectInfo
 import com.yunext.virtuals.module.devicemanager.DeviceInitializer
 import com.yunext.virtuals.module.devicemanager.JsonDeviceInitializer
@@ -53,16 +53,17 @@ class TwinsDevice(
     }
 
 
-    override fun createMqttParam(projectInfo: ProjectInfo): MQTTParam {
+    override fun createMqttParam(projectInfo: ProjectInfo): HDMqttParam {
         val id = this.generateId()
         val clientId = "DEV:${deviceType}_${generateId()}_${randomNumber()}"
         val username = id
         val password = hdMD5(clientId + projectInfo.secret) ?: ""
-        return MQTTParam(
+        // TODO fill HDMqttParam port shortUrl scheme tls
+        return HDMqttParam(
             username = username,
             password = password,
             clientId = clientId,
-            url = projectInfo.host
+            url = projectInfo.host, port = "", shortUrl = "", scheme = "", tls = null
         )
     }
 

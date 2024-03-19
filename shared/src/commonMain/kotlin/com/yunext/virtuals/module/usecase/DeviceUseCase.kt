@@ -4,7 +4,7 @@ import com.yunext.virtuals.module.repository.DeviceDTO
 import com.yunext.virtuals.module.repository.DeviceRepository
 import com.yunext.virtuals.module.repository.delete
 import com.yunext.virtuals.module.toDeviceAndState
-import com.yunext.virtuals.ui.data.DeviceAndState
+import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.DeviceType
 
 internal class DeviceUseCase {
@@ -33,7 +33,7 @@ internal class DeviceUseCase {
         return deviceRepository.edit(deviceDTO)
     }
 
-    suspend fun list(): List<DeviceAndState> {
+    suspend fun list(): List<DeviceAndStateViewData> {
         return deviceRepository.list().map(DeviceDTO::toDeviceAndState)
     }
 

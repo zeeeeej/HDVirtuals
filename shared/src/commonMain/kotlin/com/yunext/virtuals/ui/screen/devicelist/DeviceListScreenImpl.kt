@@ -35,18 +35,18 @@ import com.yunext.kmp.ui.compose.Debug
 import com.yunext.virtuals.ui.common.TwinsBackgroundBlock
 import com.yunext.virtuals.ui.common.TwinsEmptyViewForDevice
 import com.yunext.virtuals.ui.common.dialog.CHAlertDialog
-import com.yunext.virtuals.ui.data.DeviceAndState
+import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.screen.LocalPaddingValues
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @Composable
 fun DeviceListScreenImpl(
     modifier: Modifier = Modifier,
-    list: List<DeviceAndState>,
+    list: List<DeviceAndStateViewData>,
 //    effect: Effect,
     onRefresh: () -> Unit,
-    onDeviceSelected: (DeviceAndState) -> Unit,
-    onDeviceDelete: (DeviceAndState) -> Unit,
+    onDeviceSelected: (DeviceAndStateViewData) -> Unit,
+    onDeviceDelete: (DeviceAndStateViewData) -> Unit,
     onActionAdd: () -> Unit,
 ) {
     /* 背景 */

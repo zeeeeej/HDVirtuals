@@ -4,8 +4,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.virtuals.module.usecase.DeviceUseCase
 import com.yunext.virtuals.ui.common.HDStateScreenModel
-import com.yunext.virtuals.ui.data.DeviceAndState
-import com.yunext.virtuals.ui.data.DeviceType
+import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.Effect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -13,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 data class DeviceListState(
-    val list: List<DeviceAndState>,
+    val list: List<DeviceAndStateViewData>,
     val effect: Effect,
 )
 
@@ -40,7 +39,7 @@ class DeviceListScreenModel(initialState: DeviceListState = DeviceListStateDefau
         }
     }
 
-    fun doDeleteDevice(deviceAndState: DeviceAndState) {
+    fun doDeleteDevice(deviceAndState: DeviceAndStateViewData) {
         screenModelScope.launch {
             mutableState.value = state.value.copy(effect = Effect.Processing)
             try {

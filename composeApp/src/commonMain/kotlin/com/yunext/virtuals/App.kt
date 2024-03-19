@@ -1,6 +1,8 @@
 package com.yunext.virtuals
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -65,16 +67,22 @@ fun App() {
         LaunchedEffect(orientationType) {
             curOrientationType = orientationType
         }
-        Button(onClick = {
-            changeKeyBoardType(
-                when (curOrientationType) {
-                    OrientationType.Port -> OrientationType.Land
-                    OrientationType.Land -> OrientationType.Port
-                }, true
-            )
-        }, modifier = Modifier.padding(start = 100.dp, top = 50.dp)) {
-            Text("->${curOrientationType.text}")
+
+        Column(modifier = Modifier.padding(start = 100.dp, top = 50.dp)) {
+
+            Button(onClick = {
+                changeKeyBoardType(
+                    when (curOrientationType) {
+                        OrientationType.Port -> OrientationType.Land
+                        OrientationType.Land -> OrientationType.Port
+                    }, true
+                )
+            }, modifier = Modifier) {
+                Text("->${curOrientationType.text}")
+            }
         }
+
+
     }
 }
 

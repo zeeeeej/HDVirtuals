@@ -48,6 +48,10 @@ kotlin {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
 
+            implementation(libs.mqtt3.client)
+            implementation(libs.mqtt3.android.service)
+            implementation(libs.androidx.legacy.support.v4)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)

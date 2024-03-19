@@ -29,13 +29,42 @@ kotlin {
                 implementation(projects.hdcontext)
                 implementation(projects.hdcommon)
 
+                implementation(libs.kotlinx.coroutines.core)
+
                 implementation(libs.kotlinx.serialization.json)
+                // KMQTT
+                implementation(libs.kmqtt.common)
+                implementation(libs.kmqtt.client)
+
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
             }
+        }
+
+        androidMain.dependencies {
+            implementation(libs.mqtt3.client)
+            implementation(libs.mqtt3.android.service)
+            implementation(libs.androidx.legacy.support.v4)
+            // Fix: java.lang.NoClassDefFoundError: Failed resolution of: Landroid/support/v4/content/LocalBroadcastManager;
+            // android.enableJetifier=true
+            implementation(libs.android.support.v4)
+
+            api(libs.kotlinx.coroutines.android)
+
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.mqtt3.client)
+            implementation(libs.mqtt3.jvm.jdk15on)
+
+            api(libs.kotlinx.coroutines.swing)
+
+        }
+        iosMain.dependencies {
+
         }
     }
 }

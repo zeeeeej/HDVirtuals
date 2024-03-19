@@ -2,13 +2,7 @@ package com.yunext.virtuals.ui.data
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonContentPolymorphicSerializer
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.jsonObject
 import kotlin.jvm.JvmStatic
 import kotlin.random.Random
 
@@ -16,7 +10,7 @@ import kotlin.random.Random
 //@Serializable
 @Immutable
 @Stable
-data class DeviceAndState(
+data class DeviceAndStateViewData(
     val name: String,
     val communicationId: String,
     val model: String,
@@ -26,9 +20,9 @@ data class DeviceAndState(
     companion object {
 
         @JvmStatic
-        fun randomList(): List<DeviceAndState> =
+        fun randomList(): List<DeviceAndStateViewData> =
             List(Random.nextInt(10)) {
-                DeviceAndState(
+                DeviceAndStateViewData(
                     name = "虚拟设备 -> $it",
                     communicationId = "通信id -> $it",
                     model = "设备型号 -> $it",
@@ -36,9 +30,9 @@ data class DeviceAndState(
                 )
             }
 
-        val DEBUG_LIST: List<DeviceAndState> by lazy {
+        val DEBUG_LIST: List<DeviceAndStateViewData> by lazy {
             List(19) {
-                DeviceAndState(
+                DeviceAndStateViewData(
                     name = "虚拟设备 - $it",
                     communicationId = "通信id - $it",
                     model = "设备型号 - $it",
@@ -49,7 +43,7 @@ data class DeviceAndState(
 
         @JvmStatic
         val DEBUG_ITEM by lazy {
-            DeviceAndState(
+            DeviceAndStateViewData(
                 "设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01",
                 "通信id",
                 "设备型号",

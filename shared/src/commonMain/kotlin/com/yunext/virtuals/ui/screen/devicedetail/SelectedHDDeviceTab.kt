@@ -19,12 +19,14 @@ internal fun SelectedHDDeviceTab(
     selected: Boolean,
     onClick: () -> Unit,
 ) {
-    Box(Modifier.fillMaxWidth().height(44.dp), contentAlignment = Alignment.Center) {
-        Text(tab.options.title,
+    Box(Modifier.fillMaxWidth().height(44.dp).clickablePure {
+        onClick()
+    }, contentAlignment = Alignment.Center) {
+        Text(
+            tab.options.title,
             style = TextStyle(color = if (selected) China.r_luo_xia_hong else Color.Black),
             modifier = Modifier
-                .clickablePure {
-                    onClick()
-                })
+
+        )
     }
 }

@@ -1,6 +1,6 @@
 package com.yunext.virtuals.data.device
 
-import com.yunext.kmp.mqtt.data.MQTTParam
+import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.protocol.ProtocolMQTTRule
 import com.yunext.kmp.mqtt.protocol.ProtocolMQTTTopic
 import com.yunext.virtuals.data.ProjectInfo
@@ -15,7 +15,7 @@ sealed interface MQTTDevice {
 
     val deviceType: String
 
-    fun createMqttParam(projectInfo: ProjectInfo): MQTTParam
+    fun createMqttParam(projectInfo: ProjectInfo): HDMqttParam
 
     fun generateId(): String
 

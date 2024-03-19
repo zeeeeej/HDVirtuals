@@ -25,22 +25,22 @@ import com.yunext.kmp.ui.compose.Debug
 import com.yunext.kmp.ui.compose.hdBackground
 import com.yunext.virtuals.ui.common.TwinsDeviceStatus
 import com.yunext.virtuals.ui.common.TwinsLabelText
-import com.yunext.virtuals.ui.data.DeviceAndState
+import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.theme.ItemDefaults
 
 
 @Composable
 internal expect fun TwinsDeviceList(
     modifier: Modifier,
-    list: List<DeviceAndState>,
-    onDeviceSelected: (DeviceAndState) -> Unit,
-    onDeviceDelete: (DeviceAndState) -> Unit,
+    list: List<DeviceAndStateViewData>,
+    onDeviceSelected: (DeviceAndStateViewData) -> Unit,
+    onDeviceDelete: (DeviceAndStateViewData) -> Unit,
 )
 
 @Composable
 internal expect fun TwinsDeviceItem(
     modifier: Modifier,
-    device: DeviceAndState,
+    device: DeviceAndStateViewData,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 )
@@ -48,7 +48,7 @@ internal expect fun TwinsDeviceItem(
 @Composable
 internal fun TwinsDeviceItemCommon(
     modifier: Modifier,
-    device: DeviceAndState,
+    device: DeviceAndStateViewData,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {

@@ -35,7 +35,7 @@ import com.yunext.virtuals.ui.common.HDImage
 import com.yunext.virtuals.ui.common.TwinsBackgroundBlock
 import com.yunext.virtuals.ui.common.TwinsTitle
 import com.yunext.virtuals.ui.common.dialog.XPopContainer
-import com.yunext.virtuals.ui.data.DeviceAndState
+import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.MenuData
 import com.yunext.virtuals.ui.data.iconRes
 import com.yunext.virtuals.ui.screen.devicelist.DeviceCommunicationIdAndModel
@@ -45,7 +45,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun DeviceDetailScreeImpl(
-    device: DeviceAndState,
+    device: DeviceAndStateViewData,
     onMenuClick: (MenuData) -> Unit,
     onLeft: () -> Unit,
 ) {
@@ -121,7 +121,7 @@ internal fun DeviceDetailScreeImpl(
 
 @Composable
 private fun Top(
-    device: DeviceAndState,
+    device: DeviceAndStateViewData,
     modifier: Modifier = Modifier,
 ) {
     DeviceCommunicationIdAndModel(modifier, device.communicationId, device.model)

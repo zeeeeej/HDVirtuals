@@ -1,11 +1,11 @@
 package com.yunext.virtuals.data.device
 
-import com.yunext.kmp.mqtt.data.MQTTState
+import com.yunext.kmp.mqtt.data.HDMqttState
 import com.yunext.kmp.mqtt.data.isConnected
 
 class DeviceAndState(
     val device: MQTTDevice,
-    val state: MQTTState
+    val state: HDMqttState
 )
 
 val DeviceAndState.display: String

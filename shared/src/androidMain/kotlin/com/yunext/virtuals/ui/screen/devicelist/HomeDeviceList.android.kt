@@ -11,12 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.yunext.kmp.ui.compose.CHItemShadowShape
 import com.yunext.kmp.ui.compose.Debug
-import com.yunext.virtuals.ui.data.DeviceAndState
+import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 
 @Composable
 actual fun TwinsDeviceItem(
     modifier: Modifier,
-    device: DeviceAndState,
+    device: DeviceAndStateViewData,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
@@ -27,9 +27,9 @@ actual fun TwinsDeviceItem(
 @Composable
 actual fun TwinsDeviceList(
     modifier: Modifier,
-    list: List<DeviceAndState>,
-    onDeviceSelected: (DeviceAndState) -> Unit,
-    onDeviceDelete: (DeviceAndState) -> Unit,
+    list: List<DeviceAndStateViewData>,
+    onDeviceSelected: (DeviceAndStateViewData) -> Unit,
+    onDeviceDelete: (DeviceAndStateViewData) -> Unit,
 ) {
     Debug("TwinsHomePage-内容-设备列表-android")
     LazyColumn(

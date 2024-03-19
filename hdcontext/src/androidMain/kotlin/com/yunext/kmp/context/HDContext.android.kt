@@ -36,7 +36,7 @@ public actual class HDContext actual constructor() {
     private var topActivityInternal: WeakReference<Activity?> = WeakReference(null)
     val topActivity: Activity?
         get() = topActivityInternal.get()
-    
+
     private val callback = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
 

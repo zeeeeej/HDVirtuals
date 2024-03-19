@@ -16,7 +16,7 @@ import com.yunext.kmp.mqtt.protocol.tsl.TslPropertyType
 import com.yunext.kmp.mqtt.protocol.tsl.TslService
 import com.yunext.kmp.mqtt.protocol.tsl.TslSpec
 import com.yunext.virtuals.module.repository.DeviceDTO
-import com.yunext.virtuals.ui.data.DeviceAndState
+import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.DeviceStatus
 import com.yunext.virtuals.ui.data.DeviceType
 
@@ -95,7 +95,7 @@ fun TslSpecResp.convert() = this.run {
     )
 }
 
-fun DeviceDTO.toDeviceAndState() = DeviceAndState(
+fun DeviceDTO.toDeviceAndState() = DeviceAndStateViewData(
     name = this.name,
     communicationId = this.communicationId,
     model = this.model,
@@ -105,7 +105,7 @@ fun DeviceDTO.toDeviceAndState() = DeviceAndState(
     }
 )
 
-fun DeviceAndState.toDeviceDTO() = DeviceDTO(
+fun DeviceAndStateViewData.toDeviceDTO() = DeviceDTO(
     name = this.name,
     communicationId = this.communicationId,
     model = this.model,

@@ -1,7 +1,7 @@
 package com.yunext.virtuals.module.devicemanager
 
 
-import com.yunext.kmp.mqtt.data.MQTTMessage
+import com.yunext.kmp.mqtt.data.HDMqttMessage
 import com.yunext.kmp.mqtt.protocol.ProtocolMQTTContainer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 interface MQTTConvertor {
     fun decode(source: ByteArray): ProtocolMQTTContainer<*>
 
-    fun encode(message: MQTTMessage): ByteArray
+    fun encode(message: HDMqttMessage): ByteArray
 }
 
 class DefaultMqttConvertor : MQTTConvertor {
@@ -25,7 +25,7 @@ class DefaultMqttConvertor : MQTTConvertor {
         return msg
     }
 
-    override fun encode(message: MQTTMessage): ByteArray {
+    override fun encode(message: HDMqttMessage): ByteArray {
         //TODO("序列化")
         return Json.encodeToString(message).encodeToByteArray()
     }
