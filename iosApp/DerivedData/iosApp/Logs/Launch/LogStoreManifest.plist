@@ -6,22 +6,22 @@
 	<integer>10</integer>
 	<key>logs</key>
 	<dict>
-		<key>464F0127-5F75-4F46-8D00-33DD1502A4AF</key>
+		<key>51A400F1-04AC-4C8F-AEB9-AB97C02AC9C4</key>
 		<dict>
 			<key>auxiliaryLogUniqueIdentifier</key>
-			<string>3FE654D4-9D8C-464E-8359-17FF0A3B6FA4</string>
+			<string>5040D9A5-2B3C-4BDF-B720-4129407492C5</string>
 			<key>auxiliaryObservable</key>
 			<dict>
 				<key>highLevelStatus</key>
-				<string>E</string>
+				<string>W</string>
 				<key>totalNumberOfAnalyzerIssues</key>
 				<integer>0</integer>
 				<key>totalNumberOfErrors</key>
-				<integer>2</integer>
+				<integer>0</integer>
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>9</integer>
+				<integer>2</integer>
 			</dict>
 			<key>className</key>
 			<string>IDESchemeActionsInvocationRecord</string>
@@ -30,7 +30,7 @@
 			<key>domainType</key>
 			<string>com.apple.dt.IDE.LaunchSchemeAction</string>
 			<key>fileName</key>
-			<string>Run-iosApp-2024.03.19_14-13-30-+0800.xcresult</string>
+			<string>Run-iosApp-2024.03.20_10-33-33-+0800.xcresult</string>
 			<key>hasAuxiliaryLog</key>
 			<true/>
 			<key>hasConsoleLog</key>
@@ -40,15 +40,15 @@
 			<key>primaryObservable</key>
 			<dict>
 				<key>highLevelStatus</key>
-				<string>E</string>
+				<string>W</string>
 				<key>totalNumberOfAnalyzerIssues</key>
 				<integer>0</integer>
 				<key>totalNumberOfErrors</key>
-				<integer>2</integer>
+				<integer>0</integer>
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>9</integer>
+				<integer>2</integer>
 			</dict>
 			<key>schemeIdentifier-containerName</key>
 			<string>iosApp project</string>
@@ -59,13 +59,13 @@
 			<key>signature</key>
 			<string>Run iosApp</string>
 			<key>timeStartedRecording</key>
-			<real>732521610.94897902</real>
+			<real>732594813.97308099</real>
 			<key>timeStoppedRecording</key>
 			<real>0.0</real>
 			<key>title</key>
 			<string>Run iosApp</string>
 			<key>uniqueIdentifier</key>
-			<string>464F0127-5F75-4F46-8D00-33DD1502A4AF</string>
+			<string>51A400F1-04AC-4C8F-AEB9-AB97C02AC9C4</string>
 		</dict>
 	</dict>
 </dict>

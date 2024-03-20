@@ -1,6 +1,8 @@
 package com.yunext.kmp.mqtt.core
 
 import android.content.Context
+import com.yunext.kmp.context.HDContext
+import com.yunext.kmp.context.application
 import com.yunext.kmp.mqtt.data.HDMqttMessage
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
@@ -18,24 +20,23 @@ import org.eclipse.paho.client.mqttv3.MqttMessage
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.atomic.AtomicReference
 
- class AndroidMQTTClientImpl(context: Context) : HDMqttClient {
+class AndroidMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
 
-    private val ctx: Context = context.applicationContext
+    private val ctx: Context = hdContext.application.applicationContext
 
     private lateinit var client: MqttAndroidClient
 
     private var stateInternal: AtomicReference<HDMqttState> = AtomicReference(HDMqttState.Init)
 
-    override val clientId: String
+    override val tag: String
         get() = "laputa-${System.currentTimeMillis()}"
 
-     override val state: HDMqttState
+    override val state: HDMqttState
         get() = stateInternal.get()
 
     private val mTopics: CopyOnWriteArraySet<String> = CopyOnWriteArraySet()
 
-    var onStateChangedListener: OnHDMqttStateChangedListener? = null
-    private var onStateChangedListeners: MutableList<OnHDMqttStateChangedListener> = mutableListOf()
+    internal var onStateChangedListener: OnStateChangedListener? = null
 
     override fun init() {
         mqttInfo("mqtt-android-init")
@@ -62,27 +63,7 @@ import java.util.concurrent.atomic.AtomicReference
 //            })
     }
 
-    fun registerOnStateChangedListener(listener: OnHDMqttStateChangedListener) {
-        this.onStateChangedListeners.add(listener)
-    }
-
-    fun unRegisterOnStateChangedListener(listener: OnHDMqttStateChangedListener) {
-        this.onStateChangedListeners.remove(listener)
-    }
-
-
-    var onMessageChangedListener: OnHDMqttMessageChangedListener? = null
-
-    private val onChangedListenerMap: MutableMap<String, OnHDMqttMessageChangedListener> =
-        mutableMapOf()
-
-    fun registerOnMessageChangedListener(topic: String, listener: OnHDMqttMessageChangedListener) {
-        onChangedListenerMap[topic] = listener
-    }
-
-    fun unRegisterOnMessageChangedListener(topic: String) {
-        onChangedListenerMap.remove(topic)
-    }
+    internal var onMessageChangedListener: OnMessageChangedListener? = null
 
     private val internalMqttCallback = object : MqttCallbackExtended {
         override fun connectComplete(reconnect: Boolean, serverURI: String?) {
@@ -126,7 +107,7 @@ import java.util.concurrent.atomic.AtomicReference
         }
     }
 
-    override fun connect(param: HDMqttParam, listener: HDMqttActionListener) {
+    override fun connect(param: HDMqttParam, listener: OnActionListener) {
         mqttInfo("mqtt-android-connect")
         client = MqttAndroidClient(ctx.applicationContext, param.url, param.clientId).also {
             it.setCallback(internalMqttCallback)
@@ -167,8 +148,8 @@ import java.util.concurrent.atomic.AtomicReference
 
     override fun subscribeTopic(
         topic: String,
-        actionListener: HDMqttActionListener,
-        listener: OnHDMqttMessageChangedListener,
+        actionListener: OnActionListener,
+//        listener: OnMessageChangedListener,
     ) {
         mqttInfo("mqtt-android-subscribeTopic")
         if (!::client.isInitialized) return
@@ -177,13 +158,11 @@ import java.util.concurrent.atomic.AtomicReference
             override fun onSuccess(asyncActionToken: IMqttToken?) {
                 mqttInfo("subscribeTopic onSuccess $topic $asyncActionToken")
                 actionListener.onSuccess(asyncActionToken)
-                registerOnMessageChangedListener(topic, listener)
             }
 
             override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
                 mqttError("subscribeTopic onFailure $topic $asyncActionToken $exception")
                 actionListener.onFailure(asyncActionToken, exception)
-                unRegisterOnMessageChangedListener(topic)
             }
         })
 //        } else {
@@ -193,20 +172,18 @@ import java.util.concurrent.atomic.AtomicReference
 
     }
 
-    override fun unsubscribeTopic(topic: String, listener: HDMqttActionListener) {
+    override fun unsubscribeTopic(topic: String, listener: OnActionListener) {
         mqttInfo("mqtt-android-unsubscribeTopic")
         if (!::client.isInitialized) return
         client.unsubscribe(topic, null, object : IMqttActionListener {
             override fun onSuccess(asyncActionToken: IMqttToken?) {
                 mqttInfo("subscribeTopic onSuccess $topic $asyncActionToken")
                 listener.onSuccess(asyncActionToken)
-                unRegisterOnMessageChangedListener(topic)
             }
 
             override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
                 mqttError("subscribeTopic onFailure $topic $asyncActionToken $exception")
                 listener.onFailure(asyncActionToken, exception)
-                unRegisterOnMessageChangedListener(topic)
             }
         })
     }
@@ -217,7 +194,7 @@ import java.util.concurrent.atomic.AtomicReference
         payload: ByteArray,
         qos: Int,
         retained: Boolean,
-        listener: HDMqttActionListener,
+        listener: OnActionListener,
     ) {
         mqttInfo("mqtt-android-publish")
         if (!::client.isInitialized) return
@@ -244,22 +221,20 @@ import java.util.concurrent.atomic.AtomicReference
         mqttInfo("mqtt-android-disconnect")
         if (!::client.isInitialized) return
         client.disconnect()
+        onStateChanged(HDMqttState.Disconnected)
+        clear()
     }
 
-    override fun clear() {
+    private fun clear() {
         mqttInfo("mqtt-android-clear")
         onMessageChangedListener = null
-        onChangedListenerMap.clear()
         onStateChangedListener = null
     }
 
 
     private fun handleMessage(topic: String, message: HDMqttMessage?) {
         if (topic.isBlank() || message == null) return
-        onMessageChangedListener?.onChanged(this, topic, message)
-        onChangedListenerMap.forEach { (k, v) ->
-            v.onChanged(this, topic, message)
-        }
+        onMessageChangedListener?.onChanged(topic, message)
     }
 
     private fun checkIsConnected(): Boolean =
@@ -268,9 +243,6 @@ import java.util.concurrent.atomic.AtomicReference
     private fun onStateChanged(state: HDMqttState) {
         mqttInfo("onStateChanged state:$state")
         stateInternal.set(state)
-        onStateChangedListener?.onChanged(this, state)
-        onStateChangedListeners.forEach {
-            it.onChanged(this, state)
-        }
+        onStateChangedListener?.onChanged(state)
     }
 }

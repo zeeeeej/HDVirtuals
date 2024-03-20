@@ -1,31 +1,38 @@
 package com.yunext.kmp.mqtt
 
-import com.yunext.kmp.mqtt.core.HDMqttActionListener
-import com.yunext.kmp.mqtt.core.HDMqttClient
+import com.yunext.kmp.context.HDContext
+import com.yunext.kmp.mqtt.core.OnHDMqttActionListener
 import com.yunext.kmp.mqtt.core.OnHDMqttMessageChangedListener
+import com.yunext.kmp.mqtt.core.OnHDMqttStateChangedListener
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
 
- expect fun createHdMqttClient(): HDMqttClient
+expect class HDMqttClient(hdContext: HDContext)
 
+expect fun createHdMqttClient(): HDMqttClient
 
-//expect val HDMqttClient.state: HDMqttState
+fun hdDebug(debug: Boolean) {
+    HDMQTTConstant.debug = debug
+}
+
+expect val HDMqttClient.hdMqttState: HDMqttState
 
 expect fun HDMqttClient.hdMqttInit()
 expect fun HDMqttClient.hdMqttConnect(
     param: HDMqttParam,
-    listener: HDMqttActionListener,
+    listener: OnHDMqttActionListener,
+    onHDMqttStateChangedListener: OnHDMqttStateChangedListener,
+    onHDMqttMessageChangedListener: OnHDMqttMessageChangedListener,
 )
 
 expect fun HDMqttClient.hdMqttSubscribeTopic(
     topic: String,
-    actionListener: HDMqttActionListener,
-    listener: OnHDMqttMessageChangedListener,
+    actionListener: OnHDMqttActionListener
 )
 
 expect fun HDMqttClient.hdMqttUnsubscribeTopic(
     topic: String,
-    listener: HDMqttActionListener,
+    listener: OnHDMqttActionListener,
 )
 
 expect fun HDMqttClient.hdMqttPublish(
@@ -33,8 +40,7 @@ expect fun HDMqttClient.hdMqttPublish(
     payload: ByteArray,
     qos: Int,
     retained: Boolean,
-    listener: HDMqttActionListener,
+    listener: OnHDMqttActionListener,
 )
 
 expect fun HDMqttClient.hdMqttDisconnect()
-expect fun HDMqttClient.hdMqttClear()

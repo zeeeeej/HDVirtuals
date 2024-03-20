@@ -3,7 +3,7 @@ package com.yunext.virtuals.data.device
 import com.yunext.kmp.common.util.currentTime
 import com.yunext.kmp.common.util.hdMD5
 import com.yunext.kmp.mqtt.data.HDMqttParam
-import com.yunext.kmp.mqtt.protocol.ProtocolMQTTRule
+import com.yunext.kmp.mqtt.virtuals.protocol.ProtocolMQTTRule
 import com.yunext.virtuals.data.ProjectInfo
 import com.yunext.virtuals.module.devicemanager.DeviceInitializer
 

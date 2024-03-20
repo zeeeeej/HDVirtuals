@@ -2,7 +2,7 @@ package com.yunext.virtuals.module.devicemanager
 
 
 import com.yunext.kmp.mqtt.data.HDMqttMessage
-import com.yunext.kmp.mqtt.protocol.ProtocolMQTTContainer
+import com.yunext.kmp.mqtt.virtuals.protocol.ProtocolMQTTContainer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

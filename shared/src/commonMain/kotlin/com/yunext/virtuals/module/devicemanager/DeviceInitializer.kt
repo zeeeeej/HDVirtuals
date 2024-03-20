@@ -1,10 +1,10 @@
 package com.yunext.virtuals.module.devicemanager
 
-import com.yunext.kmp.mqtt.protocol.tsl.Tsl
-import com.yunext.kmp.mqtt.protocol.tsl.property.PropertyValue
-import com.yunext.kmp.mqtt.protocol.tsl.property.tslHandleTsl2PropertyValues
-import com.yunext.kmp.mqtt.protocol.tsl.property.tslHandleUpdatePropertyValues
-import com.yunext.kmp.mqtt.protocol.tsl.property.tslHandleUpdatePropertyValuesFromJson
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.Tsl
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyValue
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.tslHandleTsl2PropertyValues
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.tslHandleUpdatePropertyValues
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.tslHandleUpdatePropertyValuesFromJson
 
 
 interface DeviceInitializer {

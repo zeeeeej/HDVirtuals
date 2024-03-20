@@ -1,5 +1,6 @@
 package com.yunext.kmp.mqtt.core
 
+import com.yunext.kmp.context.HDContext
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
 import com.yunext.kmp.mqtt.utils.mqttInfo
@@ -10,13 +11,12 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-class IOSHDMqttClientImpl : HDMqttClient {
-
+class IOSHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
     private val kmqttClient = KMQTTClient()
     private val coroutineScope: CoroutineScope =
         CoroutineScope(Dispatchers.IO + SupervisorJob() + CoroutineName("KMQTTClient"))
-    override val clientId: String
-        get() = "mqtt-ios-${kmqttClient.hashCode()}"
+    override val tag: String
+        get() = "tag-ios-${kmqttClient.tag}"
 
     override fun init() {
         coroutineScope.launch {
@@ -25,23 +25,34 @@ class IOSHDMqttClientImpl : HDMqttClient {
 
     }
 
-    override fun connect(param: HDMqttParam, listener: HDMqttActionListener) {
+    internal fun registerOnStateChangedListener(listener: OnStateChangedListener) {
+        coroutineScope.launch {
+            kmqttClient.onStateChangedListener = listener
+        }
+    }
+
+    internal fun registerOnMessageChangedListener(listener: OnMessageChangedListener) {
+        coroutineScope.launch {
+            kmqttClient.onMessageChangedListener = listener
+        }
+    }
+
+    override fun connect(param: HDMqttParam, listener: OnActionListener) {
         coroutineScope.launch {
             kmqttClient.connect(param, listener)
         }
     }
 
     override fun subscribeTopic(
-        topic: String, actionListener: HDMqttActionListener,
-        listener: OnHDMqttMessageChangedListener,
+        topic: String, actionListener: OnActionListener,
     ) {
         mqttInfo("mqtt-ios-subscribeTopic")
         coroutineScope.launch {
-            kmqttClient.subscribeTopic(topic, actionListener, listener)
+            kmqttClient.subscribeTopic(topic, actionListener)
         }
     }
 
-    override fun unsubscribeTopic(topic: String, listener: HDMqttActionListener) {
+    override fun unsubscribeTopic(topic: String, listener: OnActionListener) {
         mqttInfo("mqtt-ios-unsubscribeTopic")
         coroutineScope.launch {
             kmqttClient.unsubscribeTopic(topic, listener)
@@ -53,7 +64,7 @@ class IOSHDMqttClientImpl : HDMqttClient {
         payload: ByteArray,
         qos: Int,
         retained: Boolean,
-        listener: HDMqttActionListener,
+        listener: OnActionListener,
     ) {
         mqttInfo("mqtt-ios-publish")
         coroutineScope.launch {
@@ -65,13 +76,6 @@ class IOSHDMqttClientImpl : HDMqttClient {
         mqttInfo("mqtt-ios-disconnect")
         coroutineScope.launch {
             kmqttClient.disconnect()
-        }
-    }
-
-    override fun clear() {
-        mqttInfo("mqtt-ios-clear")
-        coroutineScope.launch {
-            kmqttClient.clear()
         }
     }
 

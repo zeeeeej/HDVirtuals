@@ -1,5 +1,6 @@
 package com.yunext.kmp.mqtt.core
 
+import com.yunext.kmp.context.HDContext
 import com.yunext.kmp.mqtt.data.HDMqttMessage
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
@@ -13,71 +14,25 @@ import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 
- class JvmMQTTClientImpl : HDMqttClient {
-    override val clientId: String
-        get() = "mqtt-jvm-${System.currentTimeMillis()}"
+class JvmMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
+    override val tag: String
+        get() = "tag-jvm-${System.currentTimeMillis()}"
 
     private var currentClint: MqttClient? = null
 
-    var onStateChangedListener: OnHDMqttStateChangedListener? = null
-    var onMessageChangedListener: OnHDMqttMessageChangedListener? = null
+    internal var onStateChangedListener: OnStateChangedListener? = null
+    internal var onMessageChangedListener: OnMessageChangedListener? = null
 
     override fun init() {
         mqttInfo("mqtt-desktop-init")
-//        val broker = "ssl://${HDMQTTConstant.PATH}:${HDMQTTConstant.PORT}"
-//        val topic  = "xpl/abc"
-//        val qos = 2
-//        val memoryPersistence = MemoryPersistence()
-//        val content = "hello  i am from desktop"
-//        val ssl = true
-//        try {
-//            val client =  MqttClient(broker,clientId,memoryPersistence)
-//            val connOpts = MqttConnectOptions().apply {
-//                userName = "laputa"
-//                this.password = "123456".toCharArray()
-//                defaultFactory(ssl)
-//            }
-//            connOpts.isCleanSession = true
-//            mqttInfo("Connecting to broker: $broker")
-//            client.connect(connOpts)
-//            client.subscribeWithResponse(topic
-//            ) { tp, message ->
-//
-//                mqttInfo("$tp # $message")
-//            }
-//            mqttInfo("Connected")
-//            mqttInfo("Publishing message: $content")
-//            val message = MqttMessage(content.toByteArray())
-//            message.qos = qos
-//            client.publish(topic, message)
-//
-//            mqttInfo("Message published")
-////            client.disconnect()
-//            mqttInfo("Disconnected")
-//        } catch (me: MqttException) {
-//            mqttError("reason "+me.reasonCode);
-//            mqttError("msg "+me.message)
-//            mqttError("loc "+me.localizedMessage)
-//            mqttError("cause "+me.cause)
-//            mqttError("excep $me")
-//            me.printStackTrace();
-//        } finally {
-//        }
-
-
     }
 
-    override fun connect(param: HDMqttParam, listener: HDMqttActionListener) {
+    override fun connect(param: HDMqttParam, listener: OnActionListener) {
         mqttInfo("mqtt-desktop-connect")
-        val broker = param.url
-//        val topic  = "xpl/abc"
-//        val topic  = "/skeleton/QR-12TRWQ4/fe495a3be9c7/down"
-//        val topic = "/skeleton/QR-12TRWQ4/fe495a3be9c7/up"
-//        val qos = 2
-        val memoryPersistence = MemoryPersistence()
-//        val content = "hello  i am from desktop"
-        val ssl = param.ssl
         try {
+            val broker = param.url
+            val memoryPersistence = MemoryPersistence()
+            val ssl = param.ssl
             val client = MqttClient(broker, param.clientId, memoryPersistence)
             val connOpts = MqttConnectOptions().apply {
                 this.userName = param.username
@@ -87,13 +42,13 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
             client.setCallback(object : MqttCallback {
                 override fun connectionLost(cause: Throwable?) {
                     stateInternal = HDMqttState.Disconnected
-                    onStateChangedListener?.onChanged(this@JvmMQTTClientImpl, state)
+                    onStateChangedListener?.onChanged(state)
                 }
 
                 override fun messageArrived(topic: String, message: MqttMessage) {
                     // todo
                     onMessageChangedListener?.onChanged(
-                        this@JvmMQTTClientImpl, topic, HDMqttMessage(
+                        topic, HDMqttMessage(
                             payload = message.payload,
                             retained = message.isRetained,
                             qos = message.qos,
@@ -116,7 +71,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
             mqttInfo("Connecting Success: $result")
             listener.onSuccess(result)
             stateInternal = HDMqttState.Connected
-            onStateChangedListener?.onChanged(this@JvmMQTTClientImpl, state)
+            onStateChangedListener?.onChanged(state)
         } catch (me: MqttException) {
             mqttError("reason   :" + me.reasonCode);
             mqttError("msg      :" + me.message)
@@ -126,14 +81,13 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
             me.printStackTrace();
             listener.onFailure(null, me)
             stateInternal = HDMqttState.Disconnected
-            onStateChangedListener?.onChanged(this@JvmMQTTClientImpl, state)
+            onStateChangedListener?.onChanged(state)
         } finally {
         }
     }
 
     override fun subscribeTopic(
-        topic: String, actionListener: HDMqttActionListener,
-        listener: OnHDMqttMessageChangedListener,
+        topic: String, actionListener: OnActionListener,
     ) {
         mqttInfo("mqtt-desktop-subscribeTopic")
         val client = currentClint ?: return
@@ -141,8 +95,8 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
             topic
         ) { tp, message ->
             mqttInfo("$tp # $message")
-            listener.onChanged(
-                this, topic, HDMqttMessage(
+            onMessageChangedListener?.onChanged(
+                topic, HDMqttMessage(
                     payload = message.payload,
                     retained = message.isRetained,
                     qos = message.qos,
@@ -150,11 +104,10 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
                     dup = message.isDuplicate,
                 )
             )
-
         }
     }
 
-    override fun unsubscribeTopic(topic: String, listener: HDMqttActionListener) {
+    override fun unsubscribeTopic(topic: String, listener: OnActionListener) {
         mqttInfo("mqtt-desktop-unsubscribeTopic")
         val client = currentClint ?: return
         try {
@@ -170,7 +123,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
         payload: ByteArray,
         qos: Int,
         retained: Boolean,
-        listener: HDMqttActionListener,
+        listener: OnActionListener,
     ) {
         mqttInfo("mqtt-desktop-publish")
         val client = currentClint ?: return
@@ -186,11 +139,13 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
         mqttInfo("mqtt-desktop-disconnect")
         val client = currentClint ?: return
         client.disconnect()
+        onStateChangedListener?.onChanged(HDMqttState.Disconnected)
+        clear()
     }
 
-    override fun clear() {
+    private fun clear() {
         mqttInfo("mqtt-desktop-clear")
-        val client = currentClint ?: return
+        currentClint ?: return
         currentClint = null
     }
 

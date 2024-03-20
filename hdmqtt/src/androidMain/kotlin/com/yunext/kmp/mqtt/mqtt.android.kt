@@ -1,46 +1,56 @@
 package com.yunext.kmp.mqtt
 
-import com.yunext.kmp.context.application
 import com.yunext.kmp.context.hdContext
-import com.yunext.kmp.mqtt.core.HDMqttClient
 import com.yunext.kmp.mqtt.core.AndroidMQTTClientImpl
-import com.yunext.kmp.mqtt.core.HDMqttActionListener
+import com.yunext.kmp.mqtt.core.OnHDMqttActionListener
 import com.yunext.kmp.mqtt.core.OnHDMqttMessageChangedListener
+import com.yunext.kmp.mqtt.core.OnHDMqttStateChangedListener
+import com.yunext.kmp.mqtt.core.OnMessageChangedListener
+import com.yunext.kmp.mqtt.core.OnStateChangedListener
+
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
 
- actual fun createHdMqttClient(): HDMqttClient {
-    return AndroidMQTTClientImpl(hdContext.application)
+actual typealias HDMqttClient = AndroidMQTTClientImpl
+
+actual fun createHdMqttClient(): HDMqttClient {
+    return HDMqttClient(hdContext)
 }
 
-//actual typealias HDMqttClient2 = AndroidMQTTClientImpl
-//
-//actual val HDMqttClient2.state: HDMqttState
-//    get() = this.state
+actual val HDMqttClient.hdMqttState: HDMqttState
+    get() = this.state
 
 actual fun HDMqttClient.hdMqttInit() {
+    this.init()
 }
 
 actual fun HDMqttClient.hdMqttConnect(
     param: HDMqttParam,
-    listener: HDMqttActionListener,
+    listener: OnHDMqttActionListener,
+    onHDMqttStateChangedListener: OnHDMqttStateChangedListener,
+    onHDMqttMessageChangedListener: OnHDMqttMessageChangedListener,
 ) {
-    this.connect(param,listener)
+    this.onStateChangedListener = OnStateChangedListener { mqttState ->
+        onHDMqttStateChangedListener.onChanged(this, mqttState)
+    }
+    this.onMessageChangedListener = OnMessageChangedListener { topic, message ->
+        onHDMqttMessageChangedListener.onChanged(this, topic, message)
+    }
+    this.connect(param, listener)
 }
 
 actual fun HDMqttClient.hdMqttSubscribeTopic(
     topic: String,
-    actionListener: HDMqttActionListener,
-    listener: OnHDMqttMessageChangedListener,
+    actionListener: OnHDMqttActionListener,
 ) {
-    this.subscribeTopic(topic,actionListener,listener)
+    this.subscribeTopic(topic, actionListener)
 }
 
 actual fun HDMqttClient.hdMqttUnsubscribeTopic(
     topic: String,
-    listener: HDMqttActionListener,
+    listener: OnHDMqttActionListener,
 ) {
-    this.unsubscribeTopic(topic,listener)
+    this.unsubscribeTopic(topic, listener)
 }
 
 actual fun HDMqttClient.hdMqttPublish(
@@ -48,19 +58,12 @@ actual fun HDMqttClient.hdMqttPublish(
     payload: ByteArray,
     qos: Int,
     retained: Boolean,
-    listener: HDMqttActionListener,
+    listener: OnHDMqttActionListener,
 ) {
-    this.publish(topic,payload,qos,retained,listener)
+    this.publish(topic, payload, qos, retained, listener)
 }
 
 actual fun HDMqttClient.hdMqttDisconnect() {
     this.disconnect()
 }
 
-actual fun HDMqttClient.hdMqttClear() {
-    this.clear()
-}
-
-//actual fun HDMqttClient(): HDMqttClient2 {
-//    return HDMqttClient2(hdContext.application)
-//}

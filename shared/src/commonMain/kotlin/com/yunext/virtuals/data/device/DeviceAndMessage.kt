@@ -1,6 +1,6 @@
 package com.yunext.virtuals.data.device
 
-import com.yunext.kmp.mqtt.protocol.ProtocolMQTTContainer
+import com.yunext.kmp.mqtt.virtuals.protocol.ProtocolMQTTContainer
 
 class DeviceAndMessage(
     val device: MQTTDevice,

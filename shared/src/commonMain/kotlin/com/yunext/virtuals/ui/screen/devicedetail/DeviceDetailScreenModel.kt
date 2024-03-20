@@ -2,8 +2,10 @@ package com.yunext.virtuals.ui.screen.devicedetail
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.yunext.kmp.common.logger.HDLogger
-import com.yunext.kmp.mqtt.core.HDMqttClient
+import com.yunext.kmp.mqtt.HDMqttClient
 import com.yunext.kmp.mqtt.createHdMqttClient
+import com.yunext.kmp.mqtt.hdMqttDisconnect
+import com.yunext.kmp.mqtt.hdMqttInit
 import com.yunext.virtuals.ui.common.HDStateScreenModel
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.Effect
@@ -52,14 +54,14 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
     private var hdMqttClient: HDMqttClient? = null
     private suspend fun loadDataInternal(device: DeviceAndStateViewData) {
         val client = createHdMqttClient()
-        client.init()
+        client.hdMqttInit()
         hdMqttClient = client
     }
 
 
     override fun onDispose() {
         super.onDispose()
-        hdMqttClient?.clear()
+        hdMqttClient?.hdMqttDisconnect()
         HDLogger.d(TAG, "=========================== 退出设备详情 ===========================")
     }
 

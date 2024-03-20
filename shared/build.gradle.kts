@@ -36,11 +36,13 @@ kotlin {
             implementation(projects.hdcontext)
             implementation(projects.hdresource)
             implementation(projects.hdmqtt)
+            implementation(projects.hdmqttVirtuals)
             implementation(projects.hdhttp)
             implementation(projects.hdserial)
             implementation(projects.hddb)
             implementation(projects.hdble)
             implementation(projects.hdui)
+            implementation(projects.hdmqttVirtuals)
 
             // voyager
             implementation(libs.voyager.navigator)
