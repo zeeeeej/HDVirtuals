@@ -6,6 +6,7 @@ import com.yunext.kmp.context.application
 import com.yunext.kmp.mqtt.data.HDMqttMessage
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
+import com.yunext.kmp.mqtt.data.display
 import com.yunext.kmp.mqtt.data.isConnected
 import com.yunext.kmp.mqtt.toMsg
 import com.yunext.kmp.mqtt.utils.mqttError
@@ -109,6 +110,8 @@ class AndroidMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
 
     override fun connect(param: HDMqttParam, listener: OnActionListener) {
         mqttInfo("mqtt-android-connect")
+        mqttInfo(param.display)
+
         client = MqttAndroidClient(ctx.applicationContext, param.url, param.clientId).also {
             it.setCallback(internalMqttCallback)
         }

@@ -1,5 +1,6 @@
 package com.yunext.kmp.mqtt.virtuals.test
 
+import com.yunext.kmp.common.util.currentTime
 import com.yunext.kmp.common.util.hdUUID
 import com.yunext.kmp.mqtt.data.HDMqttParam
 
@@ -32,14 +33,15 @@ internal object TestResource {
     internal val testParam2 = HDMqttParam(
         username = "laputa",
         password = "963210xx",
-        clientId = "mqttx_0eb2fd3d_kmp_${hdUUID(4)}",
+        clientId = "mqttx_0eb2fd3d_kmp_${currentTime()}",
         url = "ssl://127.0.0.1:8883",
         ssl = false, port = "8883", shortUrl = "127.0.0.1", scheme = "ssl", tls = null
     )
+
     internal val testParam = HDMqttParam(
         username = "fe495a3be9c7",
         password = "1a430ea4f7edfb28200de2130efdb739",
-        clientId = "DEV:QR-12TRWQ4_fe495a3be9c7_${hdUUID(4)}",
+        clientId = "DEV:QR-12TRWQ4_fe495a3be9c7_${currentTime()}",
         url = "ssl://emqtt-test.yunext.com:8881",
         ssl = false, port = "8881", shortUrl = "emqtt-test.yunext.com", scheme = "ssl", tls = null
     )
@@ -47,7 +49,7 @@ internal object TestResource {
     internal val mqttXParam = HDMqttParam(
         username = "zeej",
         password = "963210xx",
-        clientId = "kmp_jvm_${hdUUID(4)}",
+        clientId = "kmp_jvm_${currentTime()}",
         url = "ssl://o5dae913.cn-hangzhou.emqx.cloud:15925",
         ssl = false,
         port = "15925",
@@ -56,7 +58,22 @@ internal object TestResource {
         tls = KEY_TLS_FOR_MQTTx
     )
 
+    internal val debugParam: HDMqttParam
+        get() = twins_test_001
 
+    private val twins_test_001 = HDMqttParam(
+        username = "twins_test_001_cid",
+        password = "42e74d901c11371d9e8362501736c2d0",
+        //clientId = "DEV:tcuf6vn2ohw4mvhb_twins_test_001_cid_${currentTime().toString().take(4)}",
+        clientId = "DEV:tcuf6vn2ohw4mvhb_twins_test_001_cid_1133",
+        url = "ssl://emqtt-test.yunext.com:8904",
+        ssl = true, port = "8904", shortUrl = "emqtt-test.yunext.com", scheme = "ssl", tls = null
+    )
+
+    // [username]twins_test_001_cid ## [password]3415ee6f6d02c7b112eae4ae472bcaba ## [clientId]DEV:tcuf6vn2ohw4mvhb_twins_test_001_cid_aTpJ ## [url]ssl://emqtt-test.yunext.com:8904 ## [ssl]true
+    // [username]twins_test_001_cid ## [password]39eb3141c562be8e7b52fea13d0bdd1d ## [clientId]DEV:tcuf6vn2ohw4mvhb_twins_test_001_cid_5987 ## [url]ssl://emqtt-test.yunext.com:8904 ## [ssl]true
+    // [username]twins_test_001_cid ## [password]ebb0c43c1703c74bf692b1b37803a191 ## [clientId]DEV:tcuf6vn2ohw4mvhb_twins_test_001_cid_4015 ## [url]ssl://emqtt-test.yunext.com:8904 ## [ssl]true
+    // [username]twins_test_001_cid ## [password]39eb3141c562be8e7b52fea13d0bdd1d ## [clientId]tcuf6vn2ohw4mvhb_twins_test_001_cid_5987 ## [url]ssl://emqtt-test.yunext.com:8904 ## [ssl]true
     internal const val TOPIC_UP = "/skeleton/QR-12TRWQ4/fe495a3be9c7/up"
     internal const val TOPIC_DOWN = "/skeleton/QR-12TRWQ4/fe495a3be9c7/down"
 }

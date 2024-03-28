@@ -1,12 +1,15 @@
 package com.yunext.kmp.mqtt
 
+import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.context.hdContext
 import com.yunext.kmp.mqtt.core.OnHDMqttActionListener
 import com.yunext.kmp.mqtt.core.IOSHDMqttClientImpl
+import com.yunext.kmp.mqtt.core.OnActionListener
 import com.yunext.kmp.mqtt.core.OnHDMqttMessageChangedListener
 import com.yunext.kmp.mqtt.core.OnHDMqttStateChangedListener
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
+import kotlinx.coroutines.delay
 
 actual typealias HDMqttClient = IOSHDMqttClientImpl
 
@@ -34,7 +37,18 @@ actual fun HDMqttClient.hdMqttConnect(
     this.registerOnMessageChangedListener { topic, message ->
         onHDMqttMessageChangedListener.onChanged(this, topic, message)
     }
-    this.connect(param, listener)
+    val onActionListener = object : OnActionListener {
+        override fun onSuccess(token: Any?) {
+            listener.onSuccess(token)
+
+        }
+
+        override fun onFailure(token: Any?, exception: Throwable?) {
+            listener.onFailure(token, exception)
+        }
+
+    }
+    this.connect(param, onActionListener)
 }
 
 actual fun HDMqttClient.hdMqttSubscribeTopic(

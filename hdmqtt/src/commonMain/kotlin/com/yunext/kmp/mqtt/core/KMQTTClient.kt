@@ -8,6 +8,7 @@ import com.yunext.kmp.mqtt.data.HDMqttState
 import com.yunext.kmp.mqtt.utils.mqttError
 import com.yunext.kmp.mqtt.utils.mqttInfo
 import com.yunext.kmp.mqtt.utils.mqttWarn
+import kotlinx.coroutines.delay
 import mqtt.MQTTVersion
 import mqtt.Subscription
 import mqtt.packets.Qos
@@ -30,28 +31,43 @@ internal class KMQTTClient : IHDMqttClient {
         mqttInfo("::init")
     }
 
+    private var retry = false
+
+
     @OptIn(ExperimentalUnsignedTypes::class)
     override fun connect(
         param: HDMqttParam,
         listener: OnActionListener,
     ) {
         try {
-            mqttInfo("::connect param:$param")
+            val url = param.shortUrl
+            val port = param.port
+            val clientId = param.clientId
+            val username = param.username
+            val password = param.password
+            mqttInfo("::connect param:$param ")
+            mqttInfo("::connect url         :$url ")
+            mqttInfo("::connect port        :$port ")
+            mqttInfo("::connect clientId    :$clientId ")
+            mqttInfo("::connect username    :$username ")
+            mqttInfo("::connect password    :$password ")
             if (mqttClient != null) {
                 mqttWarn("why your client is not null? mqttClient info : $mqttClient")
             }
+
             onStateChangedListener?.onChanged(HDMqttState.Init)
             mqttClient = MQTTClient(
                 mqttVersion = MQTTVersion.MQTT3_1_1,
-                address = param.shortUrl,
-                clientId = param.clientId,
-                port = param.port.toInt(),
-                userName = param.username,
-                password = param.password.encodeToByteArray().toUByteArray(),
+                address = url,
+                clientId = clientId,
+                port = port.toInt(),
+                userName = username,
+                password = password.encodeToByteArray().toUByteArray(),
                 //            tls = TLSClientSettings(serverCertificate = "emqxsl.ca.ios.crt"),
-                tls = param.tls?.let {
-                    TLSClientSettings(serverCertificate = it)
-                },
+//                tls = param.tls?.let {
+//                    TLSClientSettings(serverCertificate = it)
+//                },
+                tls = null,//TLSClientSettings(version = "ssl"),
                 onConnected = {
                     mqttInfo("::connect onConnected $it")
                     listener.onSuccess(mqttClient)
@@ -59,6 +75,7 @@ internal class KMQTTClient : IHDMqttClient {
                     onStateChangedListener?.onChanged(HDMqttState.Connected)
 
                 },
+
                 onDisconnected = {
                     mqttInfo("::connect onDisconnected $it")
                     listener.onFailure(mqttClient, null)
@@ -101,9 +118,10 @@ internal class KMQTTClient : IHDMqttClient {
 
 //            mqttClient?.step()
 
-            mqttClient?.run()
+            // mqttClient?.run()
         } catch (e: Exception) {
             mqttError("::connect error $e")
+            e.printStackTrace()
             stateInternal = HDMqttState.Disconnected
             onStateChangedListener?.onChanged(HDMqttState.Disconnected)
         }
@@ -113,15 +131,16 @@ internal class KMQTTClient : IHDMqttClient {
         topic: String,
         actionListener: OnActionListener,
     ) {
-        mqttInfo("::subscribeTopic topic:$topic")
-        val subscription = Subscription(topic, SubscriptionOptions(Qos.EXACTLY_ONCE))
-        val subscriptions = listOf(subscription)
-        try {
-            mqttClient?.subscribe(subscriptions)
-            actionListener.onSuccess(this)
-        } catch (e: Exception) {
-            actionListener.onFailure(this, e)
-        }
+        mqttClient?.run()
+//        mqttInfo("::subscribeTopic topic:$topic")
+//        val subscription = Subscription(topic, SubscriptionOptions(Qos.EXACTLY_ONCE))
+//        val subscriptions = listOf(subscription)
+//        try {
+//            mqttClient?.subscribe(subscriptions)
+//            actionListener.onSuccess(this)
+//        } catch (e: Exception) {
+//            actionListener.onFailure(this, e)
+//        }
     }
 
     override fun unsubscribeTopic(topic: String, listener: OnActionListener) {
@@ -167,11 +186,16 @@ internal class KMQTTClient : IHDMqttClient {
     }
 
     override fun disconnect() {
-        mqttInfo("::disconnect ")
-        mqttClient?.disconnect(ReasonCode.USE_ANOTHER_SERVER)
-        mqttClient = null
-        onStateChangedListener?.onChanged(HDMqttState.Disconnected)
-        clear()
+        try {
+            mqttInfo("::disconnect ")
+            mqttClient?.disconnect(ReasonCode.ADMINISTRATIVE_ACTION)
+        } catch (e: Exception) {
+            mqttError("::disconnect error $e")
+        } finally {
+            mqttClient = null
+            onStateChangedListener?.onChanged(HDMqttState.Disconnected)
+            clear()
+        }
     }
 
     private fun clear() {

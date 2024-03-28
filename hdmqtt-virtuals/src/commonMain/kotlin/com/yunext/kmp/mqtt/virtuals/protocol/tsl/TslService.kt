@@ -1,7 +1,5 @@
 package com.yunext.kmp.mqtt.virtuals.protocol.tsl
 
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslParam
-
 class TslService(
     val identifier: String,
     val name: String,

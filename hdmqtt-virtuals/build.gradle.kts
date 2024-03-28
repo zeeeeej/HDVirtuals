@@ -29,12 +29,26 @@ kotlin {
                 implementation(projects.hdcontext)
                 implementation(projects.hdmqtt)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
             }
+        }
+
+        androidMain.dependencies {
+            implementation(libs.kotlinx.coroutines.android)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.kotlinx.coroutines.swing)
+
+        }
+
+        iosMain.dependencies {
+
         }
     }
 }

@@ -3,16 +3,21 @@ package com.yunext.kmp.mqtt.virtuals.test
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.mqtt.HDMqttClient
 import com.yunext.kmp.mqtt.core.OnHDMqttActionListener
+import com.yunext.kmp.mqtt.core.OnHDMqttMessageChangedListener
+import com.yunext.kmp.mqtt.core.OnHDMqttStateChangedListener
 import com.yunext.kmp.mqtt.createHdMqttClient
+import com.yunext.kmp.mqtt.data.HDMqttState
 import com.yunext.kmp.mqtt.hdMqttConnect
 import com.yunext.kmp.mqtt.hdMqttDisconnect
 import com.yunext.kmp.mqtt.hdMqttInit
 import com.yunext.kmp.mqtt.hdMqttPublish
 import com.yunext.kmp.mqtt.hdMqttState
 import com.yunext.kmp.mqtt.hdMqttSubscribeTopic
+import kotlinx.coroutines.MainScope
 
 class MQTTVirtualsDemo {
     private var mqttClient: HDMqttClient? = null
+    private var retryIndex = 0
     fun disconnect() {
         mqttClient?.hdMqttDisconnect()
     }
@@ -20,12 +25,11 @@ class MQTTVirtualsDemo {
     @OptIn(ExperimentalStdlibApi::class)
 
     fun init() {
-
         val content = "hello kmp !".encodeToByteArray()
         val topic = TestResource.TOPIC_UP
+        retryIndex = 0
         mqttClient = createHdMqttClient().also { client ->
-            client.hdMqttInit()
-            client.hdMqttConnect(TestResource.mqttXParam, object : OnHDMqttActionListener {
+            val onActionListener = object : OnHDMqttActionListener {
                 override fun onSuccess(token: Any?) {
                     HDLogger.d("HDMQTTDemo", "connect:onSuccess")
 
@@ -61,12 +65,40 @@ class MQTTVirtualsDemo {
                 override fun onFailure(token: Any?, exception: Throwable?) {
                     HDLogger.e("HDMQTTDemo", "connect:onFailure :$exception")
                 }
-            }, onHDMqttStateChangedListener = { _, state ->
-                HDLogger.e("HDMQTTDemo", "$$$$ connect:state :$state $$$$")
-            }, onHDMqttMessageChangedListener = {
-                _,topic,message->
-                HDLogger.e("HDMQTTDemo", "topic:$topic message:$message")
-            })
+            }
+            val onHDMqttMessageChangedListener =
+                OnHDMqttMessageChangedListener { _, topic, message ->
+                    HDLogger.e("HDMQTTDemo", "topic:$topic message:$message")
+                }
+
+            val onHDMqttStateChangedListener: OnHDMqttStateChangedListener =
+                object : OnHDMqttStateChangedListener {
+                    override fun onChanged(mqttClient: HDMqttClient, mqttState: HDMqttState) {
+                        HDLogger.e("HDMQTTDemo", "$$$$ connect:state :$mqttState $$$$")
+                        when (mqttState) {
+                            HDMqttState.Connected -> {
+
+                            }
+
+                            HDMqttState.Disconnected -> {
+
+
+                            }
+
+                            HDMqttState.Init -> {
+
+                            }
+                        }
+                    }
+                }
+
+            client.hdMqttInit()
+            client.hdMqttConnect(
+                param = TestResource.debugParam,
+                listener = onActionListener,
+                onHDMqttStateChangedListener = onHDMqttStateChangedListener,
+                onHDMqttMessageChangedListener = onHDMqttMessageChangedListener
+            )
 
         }
 

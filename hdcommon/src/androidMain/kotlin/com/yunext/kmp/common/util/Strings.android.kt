@@ -45,5 +45,5 @@ actual fun hdUUID(length: Int): String {
     }
     return List(length) {
         BASE.random().toString()
-    }.joinToString { it }
+    }.joinToString (""){ it }
 }

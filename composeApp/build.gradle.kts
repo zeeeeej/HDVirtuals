@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.ksp)
+//    alias(libs.plugins.cocoapods)
 }
 
 kotlin {
@@ -15,35 +16,57 @@ kotlin {
             }
         }
     }
-    
+
     jvm("desktop")
-    
+
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
-//        iosTarget.binaries.framework {
-//            baseName = "ComposeApp"
-//            isStatic = true
-//        }
-
         // fix ios can't link sqlite https://github.com/cashapp/sqldelight/issues/1442
-        with(iosTarget){
+        with(iosTarget) {
             binaries.framework {
                 baseName = "ComposeApp"
                 isStatic = false
+                export(project(":shared"))
+                export(project(":hdcommon"))
+                export(project(":hdmqtt"))
+                // Export transitively.
+                // transitiveExport = true
             }
-
             compilations.all {
                 kotlinOptions.freeCompilerArgs += arrayOf("-linker-options", "-lsqlite3")
             }
+
+            //            val result = binaries.getByName("hdcontextexeDebugExecutable")
+//            println(
+//                """
+//                ^^^^^^^^^^^^
+//                result = $result
+//
+//            """.trimIndent()
+//            )
+
+//            binaries.sharedLib {
+//                export(project(":shared"))
+//            }
+
+//            binaries.staticLib {
+//                export(project(":shared"))
+//            }
         }
     }
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
+        iosMain.dependencies {
+            api(project(":shared"))
+            api(project(":hdcommon"))
+            implementation(project(":hdmqtt"))
+        }
+
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)

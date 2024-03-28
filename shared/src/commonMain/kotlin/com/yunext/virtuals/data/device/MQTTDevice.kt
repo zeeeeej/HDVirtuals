@@ -9,7 +9,8 @@ import com.yunext.virtuals.module.devicemanager.DefaultMqttConvertor
 import com.yunext.virtuals.module.devicemanager.DeviceInitializer
 import com.yunext.virtuals.module.devicemanager.MQTTConvertor
 
-sealed interface MQTTDevice {
+interface HDDevice
+sealed interface MQTTDevice : HDDevice {
 
     val rule: ProtocolMQTTRule
 
@@ -39,7 +40,7 @@ fun MQTTDevice.providerMqttConvertor(): MQTTConvertor {
     return when (this) {
         is AndroidDevice -> DefaultMqttConvertor()
         is TwinsDevice -> DefaultMqttConvertor()
-        else->throw IllegalStateException("non convertor")
+        else -> throw IllegalStateException("non convertor")
     }
 }
 

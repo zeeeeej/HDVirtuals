@@ -63,9 +63,26 @@ kotlin {
             api(libs.kotlinx.coroutines.swing)
 
         }
-        iosMain.dependencies {
+
+        val iosMain by getting {
+            dependsOn(commonMain)
 
         }
+
+        val iosSimulatorArm64Main by getting {
+            dependsOn(iosMain)
+            dependencies {
+                implementation(files("./nativeInterop/openssl-ios-simulator-arm64.klib"))
+            }
+        }
+        // TODO 旧的方式
+//        iosMain.dependencies {
+//            dependencies {
+//                implementation(files("src/nativeInterop/openssl-ios-simulator-arm64.klib"))
+//            }
+//        }
+
+
     }
 }
 

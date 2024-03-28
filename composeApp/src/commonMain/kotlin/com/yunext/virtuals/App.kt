@@ -11,19 +11,23 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.yunext.kmp.common.logger.HDLogger
+import com.yunext.kmp.common.util.hdMD5
 import com.yunext.virtuals.bridge.OrientationType
 import com.yunext.virtuals.bridge.changeKeyBoardType
 import com.yunext.virtuals.bridge.orientationTypeStateFlow
 import com.yunext.virtuals.bridge.text
+import com.yunext.virtuals.module.devicemanager.initDeviceManager
 import com.yunext.virtuals.ui.initHDRes
 import com.yunext.virtuals.ui.screen.VoyagerApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 private val initApp: CoroutineScope.() -> Unit = {
     launch {
         HDLogger.debug = true
         initHDRes(HDResProviderImpl)
+        initDeviceManager()
     }
 }
 
@@ -54,7 +58,9 @@ fun App() {
         }
 
         LaunchedEffect(Unit) {
-            initApp()
+            runBlocking {
+                initApp()
+            }
             hasInit = true
         }
         AnimatedVisibility(hasInit) {

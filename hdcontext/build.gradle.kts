@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -13,9 +15,18 @@ kotlin {
             }
         }
     }
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+//        it.binaries.executable(
+//            "hdcontextexe",
+//            listOf(NativeBuildType.DEBUG, NativeBuildType.RELEASE)
+//        ) {
+//
+//        }
+    }
 
     sourceSets {
         val commonMain by getting {
@@ -29,7 +40,7 @@ kotlin {
             }
         }
 
-        androidMain.dependencies{
+        androidMain.dependencies {
             implementation(libs.android.lifecycle.service)
             implementation(libs.android.lifecycle.common.java8)
             implementation(libs.android.lifecycle.process)

@@ -15,23 +15,25 @@ import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslProperty
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslPropertyType
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslService
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslSpec
+import com.yunext.virtuals.data.device.MQTTDevice
+import com.yunext.virtuals.data.device.TwinsDevice
 import com.yunext.virtuals.module.repository.DeviceDTO
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.DeviceStatus
 import com.yunext.virtuals.ui.data.DeviceType
 
-fun TslResp.convert()= Tsl(
-    id = this.id?:"",
-    version = this.version?:"",
-    productKey = this.productKey?:"",
-    current = this.current?:false,
+fun TslResp.convert() = Tsl(
+    id = this.id ?: "",
+    version = this.version ?: "",
+    productKey = this.productKey ?: "",
+    current = this.current ?: false,
     events = this.events?.map {
         it.convert()
-    }?: listOf<TslEvent>(),
-    properties = this.properties?.map(TslPropertyResp::convert)?: listOf(),
-    services = this.services?.map(TslServiceResp::convert)?: listOf(),
+    } ?: listOf<TslEvent>(),
+    properties = this.properties?.map(TslPropertyResp::convert) ?: listOf(),
+    services = this.services?.map(TslServiceResp::convert) ?: listOf(),
 
-)
+    )
 
 fun TslEventResp.convert() = TslEvent(
     identifier = this.identifier ?: "",
@@ -116,3 +118,13 @@ fun DeviceAndStateViewData.toDeviceDTO() = DeviceDTO(
         DeviceStatus.WiFiOnLine -> DeviceType.WIFI
     }
 )
+
+fun DeviceDTO.toMqttDevice(): MQTTDevice {
+    return TwinsDevice(
+        name = this.name,
+        deviceType = this.model,
+        deviceId = this.communicationId,
+        communicationType = this.type
+
+    )
+}

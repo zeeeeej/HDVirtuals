@@ -6,6 +6,10 @@ import com.yunext.kmp.mqtt.HDMqttClient
 import com.yunext.kmp.mqtt.createHdMqttClient
 import com.yunext.kmp.mqtt.hdMqttDisconnect
 import com.yunext.kmp.mqtt.hdMqttInit
+import com.yunext.virtuals.module.devicemanager.MQTTDeviceManager
+import com.yunext.virtuals.module.devicemanager.deviceManager
+import com.yunext.virtuals.module.toDeviceDTO
+import com.yunext.virtuals.module.toMqttDevice
 import com.yunext.virtuals.ui.common.HDStateScreenModel
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.Effect
@@ -42,6 +46,7 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
         loadDataJob = screenModelScope.launch {
             try {
                 val device = state.value.device
+                initMqtt(device)
                 loadDataInternal(device)
             } catch (e: Throwable) {
                 e.printStackTrace()
@@ -51,17 +56,18 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
         }
     }
 
-    private var hdMqttClient: HDMqttClient? = null
+    private fun initMqtt(device: DeviceAndStateViewData) {
+        HDLogger.d(TAG, "::initMqtt")
+        deviceManager.add(device.toDeviceDTO().toMqttDevice())
+    }
+
     private suspend fun loadDataInternal(device: DeviceAndStateViewData) {
-        val client = createHdMqttClient()
-        client.hdMqttInit()
-        hdMqttClient = client
+        HDLogger.d(TAG, "::loadDataInternal")
     }
 
 
     override fun onDispose() {
         super.onDispose()
-        hdMqttClient?.hdMqttDisconnect()
         HDLogger.d(TAG, "=========================== 退出设备详情 ===========================")
     }
 

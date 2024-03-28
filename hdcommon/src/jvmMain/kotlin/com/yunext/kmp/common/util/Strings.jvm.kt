@@ -14,6 +14,7 @@ private val LOWER_HEX_DIGITS = charArrayOf(
     '5', '6', '7', '8', '9',
     'a', 'b', 'c', 'd', 'e', 'f'
 )
+
 fun md5(text: String, upper: Boolean = false): String? {
     val md5 = try {
         MessageDigest.getInstance(MD5)
@@ -32,7 +33,7 @@ fun md5(text: String, upper: Boolean = false): String? {
 }
 
 actual fun hdMD5(text: String, upperCase: Boolean): String? {
-    return md5(text,upperCase)
+    return md5(text, upperCase)
 }
 
 
@@ -44,5 +45,5 @@ actual fun hdUUID(length: Int): String {
     }
     return List(length) {
         BASE.random().toString()
-    }.joinToString { it }
+    }.joinToString("") { it }
 }

@@ -43,6 +43,7 @@ mqtt3-jvm-jdk15on = "1.70"
 kmqtt = "0.4.6"
 # Android Lifecycle
 android-lifecycle = "2.7.0"
+firebaseCrashlyticsBuildtools = "2.9.9"
 
 
 
@@ -141,8 +142,10 @@ android-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common
 android-lifecycle-compiler = { module = "androidx.lifecycle:lifecycle-compiler", version.ref = "android-lifecycle" }
 android-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "android-lifecycle" }
 android-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "android-lifecycle" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 [plugins]
+cocoapods = { id = "native.cocoapods", version.ref = "kotlin" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

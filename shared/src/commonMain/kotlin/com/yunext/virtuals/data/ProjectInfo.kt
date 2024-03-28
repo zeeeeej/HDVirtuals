@@ -8,6 +8,5 @@ data class ProjectInfo(
 
 
 fun ProjectInfo.isYinDu(): Boolean {
-    return secret == "5cdbb8f042004723899f0df7878e7496"
-            || brand == "yd"
+    return secret == "5cdbb8f042004723899f0df7878e7496" || brand == "yd"
 }

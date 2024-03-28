@@ -10,6 +10,7 @@ class MemoryDeviceDatasource {
     init {
         add(DeviceDTO("wifi-0001", DeviceType.WIFI, "ff91482fdfeb", "QR-12TRWQ4"))
         add(DeviceDTO("4G-0002", DeviceType.GPRS, "fe495a3be9c7", "QR-12TRWQ4"))
+        add(DeviceDTO("twins_test_001", DeviceType.WIFI, "twins_test_001_cid", "tcuf6vn2ohw4mvhb"))
     }
 
     fun add(deviceDTO: DeviceDTO): Boolean {

@@ -1,6 +1,6 @@
 package com.yunext.kmp.mqtt.data
 
-class HDMqttParam(
+data class HDMqttParam(
     val username: String,
     val password: String,
     val clientId: String,

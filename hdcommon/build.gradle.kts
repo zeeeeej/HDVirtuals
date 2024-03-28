@@ -20,10 +20,16 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
+
+//        all {
+//            languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+//        }
+
         val commonMain by getting {
             dependencies {
                 //put your multiplatform dependencies here
                 implementation(libs.kotlinx.datetime)
+                implementation(projects.hdcontext)
             }
         }
         val commonTest by getting {
@@ -40,4 +46,7 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
+}
+dependencies {
+    implementation(libs.firebase.crashlytics.buildtools)
 }

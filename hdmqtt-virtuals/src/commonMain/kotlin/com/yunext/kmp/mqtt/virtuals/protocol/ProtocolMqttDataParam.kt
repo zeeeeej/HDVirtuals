@@ -1,6 +1,6 @@
 //package com.yunext.twins.data.mqtt
 //
-//class MqttCmdDataParam(val keys: List<String>) {
+class MqttCmdDataParam(val keys: List<String>) {
 //
 //    companion object {
 //        fun from(json: String?): MqttCmdDataParam? {
@@ -12,4 +12,4 @@
 //            }
 //        }
 //    }
-//}
+}

@@ -6,13 +6,15 @@ import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.virtuals.data.ProjectInfo
 import com.yunext.virtuals.module.devicemanager.DeviceInitializer
 import com.yunext.virtuals.module.devicemanager.JsonDeviceInitializer
+import com.yunext.virtuals.ui.data.DeviceType
+import io.ktor.http.URLBuilder
+import io.ktor.http.Url
 import kotlinx.serialization.Serializable
 
 @Serializable
-class TwinsDevice(
+data class TwinsDevice(
     val name: String,
-    val mac: String,
-    val imei: String,
+    val deviceId: String,
     override val deviceType: String,
     /**
      * device与mqtt通信的username
@@ -20,16 +22,13 @@ class TwinsDevice(
      * 1:imei
      * 2:其他
      */
-    val communicationType: CommunicationType,
+    val communicationType: DeviceType,
 ) : MQTTDevice {
     override val rule: ProtocolMQTTRule
         get() = ProtocolMQTTRule.Device
 
     override fun generateId(): String {
-        return when (communicationType) {
-            CommunicationType.G4 -> imei
-            CommunicationType.WIFI -> mac
-        }
+        return deviceId
     }
 
     /**
@@ -55,6 +54,7 @@ class TwinsDevice(
 
     override fun createMqttParam(projectInfo: ProjectInfo): HDMqttParam {
         val id = this.generateId()
+        val url = Url(projectInfo.host)
         val clientId = "DEV:${deviceType}_${generateId()}_${randomNumber()}"
         val username = id
         val password = hdMD5(clientId + projectInfo.secret) ?: ""
@@ -63,7 +63,11 @@ class TwinsDevice(
             username = username,
             password = password,
             clientId = clientId,
-            url = projectInfo.host, port = "", shortUrl = "", scheme = "", tls = null
+            url = projectInfo.host,
+            port = url.port.toString(),
+            shortUrl = url.host,
+            scheme = url.protocol.name,
+            tls = null
         )
     }
 
@@ -74,15 +78,14 @@ class TwinsDevice(
 
     companion object {
         private const val NUMs = "1234567890"
-        val EMPTY = TwinsDevice("", "", "", "", CommunicationType.G4)
+        val EMPTY = TwinsDevice("", "", "", DeviceType.GPRS)
     }
 }
 
 val TwinsDevice.display: String
     get() {
         return "name: $name \n" +
-                "mac: $mac \n" +
-                "imei: $imei \n" +
+                "deviceId: $deviceId \n" +
                 "deviceType: $deviceType \n" +
                 "generateId: ${generateId()} \n"
     }
