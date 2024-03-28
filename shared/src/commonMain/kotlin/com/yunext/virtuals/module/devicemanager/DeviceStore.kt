@@ -18,6 +18,7 @@ import com.yunext.kmp.mqtt.virtuals.coroutine.hdMqttPublishSuspend
 import com.yunext.virtuals.data.ProjectInfo
 import com.yunext.virtuals.data.device.HDDevice
 import com.yunext.virtuals.data.device.MQTTDevice
+import com.yunext.virtuals.data.device.generateTopic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -84,7 +85,10 @@ class DeviceStore(
             )
 
             delay(1000)
-            mqttClient.hdMqttSubscribeTopic("",object :OnHDMqttActionListener{
+            val supportTopics = device.supportTopics()
+            val testTopic: String = device.generateTopic(projectInfo, supportTopics[0])
+
+            mqttClient.hdMqttSubscribeTopic(testTopic,object :OnHDMqttActionListener{
                 override fun onSuccess(token: Any?) {
                     logger.i(TAG, "::connect ========>  ok")
                 }

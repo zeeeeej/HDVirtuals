@@ -2,6 +2,7 @@ import UIKit
 import SwiftUI
 import ComposeApp
 // import shared
+import CocoaMQTT
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
@@ -13,6 +14,7 @@ struct ComposeView: UIViewControllerRepresentable {
 
 struct ContentView: View {
 //     let calculator = com.yunext.virtuals.util.Calculator.Companion()
+ private let clientViewModel = HDCocoaMQTT()
     let calculator = Calculator2.Companion()
     let calculator3 = Calculator3.Companion()
     let calculator4 = Calculator4.Companion()
@@ -34,7 +36,23 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Text(sum)
+                HStack{
+                  Button("连接"){
+  clientViewModel.testMqtt()
+                  }
 
+                   Button("注册"){
+clientViewModel.subscribe(topic: "/skeleton/tcuf6vn2ohw4mvhb/twins_test_001_cid/down")
+                                }
+
+                                 Button("发送"){
+  clientViewModel.publish(topic: "/skeleton/tcuf6vn2ohw4mvhb/twins_test_001_cid/down", with: "hello swift mqtt!!!\(UUID().uuidString)")
+                                                  }
+
+                                                   Button("关闭连接"){
+  clientViewModel.disconnect()
+                                                                    }
+                }
               Button("确认"){
                     print(" 测试开始")
                                 // 测试函数作为参数
@@ -153,6 +171,7 @@ class WuYin{
         return "your wuyin is /(wuyin)"
     }
 }
+
 
 
 
