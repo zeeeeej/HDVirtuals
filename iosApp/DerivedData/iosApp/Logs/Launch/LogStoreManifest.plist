@@ -6,10 +6,10 @@
 	<integer>10</integer>
 	<key>logs</key>
 	<dict>
-		<key>DDD97F31-496E-4A40-A664-9FACB6AA29A9</key>
+		<key>9CE4A3B9-EF36-46E6-9CB1-DE91A1AA5CCD</key>
 		<dict>
 			<key>auxiliaryLogUniqueIdentifier</key>
-			<string>18F1584E-105A-41C0-B29E-55E6B920169B</string>
+			<string>61640835-7EB1-4D5B-8DCB-2E385CD5EF99</string>
 			<key>auxiliaryObservable</key>
 			<dict>
 				<key>highLevelStatus</key>
@@ -21,7 +21,7 @@
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>1</integer>
+				<integer>51</integer>
 			</dict>
 			<key>className</key>
 			<string>IDESchemeActionsInvocationRecord</string>
@@ -30,7 +30,7 @@
 			<key>domainType</key>
 			<string>com.apple.dt.IDE.LaunchSchemeAction</string>
 			<key>fileName</key>
-			<string>Run-iosApp-2024.03.28_16-04-21-+0800.xcresult</string>
+			<string>Run-iosApp-2024.03.29_15-37-08-+0800.xcresult</string>
 			<key>hasAuxiliaryLog</key>
 			<true/>
 			<key>hasConsoleLog</key>
@@ -48,7 +48,7 @@
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>1</integer>
+				<integer>50</integer>
 			</dict>
 			<key>schemeIdentifier-containerName</key>
 			<string>iosApp project</string>
@@ -59,13 +59,13 @@
 			<key>signature</key>
 			<string>Run iosApp</string>
 			<key>timeStartedRecording</key>
-			<real>733305861.65193498</real>
+			<real>733390628.24820101</real>
 			<key>timeStoppedRecording</key>
 			<real>0.0</real>
 			<key>title</key>
 			<string>Run iosApp</string>
 			<key>uniqueIdentifier</key>
-			<string>DDD97F31-496E-4A40-A664-9FACB6AA29A9</string>
+			<string>9CE4A3B9-EF36-46E6-9CB1-DE91A1AA5CCD</string>
 		</dict>
 	</dict>
 </dict>

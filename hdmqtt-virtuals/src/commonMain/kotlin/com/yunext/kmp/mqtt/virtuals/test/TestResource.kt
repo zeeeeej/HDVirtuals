@@ -59,13 +59,22 @@ internal object TestResource {
     )
 
     internal val debugParam: HDMqttParam
-        get() = twins_test_001
+        get() = twins_test_002
 
     private val twins_test_001 = HDMqttParam(
         username = "twins_test_001_cid",
         password = "42e74d901c11371d9e8362501736c2d0",
         //clientId = "DEV:tcuf6vn2ohw4mvhb_twins_test_001_cid_${currentTime().toString().take(4)}",
         clientId = "DEV:tcuf6vn2ohw4mvhb_twins_test_001_cid_1133",
+        url = "ssl://emqtt-test.yunext.com:8904",
+        ssl = true, port = "8904", shortUrl = "emqtt-test.yunext.com", scheme = "ssl", tls = null
+    )
+
+    private val twins_test_002 = HDMqttParam(
+        username = "twins_test_001_cid",
+        password = "2f75802341bd4fa4dc9e3e8b814cd633",
+        //clientId = "DEV:tcuf6vn2ohw4mvhb_twins_test_001_cid_${currentTime().toString().take(4)}",
+        clientId = "DEV:tcuf6vn2ohw4mvhb_twins_test_001_cid_0860",
         url = "ssl://emqtt-test.yunext.com:8904",
         ssl = true, port = "8904", shortUrl = "emqtt-test.yunext.com", scheme = "ssl", tls = null
     )

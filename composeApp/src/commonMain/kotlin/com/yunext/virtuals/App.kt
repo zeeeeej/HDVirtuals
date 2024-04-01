@@ -1,9 +1,17 @@
 package com.yunext.virtuals
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -22,6 +30,7 @@ import com.yunext.virtuals.ui.screen.VoyagerApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.skia.paragraph.TextBox
 
 private val initApp: CoroutineScope.() -> Unit = {
     launch {
@@ -31,8 +40,53 @@ private val initApp: CoroutineScope.() -> Unit = {
     }
 }
 
+
+//@OptIn(ExperimentalFoundationApi::class)
+//@Composable
+//fun Test() {
+//    val coroutineScope = rememberCoroutineScope()
+//    val state = rememberPagerState() {
+//        3
+//    }
+//    A(state)
+//    B() {
+//        coroutineScope.launch {
+//            state.animateScrollToPage(1)
+//        }
+//    }
+//}
+//
+//@OptIn(ExperimentalFoundationApi::class)
+//@Composable
+//fun A(state: PagerState) {
+//    val coroutineScope = rememberCoroutineScope()
+//    TestBox {
+//        coroutineScope.launch {
+//            state.animateScrollToPage(1)
+//        }
+//    }
+//}
+//
+//@Composable
+//fun B(onClick: () -> Unit) {
+//    TestBox(onClick = onClick)
+//}
+//
+//@Composable
+//fun TestBox(modifier: Modifier = Modifier, onClick: () -> Unit) {
+//    val coroutineScope = rememberCoroutineScope()
+//    Box(modifier = modifier.clickable {
+//        coroutineScope.launch {
+//            onClick()
+//        }
+//    }) {
+//        Text("测试")
+//    }
+//}
+
 @Composable
 fun App() {
+
 
     MaterialTheme {
 //        var showContent by remember { mutableStateOf(false) }

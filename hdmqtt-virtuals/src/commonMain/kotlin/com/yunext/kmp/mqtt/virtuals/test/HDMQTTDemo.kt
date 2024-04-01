@@ -22,44 +22,50 @@ class MQTTVirtualsDemo {
         mqttClient?.hdMqttDisconnect()
     }
 
+    fun register() {
+        val content = "hello kmp !".encodeToByteArray()
+        val topic = Topic_down
+        //TestResource.TOPIC_DOWN
+        val client = mqttClient ?: return
+        client.hdMqttSubscribeTopic(topic = topic,
+            object : OnHDMqttActionListener {
+                override fun onSuccess(token: Any?) {
+                    HDLogger.d("HDMQTTDemo", "subscribeTopic success!")
+                    client.hdMqttPublish(
+                        topic,
+                        content,
+                        1,
+                        false,
+                        object : OnHDMqttActionListener {
+                            override fun onSuccess(token: Any?) {
+                                HDLogger.d("HDMQTTDemo", "publish success!")
+                            }
+
+                            override fun onFailure(token: Any?, exception: Throwable?) {
+                                HDLogger.e("HDMQTTDemo", "publish fail$exception!")
+                            }
+
+                        })
+                }
+
+                override fun onFailure(token: Any?, exception: Throwable?) {
+                    HDLogger.e("HDMQTTDemo", "subscribeTopic fail$exception!")
+                }
+
+            }
+        )
+    }
+
     @OptIn(ExperimentalStdlibApi::class)
 
     fun init() {
-        val content = "hello kmp !".encodeToByteArray()
-        val topic = TestResource.TOPIC_UP
         retryIndex = 0
         mqttClient = createHdMqttClient().also { client ->
             val onActionListener = object : OnHDMqttActionListener {
                 override fun onSuccess(token: Any?) {
                     HDLogger.d("HDMQTTDemo", "connect:onSuccess")
 
-                    client.hdMqttSubscribeTopic(topic = TestResource.TOPIC_UP,
-                        object : OnHDMqttActionListener {
-                            override fun onSuccess(token: Any?) {
-                                HDLogger.d("HDMQTTDemo", "subscribeTopic success!")
-                                client.hdMqttPublish(
-                                    topic,
-                                    content,
-                                    1,
-                                    false,
-                                    object : OnHDMqttActionListener {
-                                        override fun onSuccess(token: Any?) {
-                                            HDLogger.d("HDMQTTDemo", "publish success!")
-                                        }
 
-                                        override fun onFailure(token: Any?, exception: Throwable?) {
-                                            HDLogger.e("HDMQTTDemo", "publish fail$exception!")
-                                        }
-
-                                    })
-                            }
-
-                            override fun onFailure(token: Any?, exception: Throwable?) {
-                                HDLogger.e("HDMQTTDemo", "subscribeTopic fail$exception!")
-                            }
-
-                        }
-                    )
                 }
 
                 override fun onFailure(token: Any?, exception: Throwable?) {
@@ -68,7 +74,8 @@ class MQTTVirtualsDemo {
             }
             val onHDMqttMessageChangedListener =
                 OnHDMqttMessageChangedListener { _, topic, message ->
-                    HDLogger.e("HDMQTTDemo", "topic:$topic message:$message")
+                    HDLogger.e("HDMQTTDemo", "topic:$topic message:$message ")
+                    HDLogger.e("HDMQTTDemo", "收到消息：${message.payload.decodeToString()}")
                 }
 
             val onHDMqttStateChangedListener: OnHDMqttStateChangedListener =
@@ -106,7 +113,7 @@ class MQTTVirtualsDemo {
     }
 
     fun publish() {
-        val topic = TestResource.TOPIC_DOWN
+        val topic = Topic_down
         val content = "hello kmp ! from client:${mqttClient?.hdMqttState}".encodeToByteArray()
         mqttClient?.hdMqttPublish(topic, content, 1, false, object : OnHDMqttActionListener {
             override fun onSuccess(token: Any?) {
@@ -118,5 +125,9 @@ class MQTTVirtualsDemo {
             }
 
         })
+    }
+
+     companion object{
+        private const val Topic_down = "/skeleton/tcuf6vn2ohw4mvhb/twins_test_001_cid/down"
     }
 }
