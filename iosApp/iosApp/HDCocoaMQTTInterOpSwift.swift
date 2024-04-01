@@ -78,6 +78,7 @@ class HDCocoaMQTTInterOpSwift : MqttEeventDelegate{
         // 初始化
         hDCocoaMQTTInterOpOut.initializeMQTTInSwift{
             (host,port,clientId,username,password,reference) -> String in
+            self.curReference = nil
             print("""
                   来自Kotlin的方法initializeMQTTInSwift参数
                   host          :       \(host)
@@ -96,55 +97,73 @@ class HDCocoaMQTTInterOpSwift : MqttEeventDelegate{
         // 链接
         hDCocoaMQTTInterOpOut.connectInSwift{
             reference in
-            print("""
+            self.checkReference(reference: reference){
+                print("""
                   来自Kotlin的方法connectInSwift参数
                   reference     :       \(reference)
             """)
-            self.hdCocoaMQTT.connect()
+                self.hdCocoaMQTT.connect()
+            }
         }
         
         // 注册
         hDCocoaMQTTInterOpOut.subscribeInSwift{
             topic,reference in
-            print("""
+            self.checkReference(reference: reference){
+                print("""
                   来自Kotlin的方法subscribeInSwift参数
                   topic         :       \(topic)
                   reference     :       \(reference)
             """)
-            self.hdCocoaMQTT.subscribe(topic:topic)
+                self.hdCocoaMQTT.subscribe(topic:topic)
+            }
         }
         
         // 发布
         hDCocoaMQTTInterOpOut.publishInSwift{
             topic,message,reference in
-            print("""
+            self.checkReference(reference: reference){
+                print("""
                   来自Kotlin的方法publishInSwift参数
                   topic         :       \(topic)
                   message       :       \(message)
                   reference     :       \(reference)
             """)
-            self.hdCocoaMQTT.publish(topic:topic,with : message)
+                self.hdCocoaMQTT.publish(topic:topic,with : message)
+            }
         }
         
         // 反注册
         hDCocoaMQTTInterOpOut.unSubscribeInSwift{
             topic,reference in
-            print("""
+            self.checkReference(reference: reference){
+                print("""
                   来自Kotlin的方法unSubscribeInSwift参数
                   topic         :       \(topic)
                   reference     :       \(reference)
             """)
-            self.hdCocoaMQTT.unSubscribe(topic:topic )
+                self.hdCocoaMQTT.unSubscribe(topic:topic )
+            }
         }
         
         // 断开链接
         hDCocoaMQTTInterOpOut.disconnectInSwift{
             reference in
-            print("""
-                  来自Kotlin的方法disconnectInSwift参数
-                  reference     :       \(reference)
-            """)
-            self.hdCocoaMQTT.disconnect()
+            self.checkReference(reference: reference){
+                print("""
+                      来自Kotlin的方法disconnectInSwift参数
+                      reference     :       \(reference)
+                """)
+                self.hdCocoaMQTT.disconnect()
+            }
+        }
+    }
+    
+    private func checkReference(reference:String,block:()->Void){
+        if(curReference != nil && curReference == reference){
+            block()
+        }else{
+            print("[[[warn 非当前reference]]] cur:\(curReference ?? "-") vs \(reference)")
         }
     }
     

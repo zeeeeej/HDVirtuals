@@ -3,7 +3,6 @@ package com.yunext.kmp.mqtt.core
 import com.yunext.kmp.context.HDContext
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
-import com.yunext.kmp.mqtt.interop.DebugInterOp
 import com.yunext.kmp.mqtt.interop.HDCocoaMQTTInterOpIn
 import com.yunext.kmp.mqtt.interop.HDCocoaMQTTInterOpOut
 import com.yunext.kmp.mqtt.utils.mqttInfo
@@ -24,8 +23,12 @@ class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
     private val coroutineScope: CoroutineScope =
         CoroutineScope(Dispatchers.IO + SupervisorJob() + CoroutineName("KMQTTClient"))
 
+    // kotlin -> Swift
     private val outOpt = HDCocoaMQTTInterOpOut
+    // kotlin <- Swift
     private val inOpt = HDCocoaMQTTInterOpIn
+    //
+
     private var reference: String? = null
     private var inOptJob: Job? = null
     override val tag: String
@@ -89,7 +92,7 @@ class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
             username,
             password,
             reference
-        )
+        ) // clientId + username
         mqttInfo("mqtt-ios-connect ref:$ref")
         this.reference = ref ?: ""
     }
