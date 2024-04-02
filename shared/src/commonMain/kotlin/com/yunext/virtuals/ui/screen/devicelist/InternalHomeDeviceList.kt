@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +27,8 @@ import com.yunext.kmp.ui.compose.hdBackground
 import com.yunext.virtuals.ui.common.TwinsDeviceStatus
 import com.yunext.virtuals.ui.common.TwinsLabelText
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
+import com.yunext.virtuals.ui.data.DeviceState
+import com.yunext.virtuals.ui.data.str
 import com.yunext.virtuals.ui.theme.ItemDefaults
 
 
@@ -35,6 +38,7 @@ internal expect fun TwinsDeviceList(
     list: List<DeviceAndStateViewData>,
     onDeviceSelected: (DeviceAndStateViewData) -> Unit,
     onDeviceDelete: (DeviceAndStateViewData) -> Unit,
+    onDeviceDisconnect: (DeviceAndStateViewData) -> Unit,
 )
 
 @Composable
@@ -43,6 +47,7 @@ internal expect fun TwinsDeviceItem(
     device: DeviceAndStateViewData,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
+    onStatusClick: () -> Unit,
 )
 
 @Composable
@@ -51,8 +56,9 @@ internal fun TwinsDeviceItemCommon(
     device: DeviceAndStateViewData,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
+    onStatusClick: () -> Unit,
 ) {
-    Debug("TwinsHomePage-内容-设备列表-item")
+    Debug("TwinsHomePage-内容-设备列表-item ${device.status.str}")
     Text("desktop - DeviceItem", modifier = modifier.padding(16.dp).clickable {
         onClick()
     })
@@ -63,15 +69,17 @@ internal fun TwinsDeviceItemCommon(
         .clip(ItemDefaults.itemShape)
 //        .background(Color.White)
 //        .background(xplRandomColor())
-        .hdBackground()
-//        .drawWithContent{
-//            drawRect(xplRandomColor())
-//            drawContent()
-//        }
+//        .hdBackground()
+        .drawWithContent {
+            drawRect(Color.White)
+            drawContent()
+        }
         .pointerInput(Unit) {
             detectTapGestures(
-                onTap = {},
-                onPress = { onClick() },
+                onTap = {
+                    onClick()
+                },
+                onPress = { },
                 onLongPress = { onLongClick() })
         }
 //        .clickable {
@@ -81,14 +89,21 @@ internal fun TwinsDeviceItemCommon(
         Debug("TwinsHomePage-内容-设备列表-item-internal-1")
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = device.name,
+                text = device.name,//+device.status.str,
                 modifier = Modifier.weight(1f),
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.width(4.dp))
-            TwinsDeviceStatus(deviceStatus = device.status)
+            TwinsDeviceStatus(deviceStatus = device.status, modifier =
+            Modifier.run {
+                if (device.status.state == DeviceState.ONLINE) {
+                    this.clickable {
+                        onStatusClick()
+                    }
+                } else this
+            })
 
         }
 

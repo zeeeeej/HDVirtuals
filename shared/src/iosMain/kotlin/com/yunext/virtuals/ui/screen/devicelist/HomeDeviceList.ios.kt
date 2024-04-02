@@ -19,8 +19,9 @@ actual fun TwinsDeviceItem(
     device: DeviceAndStateViewData,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
+    onStatusClick: () -> Unit,
 ) {
-    TwinsDeviceItemCommon(modifier, device, onClick, onLongClick)
+    TwinsDeviceItemCommon(modifier, device, onClick, onLongClick,onStatusClick)
 }
 
 @Composable
@@ -29,6 +30,7 @@ actual fun TwinsDeviceList(
     list: List<DeviceAndStateViewData>,
     onDeviceSelected: (DeviceAndStateViewData) -> Unit,
     onDeviceDelete: (DeviceAndStateViewData) -> Unit,
+    onDeviceDisconnect: (DeviceAndStateViewData) -> Unit,
 ) {
     Debug("TwinsHomePage-内容-设备列表-IOS")
     LazyColumn(
@@ -40,9 +42,11 @@ actual fun TwinsDeviceList(
             CHItemShadowShape {
                 TwinsDeviceItem(modifier = Modifier.fillMaxWidth(), device = device, {
                     onDeviceSelected.invoke(device)
-                }) {
+                }, {
                     onDeviceDelete.invoke(device)
-                }
+                }, onStatusClick = {
+                    onDeviceDisconnect.invoke(device)
+                })
             }
         }
     }

@@ -30,7 +30,6 @@ import com.yunext.virtuals.ui.screen.VoyagerApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.skia.paragraph.TextBox
 
 private val initApp: CoroutineScope.() -> Unit = {
     launch {

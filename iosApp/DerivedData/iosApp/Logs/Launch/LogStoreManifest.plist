@@ -6,22 +6,22 @@
 	<integer>10</integer>
 	<key>logs</key>
 	<dict>
-		<key>9CE4A3B9-EF36-46E6-9CB1-DE91A1AA5CCD</key>
+		<key>76CE503D-FA56-4982-B802-021675BF8804</key>
 		<dict>
 			<key>auxiliaryLogUniqueIdentifier</key>
-			<string>61640835-7EB1-4D5B-8DCB-2E385CD5EF99</string>
+			<string>ADE92E98-ECE4-4865-9397-6574A373D10E</string>
 			<key>auxiliaryObservable</key>
 			<dict>
 				<key>highLevelStatus</key>
-				<string>E</string>
+				<string>W</string>
 				<key>totalNumberOfAnalyzerIssues</key>
 				<integer>0</integer>
 				<key>totalNumberOfErrors</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>51</integer>
+				<integer>9</integer>
 			</dict>
 			<key>className</key>
 			<string>IDESchemeActionsInvocationRecord</string>
@@ -30,7 +30,7 @@
 			<key>domainType</key>
 			<string>com.apple.dt.IDE.LaunchSchemeAction</string>
 			<key>fileName</key>
-			<string>Run-iosApp-2024.03.29_15-37-08-+0800.xcresult</string>
+			<string>Run-iosApp-2024.04.01_10-18-31-+0800.xcresult</string>
 			<key>hasAuxiliaryLog</key>
 			<true/>
 			<key>hasConsoleLog</key>
@@ -40,15 +40,15 @@
 			<key>primaryObservable</key>
 			<dict>
 				<key>highLevelStatus</key>
-				<string>E</string>
+				<string>W</string>
 				<key>totalNumberOfAnalyzerIssues</key>
 				<integer>0</integer>
 				<key>totalNumberOfErrors</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>50</integer>
+				<integer>9</integer>
 			</dict>
 			<key>schemeIdentifier-containerName</key>
 			<string>iosApp project</string>
@@ -59,13 +59,13 @@
 			<key>signature</key>
 			<string>Run iosApp</string>
 			<key>timeStartedRecording</key>
-			<real>733390628.24820101</real>
+			<real>733630711.07569504</real>
 			<key>timeStoppedRecording</key>
 			<real>0.0</real>
 			<key>title</key>
 			<string>Run iosApp</string>
 			<key>uniqueIdentifier</key>
-			<string>9CE4A3B9-EF36-46E6-9CB1-DE91A1AA5CCD</string>
+			<string>76CE503D-FA56-4982-B802-021675BF8804</string>
 		</dict>
 	</dict>
 </dict>

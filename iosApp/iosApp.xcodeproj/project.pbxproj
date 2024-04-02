@@ -16,6 +16,7 @@
 		F0F9B0EA2BB55C2A00163DD0 /* HDCocoaMQTT.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F9B0E92BB55C2A00163DD0 /* HDCocoaMQTT.swift */; };
 		F0F9B0ED2BB6988F00163DD0 /* HDCocoaMQTTInterOpSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F9B0EC2BB6988F00163DD0 /* HDCocoaMQTTInterOpSwift.swift */; };
 		F0F9B0EF2BBA574500163DD0 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F9B0EE2BBA574500163DD0 /* Utils.swift */; };
+		F0F9B0F12BBBA64B00163DD0 /* HDLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F9B0F02BBBA64B00163DD0 /* HDLog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		F0F9B0E92BB55C2A00163DD0 /* HDCocoaMQTT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDCocoaMQTT.swift; sourceTree = "<group>"; };
 		F0F9B0EC2BB6988F00163DD0 /* HDCocoaMQTTInterOpSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDCocoaMQTTInterOpSwift.swift; sourceTree = "<group>"; };
 		F0F9B0EE2BBA574500163DD0 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		F0F9B0F02BBBA64B00163DD0 /* HDLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDLog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 				F0F9B0E92BB55C2A00163DD0 /* HDCocoaMQTT.swift */,
 				F0F9B0EC2BB6988F00163DD0 /* HDCocoaMQTTInterOpSwift.swift */,
 				F0F9B0EE2BBA574500163DD0 /* Utils.swift */,
+				F0F9B0F02BBBA64B00163DD0 /* HDLog.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -193,6 +196,7 @@
 			files = (
 				F0F9B0EF2BBA574500163DD0 /* Utils.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				F0F9B0F12BBBA64B00163DD0 /* HDLog.swift in Sources */,
 				F0F9B0ED2BB6988F00163DD0 /* HDCocoaMQTTInterOpSwift.swift in Sources */,
 				F0F9B0EA2BB55C2A00163DD0 /* HDCocoaMQTT.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,

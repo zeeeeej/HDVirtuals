@@ -31,13 +31,17 @@ import com.yunext.kmp.resource.color.app_background_70
 import com.yunext.kmp.resource.color.app_textColor_333333
 import com.yunext.kmp.ui.compose.CHItemShadowShape
 import com.yunext.kmp.ui.compose.hdBackground
+import com.yunext.virtuals.ui.HDRes
 import com.yunext.virtuals.ui.common.HDImage
 import com.yunext.virtuals.ui.common.TwinsBackgroundBlock
 import com.yunext.virtuals.ui.common.TwinsTitle
 import com.yunext.virtuals.ui.common.dialog.XPopContainer
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
+import com.yunext.virtuals.ui.data.DeviceStatus
 import com.yunext.virtuals.ui.data.MenuData
 import com.yunext.virtuals.ui.data.iconRes
+import com.yunext.virtuals.ui.data.str
+import com.yunext.virtuals.ui.hdRes
 import com.yunext.virtuals.ui.screen.devicelist.DeviceCommunicationIdAndModel
 import com.yunext.virtuals.ui.theme.ItemDefaults
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -59,6 +63,7 @@ internal fun DeviceDetailScreeImpl(
         TwinsTitle(modifier = Modifier
             .hdBackground { app_background_70 },
             text = device.name,
+            icon =  device.status.iconRes,
             leftClick = {
                 onLeft()
             },

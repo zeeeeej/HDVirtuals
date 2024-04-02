@@ -32,20 +32,21 @@ class VM{
         self.log  = "等待..."
     }
 }
+
 extension VM:MqttEeventDelegate{
-    func onConnectionStatus(isConnected: Bool) {
+    func onConnectionStatus(isConnected: Bool,client:HDCocoaMQTT) {
         append(msg: "连接状态：\(isConnected)")
     }
     
-    func onSubscibe(topics: NSDictionary) {
+    func onSubscibe(topics: NSDictionary,client:HDCocoaMQTT) {
         append(msg: "注册topic成功：\(topics)")
     }
     
-    func onUnsubscribe(topics: [String]) {
+    func onUnsubscribe(topics: [String],client:HDCocoaMQTT) {
         append(msg: "反注册topic成功：\(topics)")
     }
     
-    func onMessageArrived(message: CocoaMQTTMessage) {
+    func onMessageArrived(message: CocoaMQTTMessage,client:HDCocoaMQTT) {
         let data = message.payload
         append(msg: "收到消息：\(message.topic)-\(bytesToIntString(data))")
     }
@@ -55,7 +56,7 @@ extension VM:MqttEeventDelegate{
         for byte in bytes {
             str += String(byte)
         }
-        print(str)
+        HDLogX.shared().d(tag:"ContentView",message:str)
         return str
     }
 
@@ -100,67 +101,75 @@ struct ContentView: View {
 
     private let debugInterOp = DebugInterOp()
     private let debugSendByteArrayOpt = DebugSendByteArrayOpt()
+    private let showDebug = false
     
     var body: some View {
-        VStack {
-            Text(sum)
-                HStack{
-                  Button("连接"){
-                      //clientViewModel.connect()
-                      print("开始")
-                      let swiftData :[UInt8] = [1,2,3,4,56,4]
-                      print("\(swiftData)")
-                      debugInterOp.interOp_Debug_ByteArray2(data:swiftData)
-                      
-//                      let intArray : [Int8] = swiftData
-//                          .map { Int8(bitPattern: $0) }
-//                      let kotlinByteArray: KotlinByteArray = KotlinByteArray.init(size: Int32(data.count))
-//                      for (index, element) in intArray.enumerated() {
-//                          kotlinByteArray.set(index: Int32(index), value: element)
-//                      }
-                      
-//                      let intArray:[Int8] = data.map{Int8(bitPattern: $0)}
-//                      let kotlinByteArray:KotlinByteArray = KotlinByteArray.init(size:Int32(data.count))
-//                      for(index,element) in intArray.enumerated(){
-//                          kotlinByteArray.set(index:Int32(index),value:element)
-//                      }
-                      debugInterOp.interOp_Debug_ByteArray(data: KotlinByteArray.from( swiftData))
-                      
-                      print("结束")
-                  }
-
-                   Button("注册"){
-                       //clientViewModel.subscribe(topic: "/skeleton/tcuf6vn2ohw4mvhb/twins_test_001_cid/down")
-                                }
-
-                                 Button("发送"){
-                                     // clientViewModel.publish(topic: "/skeleton/tcuf6vn2ohw4mvhb/twins_test_001_cid/down", with: "hello swift mqtt!!!\(UUID().uuidString)")
-                                                  }
-
-                                                   Button("关闭连接"){
-                                                       //clientViewModel.disconnect()
-                                                                    }
-                }
-              Button("确认"){
-                    print(" 测试开始")
-                                // 测试函数作为参数
-                               DemoOptKt.hdAccept(some:"i am from swift param for accept!"){
-                                    (fromKotlinString) -> (KotlinInt?) in
-                                    1234
-                               }
-                               // 测试函数作为返回
-
-                              let re:String? =  DemoOptKt.hdSupply(some:"i am from swift param for supply!")("5678")
-                              print(re ?? "error hdSupply 1")
-                              let re2:String? =  DemoOptKt.hdSupply(some:"i am from swift param for supply!")("5678")
-                  print(re2 ?? "-")
-                              if let re2 {
-                                print(re2)
-                              } else{
-                                print("error hdSupply")
-                              }
-                              print(" 测试结束")
-                            }
+        
+//        // ###########测试部分##########
+//        if(showDebug){
+//            VStack {
+//                Text(sum)
+//                HStack{
+//                    Button("连接"){
+//                        //clientViewModel.connect()
+//                        print("开始")
+//                        let swiftData :[UInt8] = [1,2,3,4,56,4]
+//                        print("\(swiftData)")
+//                        debugInterOp.interOp_Debug_ByteArray2(data:swiftData)
+//                        
+//                        //                      let intArray : [Int8] = swiftData
+//                        //                          .map { Int8(bitPattern: $0) }
+//                        //                      let kotlinByteArray: KotlinByteArray = KotlinByteArray.init(size: Int32(data.count))
+//                        //                      for (index, element) in intArray.enumerated() {
+//                        //                          kotlinByteArray.set(index: Int32(index), value: element)
+//                        //                      }
+//                        
+//                        //                      let intArray:[Int8] = data.map{Int8(bitPattern: $0)}
+//                        //                      let kotlinByteArray:KotlinByteArray = KotlinByteArray.init(size:Int32(data.count))
+//                        //                      for(index,element) in intArray.enumerated(){
+//                        //                          kotlinByteArray.set(index:Int32(index),value:element)
+//                        //                      }
+//                        debugInterOp.interOp_Debug_ByteArray(data: KotlinByteArray.from( swiftData))
+//                        
+//                        print("结束")
+//                    }
+//                    
+//                    Button("注册"){
+//                        //clientViewModel.subscribe(topic: "/skeleton/tcuf6vn2ohw4mvhb/twins_test_001_cid/down")
+//                    }
+//                    
+//                    Button("发送"){
+//                        // clientViewModel.publish(topic: "/skeleton/tcuf6vn2ohw4mvhb/twins_test_001_cid/down", with: "hello swift mqtt!!!\(UUID().uuidString)")
+//                    }
+//                    
+//                    Button("关闭连接"){
+//                        //clientViewModel.disconnect()
+//                    }
+//                }
+//                Button("确认"){
+//                    print(" 测试开始")
+//                    // 测试函数作为参数
+//                    DemoOptKt.hdAccept(some:"i am from swift param for accept!"){
+//                        (fromKotlinString) -> (KotlinInt?) in
+//                        1234
+//                    }
+//                    // 测试函数作为返回
+//                    
+//                    let re:String? =  DemoOptKt.hdSupply(some:"i am from swift param for supply!")("5678")
+//                    print(re ?? "error hdSupply 1")
+//                    let re2:String? =  DemoOptKt.hdSupply(some:"i am from swift param for supply!")("5678")
+//                    print(re2 ?? "-")
+//                    if let re2 {
+//                        print(re2)
+//                    } else{
+//                        print("error hdSupply")
+//                    }
+//                    print(" 测试结束")
+//                }
+//            }
+//            //.frame(height: 0)
+//                .hidden()
+//            // ###########测试部分##########
 
             ComposeView()
                 .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
@@ -169,66 +178,69 @@ struct ContentView: View {
                     //
                     debugInterOp.interOp_Out_ByteArray{
                         KotlinByteArray in
-                        print("收到来自kotlin的ByteArray参数:\(KotlinByteArray)")
+                        
+                        HDLogX.shared().d(tag:"ContentView",message:"收到来自kotlin的ByteArray参数:\(KotlinByteArray)")
+                        
                         // how KotlinByteArray->[Int8]
-//
-//                        func test123(p:[Int8]){
-//                            print("p:\(p)")
-//                        }
-//                        
-//                        test123(p:KotlinByteArray)
+                        //
+                        //                        func test123(p:[Int8]){
+                        //                            print("p:\(p)")
+                        //                        }
+                        //
+                        //                        test123(p:KotlinByteArray)
                     }
                     
                     // 注册回调
                     debugSendByteArrayOpt.interOp_Out_ByteArray{
                         data in
-                        print("收到来自kotlin的NSData参数:\(data)")
+                        HDLogX.shared().d(tag:"ContentView",message:"收到来自kotlin的NSData参数:\(data)")
                         let swiftByteArray = [UInt8](data)
-                        print("转换来自kotlin的NSData参数:\(swiftByteArray)")
+                        
+                        HDLogX.shared().d(tag:"ContentView",message:"转换来自kotlin的NSData参数:\(swiftByteArray)")
                         
                     }
                     
                     // 注册来自kotlin的桥接方法
                     Bridges_iosKt.changeScreenOrientation { KotlinInt in
-                                if (KotlinInt == 0) {
-                                    changeOrientation(to: UIInterfaceOrientation.portrait)
-                                }
-                                else {
-                                    changeOrientation(to: UIInterfaceOrientation.landscapeLeft)
-                                }
-                            }
-
-                     // 注册来自kotlin的桥接方法
-                     Bridges_iosKt.tryGetScreenOrientation (
+                        if (KotlinInt == 0) {
+                            changeOrientation(to: UIInterfaceOrientation.portrait)
+                        }
+                        else {
+                            changeOrientation(to: UIInterfaceOrientation.landscapeLeft)
+                        }
+                    }
+                    
+                    // 注册来自kotlin的桥接方法
+                    Bridges_iosKt.tryGetScreenOrientation (
                         callBack:tryGetOrientationType
-
-                     )
+                        
+                    )
                     
                     //
-//                    hDCocoaMQTTInterOpOut.initializeMQTTInSwift{
-//                        (host,port,clientId,username,password,reference) -> String in
-//                        print("""
-//                              来自Kotlin的方法initializeMQTTInSwift参数
-//                              host          :       \(host)
-//                              port          :       \(port)
-//                              clientId      :       \(clientId)
-//                              username      :       \(username)
-//                              password      :       \(password)
-//                              reference     :       \(reference)
-//                        """)
-//                        clientViewModel.initializeMQTT(host,UInt16(port),clientId,username,password)
-//                        clientViewModel.connect()
-//                        return "来自initializeMQTTInSwift swift返回"
-//                    
-//                    }
+                    //                    hDCocoaMQTTInterOpOut.initializeMQTTInSwift{
+                    //                        (host,port,clientId,username,password,reference) -> String in
+                    //                        print("""
+                    //                              来自Kotlin的方法initializeMQTTInSwift参数
+                    //                              host          :       \(host)
+                    //                              port          :       \(port)
+                    //                              clientId      :       \(clientId)
+                    //                              username      :       \(username)
+                    //                              password      :       \(password)
+                    //                              reference     :       \(reference)
+                    //                        """)
+                    //                        clientViewModel.initializeMQTT(host,UInt16(port),clientId,username,password)
+                    //                        clientViewModel.connect()
+                    //                        return "来自initializeMQTTInSwift swift返回"
+                    //
+                    //                    }
                     
-
-
-
-
-
+                    
+                    
+                    
                 }
-        }
+
+                
+        
     }
 }
 

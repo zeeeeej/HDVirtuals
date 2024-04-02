@@ -56,6 +56,7 @@ import com.yunext.kmp.resource.color.app_textColor_999999
 import com.yunext.kmp.ui.compose.Debug
 import com.yunext.virtuals.ui.HDRes
 import com.yunext.virtuals.ui.data.DeviceStatus
+import com.yunext.virtuals.ui.data.iconRes
 import com.yunext.virtuals.ui.hdRes
 import com.yunext.virtuals.ui.screen.LocalPaddingValues
 import com.yunext.virtuals.ui.theme.Twins
@@ -70,7 +71,7 @@ private object TwinsTitleDefaults {
 fun TwinsTitle(
     modifier: Modifier = Modifier,
     text: String,
-    icon:DrawableResourceFactory? = null,
+    icon: DrawableResourceFactory? = null,
     //icon: Painter? = null,
     leftClick: () -> Unit = {},
     rightClick: (() -> Unit)? = null,
@@ -202,39 +203,11 @@ fun TwinsEmptyViewForDevice() {
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun TwinsDeviceStatus(modifier: Modifier = Modifier, deviceStatus: DeviceStatus) {
-    when (deviceStatus) {
-        DeviceStatus.GPRSOffLine -> {
-            HDImage(
-                resource = { HDRes.drawable.icon_twins_offline },
-//                painter = painterResource(DrawableResource("icon_twins_offline.png")),//id = R.mipmap.icon_twins_offline),
-                contentDescription = "gprs_offline", modifier = modifier
-            )
-        }
-
-        DeviceStatus.GPRSOnLine -> {
-            HDImage(
-                resource = { HDRes.drawable.icon_twins_4g },
-//                painter = painterResource(DrawableResource("icon_twins_4g.png")),//id = R.mipmap.icon_twins_4g),
-                contentDescription = "wifi", modifier = modifier
-            )
-        }
-
-        DeviceStatus.WiFiOffLine -> {
-            HDImage(
-                resource = { HDRes.drawable.icon_twins_offline },
-                // painter = painterResource(DrawableResource("icon_twins_offline.png")),//id = R.mipmap.icon_twins_offline),
-                contentDescription = "wifi", modifier = modifier
-            )
-        }
-
-        DeviceStatus.WiFiOnLine -> {
-            HDImage(
-                resource = { HDRes.drawable.icon_twins_wifi },
-//                painter = painterResource(DrawableResource("icon_twins_wifi.png")),//id = R.mipmap.icon_twins_wifi),
-                contentDescription = "wifi", modifier = modifier
-            )
-        }
-    }
+    HDImage(
+        resource = deviceStatus.iconRes,
+        // painter = painterResource(DrawableResource("icon_twins_offline.png")),//id = R.mipmap.icon_twins_offline),
+        contentDescription = "deviceStatus", modifier = modifier
+    )
 }
 
 @OptIn(ExperimentalResourceApi::class)
@@ -272,8 +245,8 @@ fun TwinsBackgroundBlock(
     @OptIn(ExperimentalResourceApi::class)
     resource: DrawableResourceFactory = {
         hdRes {
-        HDRes.drawable.icon_twins_body_bg
-    }
+            HDRes.drawable.icon_twins_body_bg
+        }
     },
     grey: Boolean = false,
 ) {

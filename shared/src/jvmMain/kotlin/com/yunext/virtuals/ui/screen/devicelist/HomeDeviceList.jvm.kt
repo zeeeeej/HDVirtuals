@@ -22,9 +22,15 @@ import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 
 
 @Composable
-actual fun TwinsDeviceItem(modifier: Modifier, device: DeviceAndStateViewData, onClick: () -> Unit, onLongClick:()->Unit) {
+actual fun TwinsDeviceItem(
+    modifier: Modifier,
+    device: DeviceAndStateViewData,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    onStatusClick: () -> Unit,
+) {
 
-    TwinsDeviceItemCommon(modifier, device,onClick,onLongClick)
+    TwinsDeviceItemCommon(modifier, device, onClick, onLongClick,onStatusClick)
 }
 
 private const val MAX_CELLS = 3
@@ -35,6 +41,7 @@ actual fun TwinsDeviceList(
     list: List<DeviceAndStateViewData>,
     onDeviceSelected: (DeviceAndStateViewData) -> Unit,
     onDeviceDelete: (DeviceAndStateViewData) -> Unit,
+    onDeviceDisconnect: (DeviceAndStateViewData) -> Unit,
 ) {
     Debug("TwinsHomePage-内容-设备列表-桌面")
 //    LazyVerticalGrid(
@@ -64,9 +71,11 @@ actual fun TwinsDeviceList(
             CHItemShadowShape {
                 TwinsDeviceItem(modifier = Modifier.fillMaxWidth(), device = device, onClick = {
                     onDeviceSelected.invoke(device)
-                }) {
+                },{
                     onDeviceDelete.invoke(device)
-                }
+                }, onStatusClick = {
+                    onDeviceDisconnect.invoke(device)
+                })
             }
         }
     }
@@ -96,7 +105,7 @@ fun <T> LazyListScope.gridItemsSpace(
         ) {
             (0 until MAX_CELLS).forEach { rowIndex ->
                 val device = data[fullIndex * MAX_CELLS + rowIndex]
-                if(rowIndex!=0){
+                if (rowIndex != 0) {
                     horizontalSpacer()
                 }
 
@@ -118,7 +127,7 @@ fun <T> LazyListScope.gridItemsSpace(
             ) {
                 (0 until lastFullColumnCount).forEach {
                     val device = data[fullColumnCount * MAX_CELLS + it]
-                    if(it!=0){
+                    if (it != 0) {
                         horizontalSpacer()
                     }
                     Box(

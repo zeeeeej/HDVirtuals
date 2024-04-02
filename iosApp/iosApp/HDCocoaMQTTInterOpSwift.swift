@@ -11,75 +11,81 @@ import ComposeApp
 import CocoaMQTT
 
 class HDCocoaMQTTInterOpSwift : MqttEeventDelegate{
-    private var curReference :String? = nil
-    
-    func onConnectionStatus(isConnected: Bool) {
-        let ref = curReference!
-        hDCocoaMQTTInterOpIn.onConnectStateChangedCallInSwift(reference: ref, connect:isConnected)
-    }
-    
-    func onSubscibe(topics: NSDictionary) {
-        
-    }
-    
-    func onUnsubscribe(topics: [String]) {
-        
-    }
-    
-    func onMessageArrived(message: CocoaMQTTMessage) {
-        let ref = curReference!
-        let topic = message.topic
-        let payload:[UInt8] = message.payload
-        let qos = message.qos.rawValue
-        let retained = message.retained
-        let dup = message.duplicated
-//        let payLoadKt:[Int8]
-        // process(buffer.map{ x in UInt8(x) }) // OK
-//        let newData :[Int] = payload.map{x in Int(x)}
-//        var json  = ""
-//        if  let m = message.string?.description  {
-//            json = m
-//        }
-//        let json2 = bytesToIntString(payload)
-//        guard let json2 = String(data: Data(payload), encoding: .utf8) else { return; default "" }
-//        let count = payload.length / sizeof(UInt8)
-//        var array = [UInt8](count: count, repeatedValue: 0)
-//        payload.getBytes(&array, length:count * sizeof(UInt8))
-//        String.stringWithBytes(payload, encoding: NSUTF8StringEncoding)
-//        
-        print("======收到消息 a=====")
-        print("topic            :   \(message.topic)")
-        print("payload          :   \(message.payload.count)")
-        print("description      :   \(String(describing: message.string?.description))")
-        print("payload.str      :   \(bytesToIntString(payload))")
-//        print("json             :   \(json)")
-//        print("newData          :   \(newData.count)")
-        //let payload:[UInt8] = stringToBytes(json)
-     
-        let py = KotlinByteArray.from(payload)
-        hDCocoaMQTTInterOpIn.onMessageArrivedCallInSwift(reference: ref, topic: topic, qos: Int32(qos), payload: py, retained: retained, dup: dup)
-        print("======收到消息 z=====")
-    }
-    
-    // mqtt管理 单利
-    private let hdCocoaMQTT = HDCocoaMQTT.shared()
+    private var debug:Bool = false
+    private let TAG = "HDCocoaMQTTx"
+    // mqtt管理
+    private var hDCocoaMQTTMap  = [String:HDCocoaMQTT]()
     // kotlin interop out 回调设置类 kotlin call swift
     private let hDCocoaMQTTInterOpOut = HDCocoaMQTTInterOpOut()
     // kotlin interop in 回调设置类 swift callback
     private let hDCocoaMQTTInterOpIn = HDCocoaMQTTInterOpIn()
     
+    private func tryGetClient(reference:String)->HDCocoaMQTT?{
+        return hDCocoaMQTTMap[reference]
+    }
+    
+    private func add(ref:String,client:HDCocoaMQTT){
+        let exsits = tryGetClient(reference: ref)
+        if(exsits != nil){
+            exsits?.disconnect()
+            exsits?.delegate = nil
+        }
+        hDCocoaMQTTMap[ref] = client
+    }
+    
+    private func remove(ref:String){
+//        let exsits = tryGetClient(reference: ref)
+//        if(exsits != nil){
+//            exsits?.disconnect()
+//            exsits?.delegate = nil
+//        }
+        hDCocoaMQTTMap.removeValue(forKey: ref)
+    }
    
-    //private let vm = VM()
+    // ########### delegate a ###########
+    func onConnectionStatus(isConnected: Bool,client: HDCocoaMQTT) {
+       
+        
+        
+        hDCocoaMQTTInterOpIn.onConnectStateChangedCallInSwift(reference: client.reference(), connect:isConnected)
+    }
+    
+    func onSubscibe(topics: NSDictionary,client: HDCocoaMQTT) {
+        
+    }
+    
+    func onUnsubscribe(topics: [String],client: HDCocoaMQTT) {
+        
+    }
+    
+    func onMessageArrived(message: CocoaMQTTMessage,client: HDCocoaMQTT) {
+        let ref = client.reference()
+        let topic = message.topic
+        let payload:[UInt8] = message.payload
+        let qos = message.qos.rawValue
+        let retained = message.retained
+        let dup = message.duplicated
+        self.TRACE("======收到消息 a=====")
+        self.TRACE("topic            :   \(message.topic)")
+        self.TRACE("payload          :   \(message.payload.count)")
+        self.TRACE("description      :   \(String(describing: message.string?.description))")
+        self.TRACE("payload.str      :   \(bytesToIntString(payload))")
+        let py = KotlinByteArray.from(payload)
+        hDCocoaMQTTInterOpIn.onMessageArrivedCallInSwift(reference: ref, topic: topic, qos: Int32(qos), payload: py, retained: retained, dup: dup)
+        self.TRACE("======收到消息 z=====")
+    }
+    // ########### delegate z ###########
+    
+   
     
     // 初始化kotlin callback
     func initializeInterOp(){
-        hdCocoaMQTT.delegate = self
         
         // 初始化
         hDCocoaMQTTInterOpOut.initializeMQTTInSwift{
             (host,port,clientId,username,password,reference) -> String in
-            self.curReference = nil
-            print("""
+            self.displayClients()
+            self.TRACE("""
                   来自Kotlin的方法initializeMQTTInSwift参数
                   host          :       \(host)
                   port          :       \(port)
@@ -88,85 +94,118 @@ class HDCocoaMQTTInterOpSwift : MqttEeventDelegate{
                   password      :       \(password)
                   reference     :       \(reference)
             """)
-            self.hdCocoaMQTT.initializeMQTT(host,UInt16(truncating: port),clientId,username,password)
-            self.hdCocoaMQTT.connect()
-            let ref = clientId+username
-            self.curReference = ref
-            return ref//"来自initializeMQTTInSwift swift返回"
+            let ref = clientId + "@" + username
+            if(self.tryGetClient(reference: ref) != nil){
+                self.TRACE("已经存在：\(ref)")
+                return ""
+            }
+            self.TRACE("创建client")
+            let client = HDCocoaMQTT()
+            client.initializeMQTT(host,UInt16(truncating: port),clientId,username,password,ref)
+            client.delegate = self
+            client.connect()
+            self.hDCocoaMQTTMap[ref] = client
+            self.displayClients()
+            return ref
         }
+        
         // 链接
         hDCocoaMQTTInterOpOut.connectInSwift{
             reference in
-            self.checkReference(reference: reference){
-                print("""
+            self.checkClient(reference: reference){
+                client in
+                self.TRACE("""
                   来自Kotlin的方法connectInSwift参数
                   reference     :       \(reference)
             """)
-                self.hdCocoaMQTT.connect()
+                client.connect()
             }
         }
         
         // 注册
         hDCocoaMQTTInterOpOut.subscribeInSwift{
             topic,reference in
-            self.checkReference(reference: reference){
-                print("""
+            self.checkClient(reference: reference){
+                client in
+                self.TRACE("""
                   来自Kotlin的方法subscribeInSwift参数
                   topic         :       \(topic)
                   reference     :       \(reference)
             """)
-                self.hdCocoaMQTT.subscribe(topic:topic)
+                client.subscribe(topic:topic)
             }
         }
         
         // 发布
         hDCocoaMQTTInterOpOut.publishInSwift{
             topic,message,reference in
-            self.checkReference(reference: reference){
-                print("""
+            self.checkClient(reference: reference){
+                client in
+                self.TRACE("""
                   来自Kotlin的方法publishInSwift参数
                   topic         :       \(topic)
                   message       :       \(message)
                   reference     :       \(reference)
             """)
-                self.hdCocoaMQTT.publish(topic:topic,with : message)
+                client.publish(topic:topic,with : message)
             }
         }
         
         // 反注册
         hDCocoaMQTTInterOpOut.unSubscribeInSwift{
             topic,reference in
-            self.checkReference(reference: reference){
-                print("""
+            self.checkClient(reference: reference){
+                client in
+                let msg = """
                   来自Kotlin的方法unSubscribeInSwift参数
                   topic         :       \(topic)
                   reference     :       \(reference)
-            """)
-                self.hdCocoaMQTT.unSubscribe(topic:topic )
+            """
+                self.TRACE(msg)
+                client.unSubscribe(topic:topic )
             }
         }
         
         // 断开链接
         hDCocoaMQTTInterOpOut.disconnectInSwift{
             reference in
-            self.checkReference(reference: reference){
-                print("""
+            self.checkClient(reference: reference){
+                client in
+                self.TRACE("""
                       来自Kotlin的方法disconnectInSwift参数
                       reference     :       \(reference)
                 """)
-                self.hdCocoaMQTT.disconnect()
+                self.remove(ref: client.reference())
+                client.disconnect()
+                client.delegate = nil
             }
         }
     }
     
-    private func checkReference(reference:String,block:()->Void){
-        if(curReference != nil && curReference == reference){
-            block()
+    private func checkClient(reference:String,block:(HDCocoaMQTT)->Void){
+        if let client = tryGetClient(reference: reference) {
+            block(client)
         }else{
-            print("[[[warn 非当前reference]]] cur:\(curReference ?? "-") vs \(reference)")
+            TRACE("不存在client：\(reference) ")
         }
     }
+}
+
+extension HDCocoaMQTTInterOpSwift{
+    func TRACE(_ msg:String){
+        if(!debug){
+            return
+        }
+        HDLogX.shared().d(tag: TAG, message: msg)
+    }
     
+    func displayClients(){
+        TRACE("###当前MQTT客户端###")
+        for (ref,client) in self.hDCocoaMQTTMap{
+            TRACE("-->\(ref)")
+        }
+        TRACE("***当前MQTT客户端***")
+    }
 }
 
 

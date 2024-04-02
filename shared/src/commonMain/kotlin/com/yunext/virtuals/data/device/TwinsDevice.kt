@@ -23,7 +23,10 @@ data class TwinsDevice(
      * 2:其他
      */
     val communicationType: DeviceType,
+
 ) : MQTTDevice {
+    override val id: String
+        get() = deviceId
     override val rule: ProtocolMQTTRule
         get() = ProtocolMQTTRule.Device
 

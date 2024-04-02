@@ -7,7 +7,7 @@ import com.yunext.kmp.mqtt.core.OnHDMqttStateChangedListener
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
 
-expect class HDMqttClient(hdContext: HDContext)
+expect class HDMqttClient internal constructor(hdContext: HDContext)
 
 expect fun createHdMqttClient(): HDMqttClient
 

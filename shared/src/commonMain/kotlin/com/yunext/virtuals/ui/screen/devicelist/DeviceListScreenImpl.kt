@@ -48,6 +48,7 @@ fun DeviceListScreenImpl(
     onDeviceSelected: (DeviceAndStateViewData) -> Unit,
     onDeviceDelete: (DeviceAndStateViewData) -> Unit,
     onActionAdd: () -> Unit,
+    onDisconnect:(DeviceAndStateViewData)->Unit
 ) {
     /* 背景 */
     @OptIn(ExperimentalResourceApi::class)
@@ -119,11 +120,7 @@ fun DeviceListScreenImpl(
                     if (list.isEmpty()) {
                         TwinsEmptyViewForDevice()
                     } else {
-                        TwinsDeviceList(Modifier, list,{
-                            onDeviceSelected.invoke(it)
-                        }){
-                            onDeviceDelete.invoke(it)
-                        }
+                        TwinsDeviceList(Modifier, list,onDeviceSelected,onDeviceDelete,onDisconnect)
                     }
 
 //                    PullRefreshIndicator(

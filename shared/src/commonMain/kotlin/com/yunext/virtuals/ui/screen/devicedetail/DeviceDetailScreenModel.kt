@@ -2,18 +2,19 @@ package com.yunext.virtuals.ui.screen.devicedetail
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.yunext.kmp.common.logger.HDLogger
-import com.yunext.kmp.mqtt.HDMqttClient
-import com.yunext.kmp.mqtt.createHdMqttClient
-import com.yunext.kmp.mqtt.hdMqttDisconnect
-import com.yunext.kmp.mqtt.hdMqttInit
-import com.yunext.virtuals.module.devicemanager.MQTTDeviceManager
+import com.yunext.virtuals.data.device.TwinsDevice
+import com.yunext.virtuals.data.device.UnSupportDeviceException
 import com.yunext.virtuals.module.devicemanager.deviceManager
+import com.yunext.virtuals.module.devicemanager.filterOrNull
 import com.yunext.virtuals.module.toDeviceDTO
 import com.yunext.virtuals.module.toMqttDevice
 import com.yunext.virtuals.ui.common.HDStateScreenModel
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
+import com.yunext.virtuals.ui.data.DeviceStatus
+import com.yunext.virtuals.ui.data.DeviceType
 import com.yunext.virtuals.ui.data.Effect
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
@@ -34,6 +35,7 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
         HDLogger.d(TAG, "=== status             :   ${initialState.device.status}")
         HDLogger.d(TAG, "=== 加载信息...")
         loadData()
+
     }
 
     companion object {
@@ -58,6 +60,40 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
 
     private fun initMqtt(device: DeviceAndStateViewData) {
         HDLogger.d(TAG, "::initMqtt")
+        screenModelScope.launch {
+            deviceManager.deviceStoreMapStateFlow.value
+                .filterOrNull(device.communicationId)
+                ?.deviceStateHolderFlow?.collect { holder ->
+                    try {
+                        mutableState.update { oldState ->
+                            val changedDevice =
+                                (holder.device as? TwinsDevice) ?: throw UnSupportDeviceException(
+                                    holder.device::class
+                                )
+                            oldState.copy(
+                                device = DeviceAndStateViewData(
+                                    name = device.name,
+                                    communicationId = changedDevice.generateId(),
+                                    model = changedDevice.deviceType,
+                                    status = when (changedDevice.communicationType) {
+                                        DeviceType.WIFI -> {
+                                            if (holder.connect) {
+                                                DeviceStatus.WiFiOnLine
+                                            } else DeviceStatus.WiFiOffLine
+                                        }
+
+                                        DeviceType.GPRS -> if (holder.connect) {
+                                            DeviceStatus.GPRSOnLine
+                                        } else DeviceStatus.GPRSOffLine
+                                    }
+                                )
+                            )
+                        }
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                    }
+                }
+        }
         deviceManager.add(device.toDeviceDTO().toMqttDevice())
     }
 

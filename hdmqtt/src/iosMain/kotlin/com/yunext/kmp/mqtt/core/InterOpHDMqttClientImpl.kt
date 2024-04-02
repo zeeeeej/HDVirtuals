@@ -5,14 +5,20 @@ import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
 import com.yunext.kmp.mqtt.interop.HDCocoaMQTTInterOpIn
 import com.yunext.kmp.mqtt.interop.HDCocoaMQTTInterOpOut
+import com.yunext.kmp.mqtt.interop.HDInterOpMqttMessage
+import com.yunext.kmp.mqtt.interop.HDInterOpState
+import com.yunext.kmp.mqtt.interop.OnHDInterOpMqttMessageChanged
+import com.yunext.kmp.mqtt.interop.OnHDInterOpStateChanged
+import com.yunext.kmp.mqtt.utils.mqttError
 import com.yunext.kmp.mqtt.utils.mqttInfo
+import com.yunext.kmp.mqtt.utils.mqttWarn
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
@@ -20,19 +26,21 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
+
     private val coroutineScope: CoroutineScope =
         CoroutineScope(Dispatchers.IO + SupervisorJob() + CoroutineName("KMQTTClient"))
 
+    // 标志
+    private var reference: String? = null
+
     // kotlin -> Swift
     private val outOpt = HDCocoaMQTTInterOpOut
+
     // kotlin <- Swift
     private val inOpt = HDCocoaMQTTInterOpIn
-    //
 
-    private var reference: String? = null
-    private var inOptJob: Job? = null
     override val tag: String
-        get() = "tag-swift-interop"
+        get() = "tag-$TAG"
 
     private var internalState: HDMqttState = HDMqttState.Init
 
@@ -46,35 +54,46 @@ class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
         onMessageChangedListener = listener
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    override fun init() {
-        mqttInfo("mqtt-ios-init")
-        inOptJob?.cancel()
-        inOptJob = null
-        inOptJob = coroutineScope.launch {
-            inOpt.messageChannel.receiveAsFlow().onEach {
-                mqttInfo("mqtt-ios-init inOpt receiver message $it")
-                if (it.reference == this@InterOpHDMqttClientImpl.reference) {
-                    onMessageChangedListener?.onChanged(
-                        it.topic, it.message
-                    )
-                }
-            }.onCompletion {
-                mqttInfo("mqtt-ios-init inOpt messageChannel error $it")
-            }.launchIn(this)
-
-            inOpt.connectStateChannel.receiveAsFlow().onEach {
-                mqttInfo("mqtt-ios-init inOpt receiver message $it")
-                if (it.reference == this@InterOpHDMqttClientImpl.reference) {
-                    val newInternalState =
-                        if (it.connect) HDMqttState.Connected else HDMqttState.Disconnected
-                    internalState = newInternalState
-                    onStateChangedListener?.onChanged(newInternalState)
-                }
-            }.onCompletion {
-                mqttInfo("mqtt-ios-init inOpt connectStateChannel error $it")
-            }.launchIn(this)
+    private val messageCallback: OnHDInterOpMqttMessageChanged = { message: HDInterOpMqttMessage ->
+        mqttInfo("$TAG::init messageChannel $message")
+        if (message.reference == this@InterOpHDMqttClientImpl.reference) {
+            onMessageChangedListener?.onChanged(
+                message.topic, message.message
+            )
         }
+    }
+
+    private val stateCallback: OnHDInterOpStateChanged = { state: HDInterOpState ->
+        mqttInfo("$TAG::init connectStateChannel receiver : $state")
+        mqttInfo("$TAG::init connectStateChannel cur      : ${this@InterOpHDMqttClientImpl.reference}")
+        if (state.reference == this@InterOpHDMqttClientImpl.reference) {
+            val newInternalState =
+                if (state.connect) HDMqttState.Connected else HDMqttState.Disconnected
+            internalState = newInternalState
+            onStateChangedListener?.onChanged(newInternalState)
+        } else {
+            mqttWarn("$TAG::init connectStateChannel 不是当前client")
+        }
+    }
+
+    override fun init() {
+        mqttInfo("$TAG::init inOpt:$inOpt")
+        inOpt.registerMessage(messageCallback)
+        inOpt.register(stateCallback)
+//        inOpt.connectStateChannel.onEach {
+//
+//            try {
+//                mqttInfo("$TAG::init ==================>")
+//                mqttInfo("$TAG::init rec:${it.reference}")
+//                mqttInfo("$TAG::init cur:${reference}")
+//            } catch (e: Exception) {
+//                mqttError("$TAG::init onEach error :$it")
+//            }
+//        }.onCompletion {
+//            mqttError("$TAG::init onCompletion error :$it")
+//        }.launchIn(coroutineScope).invokeOnCompletion {
+//            mqttInfo("$TAG::init invokeOnCompletion <==")
+//        }
     }
 
     override fun connect(param: HDMqttParam, listener: OnActionListener) {
@@ -83,30 +102,29 @@ class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
         val clientId = param.clientId
         val username = param.username
         val password = param.password
-        val reference = "${clientId}-${username}"
-        mqttInfo("mqtt-ios-connect ${outOpt.initializeMQTT}")
+        mqttInfo("$TAG::connect  ${outOpt.initializeMQTT}")
         val ref = outOpt.initializeMQTT?.invoke(
             host,
             port.toUInt(),
             clientId,
             username,
             password,
-            reference
-        ) // clientId + username
-        mqttInfo("mqtt-ios-connect ref:$ref")
+            ""
+        )
+        mqttInfo("$TAG::connect success ! ref:$ref")
         this.reference = ref ?: ""
     }
 
     override fun subscribeTopic(
         topic: String, actionListener: OnActionListener,
     ) {
-        mqttInfo("mqtt-ios-subscribeTopic ${outOpt.subscribe}")
+        mqttInfo("$TAG::subscribeTopic ${outOpt.subscribe}")
         val ref = reference ?: return
         outOpt.subscribe?.invoke(topic, ref)
     }
 
     override fun unsubscribeTopic(topic: String, listener: OnActionListener) {
-        mqttInfo("mqtt-ios-unsubscribeTopic")
+        mqttInfo("$TAG::unsubscribeTopic $topic")
         val ref = reference ?: return
         outOpt.unSubscribe?.invoke(topic, ref)
 
@@ -119,22 +137,33 @@ class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
         retained: Boolean,
         listener: OnActionListener,
     ) {
-        mqttInfo("mqtt-ios-publish ${outOpt.publish}")
+        mqttInfo("$TAG::publish ${outOpt.publish}")
         val ref = reference ?: return
         outOpt.publish?.invoke(topic, payload.decodeToString(), ref)
     }
 
     override fun disconnect() {
-        mqttInfo("mqtt-ios-disconnect ${outOpt.disconnect}")
+        mqttInfo("$TAG::disconnect reference:${reference} ${outOpt.disconnect}")
         val ref = reference ?: return
+        mqttInfo("$TAG::disconnect 开始清理")
         outOpt.disconnect?.invoke(ref)
-        inOptJob?.cancel()
-        inOptJob = null
+
+        coroutineScope.cancel()
+
+        internalState = HDMqttState.Disconnected
+        onStateChangedListener?.onChanged(HDMqttState.Disconnected)
+
+        inOpt.unregister(stateCallback)
+        inOpt.unregisterMessage(messageCallback)
         onStateChangedListener = null
         onMessageChangedListener = null
-        coroutineScope.cancel()
+
     }
 
     override val state: HDMqttState
         get() = internalState
+
+    companion object {
+        private const val TAG = "InterOpHDMqttClientImpl"
+    }
 }

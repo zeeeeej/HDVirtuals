@@ -2,7 +2,10 @@ package com.yunext.virtuals.ui.data
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import com.yunext.virtuals.ui.HDRes
+import com.yunext.virtuals.ui.common.DrawableResourceFactory
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import kotlin.jvm.JvmStatic
 import kotlin.random.Random
 
@@ -14,8 +17,8 @@ data class DeviceAndStateViewData(
     val name: String,
     val communicationId: String,
     val model: String,
-    val status:  DeviceStatus,
-)  {
+    val status: DeviceStatus,
+) {
 
     companion object {
 
@@ -69,12 +72,15 @@ sealed class DeviceStatus(val type: DeviceType, val state: DeviceState) {
     @Immutable
     @Stable
     object WiFiOnLine : DeviceStatus(DeviceType.WIFI, DeviceState.ONLINE)
+
     @Immutable
     @Stable
     object WiFiOffLine : DeviceStatus(DeviceType.WIFI, DeviceState.OFFLINE)
+
     @Immutable
     @Stable
     object GPRSOnLine : DeviceStatus(DeviceType.GPRS, DeviceState.ONLINE)
+
     @Immutable
     @Stable
     object GPRSOffLine : DeviceStatus(DeviceType.GPRS, DeviceState.OFFLINE)
@@ -84,6 +90,44 @@ sealed class DeviceStatus(val type: DeviceType, val state: DeviceState) {
         }
     }
 }
+
+val DeviceStatus.str: String
+    get() = when (this) {
+        DeviceStatus.GPRSOffLine -> "4G离线"
+        DeviceStatus.GPRSOnLine -> "4G在线"
+        DeviceStatus.WiFiOffLine -> "WiFi离线"
+        DeviceStatus.WiFiOnLine -> "WiFi在线"
+    }
+
+@OptIn(ExperimentalResourceApi::class)
+val DeviceStatus.iconRes: DrawableResourceFactory
+    get() = when (this) {
+        DeviceStatus.GPRSOffLine -> {
+            {
+                HDRes.drawable.icon_twins_offline
+            }
+
+        }
+
+        DeviceStatus.GPRSOnLine -> {
+            {
+                HDRes.drawable.icon_twins_4g
+            }
+        }
+
+        DeviceStatus.WiFiOffLine -> {
+            {
+                HDRes.drawable.icon_twins_offline
+            }
+        }
+
+        DeviceStatus.WiFiOnLine -> {
+            {
+                HDRes.drawable.icon_twins_wifi
+            }
+        }
+    }
+
 
 @Serializable
 enum class DeviceState {

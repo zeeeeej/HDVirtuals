@@ -8,9 +8,12 @@ class MemoryDeviceDatasource {
     private val map: ConcurrentMap<String, DeviceDTO> = ConcurrentMap()
 
     init {
-        add(DeviceDTO("wifi-0001", DeviceType.WIFI, "ff91482fdfeb", "QR-12TRWQ4"))
-        add(DeviceDTO("4G-0002", DeviceType.GPRS, "fe495a3be9c7", "QR-12TRWQ4"))
         add(DeviceDTO("twins_test_001", DeviceType.WIFI, "twins_test_001_cid", "tcuf6vn2ohw4mvhb"))
+        add(DeviceDTO("twins_test_002", DeviceType.WIFI, "twins_test_002_cid", "tcuf6vn2ohw4mvhb"))
+        add(DeviceDTO("twins_test_003", DeviceType.WIFI, "twins_test_003_cid", "tcuf6vn2ohw4mvhb"))
+        add(DeviceDTO("twins_test_004", DeviceType.WIFI, "twins_test_004_cid", "tcuf6vn2ohw4mvhb"))
+//        add(DeviceDTO("1", DeviceType.WIFI, "ff91482fdfeb", "QR-12TRWQ4"))
+//        add(DeviceDTO("2", DeviceType.GPRS, "fe495a3be9c7", "QR-12TRWQ4"))
     }
 
     fun add(deviceDTO: DeviceDTO): Boolean {

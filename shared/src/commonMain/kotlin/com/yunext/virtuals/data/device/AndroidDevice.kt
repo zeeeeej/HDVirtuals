@@ -36,4 +36,7 @@ class AndroidDevice(
     override fun providerDeviceInitializer(): DeviceInitializer {
         TODO("Not yet implemented")
     }
+
+    override val id: String
+        get() = userId
 }
