@@ -68,8 +68,5 @@ class TslProperty(
     }
 }
 
-val TslProperty.display: String
-    get() {
-        return "$name<$identifier> [$dataType] required[$required] accessMode[$accessMode] "
-    }
+
 

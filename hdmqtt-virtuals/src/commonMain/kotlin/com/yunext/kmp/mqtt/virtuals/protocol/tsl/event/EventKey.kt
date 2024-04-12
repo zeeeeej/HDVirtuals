@@ -1,4 +1,4 @@
-package com.yunext.kmp.mqtt.protocol.tsl.event
+package com.yunext.kmp.mqtt.virtuals.protocol.tsl.event
 
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslEventType
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyKey

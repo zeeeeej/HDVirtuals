@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ProtocolMQTTContainer<T>(
     val cmd: String?,
-    val child: String?,
+    val child: String? = null,
     val params: T,
 ) {
     companion object {

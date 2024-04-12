@@ -1,0 +1,7 @@
+{
+  "cmd": "set",
+  "params": {
+    "signalStrength": -111,
+    "abc": "hello"
+  }
+}

@@ -1,9 +1,15 @@
-package com.yunext.kmp.http.tsl
+package com.yunext.kmp.resp.tsl
 
-class TslParamResp(
-    /* 唯一标识符（产品下唯一） */
-    val identifier: String?,
-    val name: String?,
+import kotlinx.serialization.Serializable
+
+/**
+ * inner属性集合
+ */
+@Serializable
+class TslItemPropertyResp(
+
+    val identifier:String?,
+    val name:String?,
     /*
      * DataTypeEnum
      * 属性类型
@@ -17,7 +23,6 @@ class TslParamResp(
      * struct（结构体类型，可包含前面7种类型，下面使用"specs":[{}]描述包含的对象）
      * array（数组类型，支持int、double、float、text、struct）
      */
-    val dataType: String?,
-    /* 属性约束 */
+    val dataType:String?,
     val specs: TslSpecResp?,
 )

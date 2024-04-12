@@ -24,8 +24,8 @@ import com.yunext.kmp.common.logger.HDLogger
 
 internal sealed interface HDDeviceTab : Tab
 
-internal val Device_Tabs by lazy {
-    arrayOf(PropertiesTab, EventsTab, ServicesTab)
+internal val deviceDetailTabs  by lazy{
+    listOf(PropertiesTab,EventsTab,ServicesTab)
 }
 
 internal data object PropertiesTab : HDDeviceTab {
@@ -113,12 +113,12 @@ private fun InnerTabNavigation() {
 // tab+content
 @Composable
 private fun Tab.DeviceTabContent() {
-    val tabTitle = options.title
-    val list by remember { mutableStateOf(Device_Tabs) }
-    LifecycleEffect(
-        onStarted = { HDLogger.d("Navigator", "Start tab $tabTitle") },
-        onDisposed = { HDLogger.d("Navigator", "Dispose tab $tabTitle") }
-    )
+    val tabList by remember { mutableStateOf(listOf( PropertiesTab,EventsTab,ServicesTab)) }
+//    val tabTitle = options.title
+//    LifecycleEffect(
+//        onStarted = { HDLogger.d("Navigator", "Start tab $tabTitle") },
+//        onDisposed = { HDLogger.d("Navigator", "Dispose tab $tabTitle") }
+//    )
     Column {
 
         //<editor-fold desc="【1.Tab部分】">
@@ -126,7 +126,7 @@ private fun Tab.DeviceTabContent() {
         // -使用TabRow
         val tabs: @Composable () -> Unit = {
             val tabNavigator = LocalTabNavigator.current
-            list.forEach { cur ->
+            tabList.forEach { cur ->
                 SelectedHDDeviceTab(
                     cur,
                     this@DeviceTabContent == cur
@@ -144,23 +144,23 @@ private fun Tab.DeviceTabContent() {
         //</editor-fold>
 
         //<editor-fold desc="【2.内容部分】">
-        Navigator(
-            when (this@DeviceTabContent) {
-                is PropertiesTab -> DeviceDetailSubPropertyScreen()
-                is EventsTab -> DeviceDetailSubEventScreen()
-                is ServicesTab -> DeviceDetailSubServiceScreen()
-                else -> error("error tab $this@DeviceTabContent")
-            }
-        ) { innerNav ->
-            SlideTransition(innerNav)
-            // 可使用默认
-            /*
-            { innerScreen ->
-                 HDLogger.d("Navigator", "--innerScreen:$innerScreen innerNav.key:${innerNav}")
-                 innerScreen.Content()
-             }
-             */
-        }
+//        Navigator(
+//            when (this@DeviceTabContent) {
+//                is PropertiesTab -> DeviceDetailSubPropertyScreen()
+//                is EventsTab -> DeviceDetailSubEventScreen()
+//                is ServicesTab -> DeviceDetailSubServiceScreen()
+//                else -> error("error tab $this@DeviceTabContent")
+//            }
+//        ) { innerNav ->
+//            SlideTransition(innerNav)
+//            // 可使用默认
+//            /*
+//            { innerScreen ->
+//                 HDLogger.d("Navigator", "--innerScreen:$innerScreen innerNav.key:${innerNav}")
+//                 innerScreen.Content()
+//             }
+//             */
+//        }
         //</editor-fold>
     }
 }

@@ -25,11 +25,12 @@ fun CHPressedView(
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource =
         remember { MutableInteractionSource() },
+    enable:Boolean = true
 ) {
     val isPressed by interactionSource.collectIsPressedAsState()
     Box(
 
-        modifier = modifier.clickable(interactionSource = interactionSource, indication = null) {
+        modifier = modifier.clickable(interactionSource = interactionSource, indication = null,enabled = enable) {
             onClick.invoke()
         }, contentAlignment = Alignment.Center
     ) {

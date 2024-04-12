@@ -16,7 +16,7 @@ compose = "1.6.2"
 compose-plugin = "1.6.0"
 junit = "4.13.2"
 kotlin = "1.9.22"
-ktor = "2.3.9"
+ktor = "2.3.8"
 logback = "1.5.3"
 ksp = "1.9.22-1.0.17" # ksp
 kotlinpoet-ksp = "1.12.0"
@@ -44,6 +44,7 @@ kmqtt = "0.4.6"
 # Android Lifecycle
 android-lifecycle = "2.7.0"
 firebaseCrashlyticsBuildtools = "2.9.9"
+napier = "2.7.1"
 
 
 
@@ -76,6 +77,8 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-serialization-kotlinx-protobuf = { module = "io.ktor:ktor-serialization-kotlinx-protobuf", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 # voyager
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
@@ -143,6 +146,9 @@ android-lifecycle-compiler = { module = "androidx.lifecycle:lifecycle-compiler",
 android-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "android-lifecycle" }
 android-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "android-lifecycle" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+# Log
+# https://github.com/AAkira/Napier
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 [plugins]
 cocoapods = { id = "native.cocoapods", version.ref = "kotlin" }
@@ -156,3 +162,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 # sqlDelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
 sqlDelight2 = { id = "app.cash.sqldelight", version.ref = "sqlDelight2" }
+

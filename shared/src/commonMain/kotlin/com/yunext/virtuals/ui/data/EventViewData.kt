@@ -9,15 +9,19 @@ import com.yunext.kmp.resource.color.app_orange
 import com.yunext.kmp.resource.color.app_orange_light
 import com.yunext.kmp.resource.color.app_red
 import com.yunext.kmp.resource.color.app_red_light
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import kotlin.random.Random
 
+@Serializable
 @Stable
-internal data class EventData(
+data class EventData(
     val name: String,
     val key: String,
     val required: Boolean,
     val eventType: EventType,
-    val output: List<*>,
+    val output: List<JsonElement>,
     val desc: String,
 ) {
 
@@ -34,7 +38,7 @@ internal data class EventData(
             key = randomText(),
             required = Random.nextBoolean(),
             eventType = EventType.values().random(),
-            output = List(Random.nextInt(4)) { it },
+            output = List(Random.nextInt(4)) { JsonPrimitive(it) },
             desc = randomText(),
         )
     }

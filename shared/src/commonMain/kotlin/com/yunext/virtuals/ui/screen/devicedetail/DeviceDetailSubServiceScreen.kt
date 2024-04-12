@@ -18,19 +18,24 @@ class DeviceDetailSubServiceScreen : Screen {
 
     @Composable
     override fun Content() {
-        Box(Modifier.fillMaxSize()) {
-            //HDDebugText("设备详情-服务")
+        DeviceDetailSubServiceScreenImpl()
+    }
+}
 
-            val list by remember {
-                mutableStateOf(List(20) { it })
-            }
-            if (list.isEmpty()) {
-                TwinsEmptyView()
-            } else {
-                Box(Modifier.padding(horizontal = 16.dp)) {
-                    ListTslService(list = list) {
+@Composable
+internal fun DeviceDetailSubServiceScreenImpl() {
+    Box(Modifier.fillMaxSize()) {
+        //HDDebugText("设备详情-服务")
 
-                    }
+        val list by remember {
+            mutableStateOf(List(20) { it })
+        }
+        if (list.isEmpty()) {
+            TwinsEmptyView()
+        } else {
+            Box(Modifier.padding(horizontal = 16.dp)) {
+                ListTslService(list = list) {
+
                 }
             }
         }

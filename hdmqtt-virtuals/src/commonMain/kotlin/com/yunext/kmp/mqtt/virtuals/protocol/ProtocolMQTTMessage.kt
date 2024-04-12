@@ -1,5 +1,21 @@
 package com.yunext.kmp.mqtt.virtuals.protocol
 
+import kotlinx.serialization.encodeToString
+
+
+val ProtocolMQTTMessage.payload:ByteArray
+    get() = when(this){
+        is DataMQTTMessage -> hdJson.encodeToString(data).encodeToByteArray()
+        is DataReplyMQTTMessage -> data
+        is InfoMQTTMessage -> data
+        is OnlineMQTTMessage -> hdJson.encodeToString(data).encodeToByteArray()
+        is ReplyServiceMQTTMessage -> data
+        is ReportMQTTMessage -> data
+        is SetMQTTMessage -> data
+        is SetRepayMQTTMessage -> data
+        is TimestampMQTTMessage -> data
+        is TimestampReplyMQTTMessage -> data
+    }
 sealed interface ProtocolMQTTMessage {
     // 通道
     val topic: ProtocolMQTTTopic
@@ -7,8 +23,8 @@ sealed interface ProtocolMQTTMessage {
     // 命令
     val cmd: ProtocolMQTTCmd
 
-    // 数据
-    val data: Any
+//    // 数据
+//    val data: ByteArray
 
     val qos: Int
         get() = 1
@@ -30,7 +46,7 @@ interface DownStream
  * 设备上电时上报的基本信息
  * 无回复
  */
-class InfoMQTTMessage(override val data: Any) : ProtocolMQTTMessage, UpStream {
+class InfoMQTTMessage(val data: ByteArray) : ProtocolMQTTMessage, UpStream {
     override val topic: ProtocolMQTTTopic
         get() = ProtocolMQTTTopic.UP
     override val cmd: ProtocolMQTTCmd = InfoUpCmd
@@ -46,7 +62,7 @@ class InfoMQTTMessage(override val data: Any) : ProtocolMQTTMessage, UpStream {
  * 设备数据上报
  * 无回复
  */
-class ReportMQTTMessage(override val data: Any) : ProtocolMQTTMessage, UpStream {
+class ReportMQTTMessage(val data: ByteArray) : ProtocolMQTTMessage, UpStream {
     override val topic: ProtocolMQTTTopic
         get() = ProtocolMQTTTopic.UP
     override val cmd: ProtocolMQTTCmd = ReportCmd
@@ -63,7 +79,7 @@ class ReportMQTTMessage(override val data: Any) : ProtocolMQTTMessage, UpStream 
  * 平台下发
  * 有回复
  */
-class SetMQTTMessage(override val data: Any) : ProtocolMQTTMessage, DownStream {
+class SetMQTTMessage(val data: ByteArray) : ProtocolMQTTMessage, DownStream {
     override val topic: ProtocolMQTTTopic
         get() = ProtocolMQTTTopic.DOWN
     override val cmd: ProtocolMQTTCmd = SetCmd
@@ -74,7 +90,7 @@ class SetMQTTMessage(override val data: Any) : ProtocolMQTTMessage, DownStream {
         get() = arrayOf(ProtocolMQTTRule.Device)
 }
 
-class SetRepayMQTTMessage(override val data: Any) : ProtocolMQTTMessage, UpStream {
+class SetRepayMQTTMessage(val data: ByteArray) : ProtocolMQTTMessage, UpStream {
     override val topic: ProtocolMQTTTopic
         get() = ProtocolMQTTTopic.UP
     override val cmd: ProtocolMQTTCmd = SetCmd
@@ -90,9 +106,12 @@ class SetRepayMQTTMessage(override val data: Any) : ProtocolMQTTMessage, UpStrea
  * 平台可发出消息查询当前设备参数（包括运行状态与属性）
  * 回复 参数值
  */
-class DataMQTTMessage(private val keys: List<String>) : ProtocolMQTTMessage {
-    override val data: Any
+class DataMQTTMessage(private val keys: List<String>) :
+    ProtocolMQTTMessage {
+    val data: Map<String, List<String>>
         get() = mapOf("keys" to keys)
+
+
     override val topic: ProtocolMQTTTopic
         get() = ProtocolMQTTTopic.DOWN
     override val cmd: ProtocolMQTTCmd = DataCmd
@@ -105,7 +124,7 @@ class DataMQTTMessage(private val keys: List<String>) : ProtocolMQTTMessage {
     val subTopic: ProtocolMQTTTopic = ProtocolMQTTTopic.UP // 回复topic
 }
 
-class DataReplyMQTTMessage(override val data: Any) : ProtocolMQTTMessage, UpStream {
+class DataReplyMQTTMessage(val data: ByteArray) : ProtocolMQTTMessage, UpStream {
     override val topic: ProtocolMQTTTopic
         get() = ProtocolMQTTTopic.UP
     override val cmd: ProtocolMQTTCmd = DataCmd
@@ -131,7 +150,7 @@ class DataReplyMQTTMessage(override val data: Any) : ProtocolMQTTMessage, UpStre
 }
  *
  */
-class TimestampMQTTMessage(override val data: Any) : ProtocolMQTTMessage {
+class TimestampMQTTMessage(val data: ByteArray) : ProtocolMQTTMessage {
 
     override val topic: ProtocolMQTTTopic
         get() = ProtocolMQTTTopic.QUERY
@@ -145,7 +164,7 @@ class TimestampMQTTMessage(override val data: Any) : ProtocolMQTTMessage {
 
 }
 
-class TimestampReplyMQTTMessage(override val data: Any) : ProtocolMQTTMessage, UpStream {
+class TimestampReplyMQTTMessage(val data: ByteArray) : ProtocolMQTTMessage, UpStream {
 
     override val topic: ProtocolMQTTTopic
         get() = ProtocolMQTTTopic.REPLY
@@ -162,7 +181,7 @@ class TimestampReplyMQTTMessage(override val data: Any) : ProtocolMQTTMessage, U
  */
 class OnlineMQTTMessage(private val online: Boolean) : ProtocolMQTTMessage {
     override val cmd: ProtocolMQTTCmd = OnlineCmd
-    override val data: Any
+    val data: Map<String, Boolean>
         get() = mapOf("online" to online)
     override val desc: String = ""
     override val pub: Array<ProtocolMQTTRule>
@@ -185,7 +204,7 @@ class OnlineMQTTMessage(private val online: Boolean) : ProtocolMQTTMessage {
  * 设备数据上报
  * 无回复
  */
-class ReplyServiceMQTTMessage(override val data: Any, serviceId: String) : ProtocolMQTTMessage,
+class ReplyServiceMQTTMessage(val data: ByteArray, serviceId: String) : ProtocolMQTTMessage,
     UpStream {
     override val topic: ProtocolMQTTTopic
         get() = ProtocolMQTTTopic.UP

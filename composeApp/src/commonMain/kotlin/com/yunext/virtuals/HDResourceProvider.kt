@@ -1,8 +1,7 @@
 package com.yunext.virtuals
 
-import com.yunext.kmp.resource.color.China
-import com.yunext.virtuals.ui.HDRes
-import com.yunext.virtuals.ui.HDResProvider
+import com.yunext.kmp.resource.HDRes
+import com.yunext.kmp.resource.HDResProvider
 import hdvirtuals.composeapp.generated.resources.Res
 import hdvirtuals.composeapp.generated.resources.ic_app
 import hdvirtuals.composeapp.generated.resources.icon_app_hadlinks
@@ -111,4 +110,8 @@ object HDResProviderImpl : HDResProvider {
         get() = Res.drawable.icon_twins_uncheck
     override val HDRes.drawable.icon_twins_wifi: DrawableResource
         get() = Res.drawable.icon_twins_wifi
+
+    override suspend fun readFiles(fileName: String): ByteArray {
+        return Res.readBytes(fileName)
+    }
 }

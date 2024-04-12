@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
-import com.yunext.virtuals.ui.HDResProvider
-import com.yunext.virtuals.ui.hdRes
+import com.yunext.kmp.resource.HDResProvider
+import com.yunext.kmp.resource.hdRes
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource

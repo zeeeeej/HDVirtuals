@@ -1,0 +1,702 @@
+{
+  "code": 100,
+  "msg": "请求成功",
+  "data": {
+    "id": "62d105a342289a61630f210b",
+    "version": "20220715141658416",
+    "productKey": "t43mxg7fl6clfbop",
+    "current": true,
+    "events": [
+      {
+        "identifier": "event1",
+        "name": "事件1",
+        "type": "info",
+        "required": null,
+        "desc": "事件1",
+        "method": null,
+        "outputData": [
+          {
+            "identifier": "1",
+            "name": "1",
+            "dataType": "struct",
+            "specs": {
+              "min": null,
+              "max": null,
+              "unit": null,
+              "unitName": null,
+              "size": null,
+              "step": null,
+              "length": null,
+              "type": null,
+              "item": [
+                {
+                  "identifier": "1",
+                  "name": "1",
+                  "dataType": "text",
+                  "specs": {
+                    "min": null,
+                    "max": null,
+                    "unit": null,
+                    "unitName": null,
+                    "size": null,
+                    "step": null,
+                    "length": 11,
+                    "type": null,
+                    "item": [],
+                    "enumDesc": {
+                      "0": "",
+                      "1": ""
+                    }
+                  }
+                },
+                {
+                  "identifier": "2",
+                  "name": "2",
+                  "dataType": "bool",
+                  "specs": {
+                    "min": null,
+                    "max": null,
+                    "unit": null,
+                    "unitName": null,
+                    "size": null,
+                    "step": null,
+                    "length": null,
+                    "type": null,
+                    "item": [],
+                    "enumDesc": {
+                      "0": "2",
+                      "1": "2"
+                    }
+                  }
+                }
+              ],
+              "enumDesc": null
+            }
+          },
+          {
+            "identifier": "22",
+            "name": "22",
+            "dataType": "text",
+            "specs": {
+              "min": null,
+              "max": null,
+              "unit": null,
+              "unitName": null,
+              "size": null,
+              "step": null,
+              "length": 22,
+              "type": null,
+              "item": null,
+              "enumDesc": null
+            }
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "identifier": "signalStrength",
+        "name": "信号强度",
+        "dataType": "int",
+        "specs": {
+          "min": 0,
+          "max": 255,
+          "unit": "L/s",
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": null,
+          "type": null,
+          "item": null,
+          "enumDesc": null
+        },
+        "accessMode": "r",
+        "required": null,
+        "desc": "信号强度"
+      },
+      {
+        "identifier": "testFloat",
+        "name": "testFloat",
+        "dataType": "float",
+        "specs": {
+          "min": 0,
+          "max": 255,
+          "unit": "L/s",
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": null,
+          "type": null,
+          "item": null,
+          "enumDesc": null
+        },
+        "accessMode": "r",
+        "required": null,
+        "desc": "testFloat"
+      },
+      {
+        "identifier": "testDouble",
+        "name": "testDouble",
+        "dataType": "double",
+        "specs": {
+          "min": 0,
+          "max": 255,
+          "unit": "L/s",
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": null,
+          "type": null,
+          "item": null,
+          "enumDesc": null
+        },
+        "accessMode": "r",
+        "required": null,
+        "desc": "testDouble"
+      },
+      {
+        "identifier": "connectExceedTim",
+        "name": "连接超时时间",
+        "dataType": "date",
+        "specs": {
+          "min": null,
+          "max": null,
+          "unit": null,
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": null,
+          "type": null,
+          "item": null,
+          "enumDesc": null
+        },
+        "accessMode": "r",
+        "required": null,
+        "desc": "连接超时时间1"
+      },
+      {
+        "identifier": "version",
+        "name": "版本",
+        "dataType": "text",
+        "specs": {
+          "min": null,
+          "max": null,
+          "unit": null,
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": 520,
+          "type": null,
+          "item": null,
+          "enumDesc": null
+        },
+        "accessMode": "rw",
+        "required": null,
+        "desc": "版本"
+      },
+      {
+        "identifier": "online",
+        "name": "是否在线",
+        "dataType": "bool",
+        "specs": {
+          "min": null,
+          "max": null,
+          "unit": null,
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": null,
+          "type": null,
+          "item": null,
+          "enumDesc": {
+            "0": "离线",
+            "1": "在线"
+          }
+        },
+        "accessMode": "rw",
+        "required": null,
+        "desc": "是否在线"
+      },
+      {
+        "identifier": "testEnum",
+        "name": "方向",
+        "dataType": "enum",
+        "specs": {
+          "min": null,
+          "max": null,
+          "unit": null,
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": null,
+          "type": "int",
+          "item": null,
+          "enumDesc": {
+            "1": "上",
+            "2": "下",
+            "3": "左",
+            "4": "右"
+          }
+        },
+        "accessMode": "r",
+        "required": null,
+        "desc": "测试enum"
+      },
+      {
+        "identifier": "testBool",
+        "name": "运行状态",
+        "dataType": "bool",
+        "specs": {
+          "min": null,
+          "max": null,
+          "unit": null,
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": null,
+          "type": null,
+          "item": null,
+          "enumDesc": {
+            "0": "停止",
+            "1": "运行"
+          }
+        },
+        "accessMode": "rw",
+        "required": null,
+        "desc": "测试bool"
+      },
+      {
+        "identifier": "testArray",
+        "name": "测试array",
+        "dataType": "array",
+        "specs": {
+          "min": null,
+          "max": null,
+          "unit": null,
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": 11,
+          "type": "struct",
+          "item": [
+            {
+              "identifier": "1",
+              "name": "1",
+              "dataType": "int",
+              "specs": {
+                "min": 1,
+                "max": 2,
+                "unit": "pH",
+                "unitName": null,
+                "size": null,
+                "step": null,
+                "length": null,
+                "type": null,
+                "item": null,
+                "enumDesc": {
+                  "0": "",
+                  "1": ""
+                }
+              }
+            },
+            {
+              "identifier": "weight",
+              "name": "2",
+              "dataType": "int",
+              "specs": {
+                "min": null,
+                "max": null,
+                "unit": "kg",
+                "unitName": null,
+                "size": null,
+                "step": 1,
+                "length": 22,
+                "type": null,
+                "item": null,
+                "enumDesc": {
+                  "0": "",
+                  "1": ""
+                }
+              }
+            }
+          ],
+          "enumDesc": null
+        },
+        "accessMode": "rw",
+        "required": null,
+        "desc": "测试array"
+      },
+      {
+        "identifier": "enumStatus",
+        "name": "测试struct",
+        "dataType": "struct",
+        "specs": {
+          "min": null,
+          "max": null,
+          "unit": null,
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": 1,
+          "type": null,
+          "item": [
+            {
+              "identifier": "p1",
+              "name": "??1",
+              "dataType": "int",
+              "specs": {
+                "min": 0,
+                "max": 255,
+                "unit": "min",
+                "unitName": null,
+                "size": null,
+                "step": null,
+                "length": 1,
+                "type": null,
+                "item": [],
+                "enumDesc": {},
+                "coefficient": null,
+                "signed": null,
+                "bigEndian": null,
+                "hexStr": null
+              },
+              "allocated": null,
+              "operateType": null
+            },
+            {
+              "identifier": "p2",
+              "name": "??2",
+              "dataType": "float",
+              "specs": {
+                "min": 0,
+                "max": 255,
+                "unit": "摄氏度",
+                "unitName": null,
+                "size": null,
+                "step": null,
+                "length": 1,
+                "type": null,
+                "item": [],
+                "enumDesc": {},
+                "coefficient": null,
+                "signed": null,
+                "bigEndian": null,
+                "hexStr": null
+              },
+              "allocated": null,
+              "operateType": null
+            },
+
+            {
+              "identifier": "p3",
+              "name": "testDate",
+              "dataType": "date",
+              "specs": {
+                "min": 0,
+                "max": 255,
+                "unit": "摄氏",
+                "unitName": null,
+                "size": null,
+                "step": null,
+                "length": 1,
+                "type": null,
+                "item": [],
+                "enumDesc": {},
+                "coefficient": null,
+                "signed": null,
+                "bigEndian": null,
+                "hexStr": null
+              },
+              "allocated": null,
+              "operateType": null
+            },
+            {
+              "identifier": "p4",
+              "name": "testDouble",
+              "dataType": "double",
+              "specs": {
+                "min": 0,
+                "max": 255,
+                "unit": "摄氏",
+                "unitName": null,
+                "size": null,
+                "step": null,
+                "length": 1,
+                "type": null,
+                "item": [],
+                "enumDesc": {},
+                "coefficient": null,
+                "signed": null,
+                "bigEndian": null,
+                "hexStr": null
+              },
+              "allocated": null,
+              "operateType": null
+            },
+            {
+              "identifier": "testBool",
+              "name": "运行状态",
+              "dataType": "bool",
+              "specs": {
+                "min": null,
+                "max": null,
+                "unit": null,
+                "unitName": null,
+                "size": null,
+                "step": null,
+                "length": null,
+                "type": null,
+                "item": null,
+                "enumDesc": {
+                  "0": "停止",
+                  "1": "运行"
+                }
+              },
+              "accessMode": "rw",
+              "required": null,
+              "desc": "测试bool"
+            },
+            {
+              "identifier": "errorCode",
+              "name": "错误码",
+              "dataType": "enum",
+              "specs": {
+                "min": null,
+                "max": null,
+                "unit": null,
+                "unitName": null,
+                "size": null,
+                "step": null,
+                "length": null,
+                "type": "text",
+                "item": null,
+                "enumDesc": {
+                  "01": "烟雾报警",
+                  "02": "浸水报警",
+                  "03": "通讯故障"
+                }
+              },
+              "accessMode": "r",
+              "required": null,
+              "desc": null
+            },
+            {
+              "identifier": "errorCodeForInt",
+              "name": "错误码",
+              "dataType": "enum",
+              "specs": {
+                "min": null,
+                "max": null,
+                "unit": null,
+                "unitName": null,
+                "size": null,
+                "step": null,
+                "length": null,
+                "type": "int",
+                "item": null,
+                "enumDesc": {
+                  "1": "烟雾报警int",
+                  "2": "浸水报警int",
+                  "3": "通讯故障int"
+                }
+              },
+              "accessMode": "r",
+              "required": null,
+              "desc": null
+            }
+          ],
+          "enumDesc": null,
+          "coefficient": null,
+          "signed": null,
+          "bigEndian": null,
+          "hexStr": null
+        },
+        "allocated": null,
+        "operateType": null,
+        "accessMode": "r",
+        "required": null,
+        "desc": ""
+      },
+      {
+        "identifier": "errorCode",
+        "name": "错误码",
+        "dataType": "enum",
+        "specs": {
+          "min": null,
+          "max": null,
+          "unit": null,
+          "unitName": null,
+          "size": null,
+          "step": null,
+          "length": null,
+          "type": "text",
+          "item": null,
+          "enumDesc": {
+            "01": "烟雾报警",
+            "02": "浸水报警",
+            "03": "通讯故障"
+          }
+        },
+        "accessMode": "r",
+        "required": null,
+        "desc": null
+      }
+    ],
+    "services": [
+      {
+        "identifier": "service1",
+        "name": "开关机",
+        "callType": "async",
+        "required": null,
+        "desc": "服务1",
+        "method": null,
+        "inputData": [
+          {
+            "identifier": "1",
+            "name": "启停",
+            "dataType": "enum",
+            "specs": {
+              "min": null,
+              "max": null,
+              "unit": null,
+              "unitName": null,
+              "size": null,
+              "step": null,
+              "length": null,
+              "type": "int",
+              "item": null,
+              "enumDesc": {
+                "0": "关机",
+                "1": "开机"
+              }
+            }
+          }
+        ],
+        "outputData": [
+          {
+            "identifier": "2",
+            "name": "2",
+            "dataType": "bool",
+            "specs": {
+              "min": null,
+              "max": null,
+              "unit": null,
+              "unitName": null,
+              "size": null,
+              "step": null,
+              "length": null,
+              "type": null,
+              "item": null,
+              "enumDesc": {
+                "0": "22",
+                "1": "33"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "identifier": "service2",
+        "name": "控制指令",
+        "callType": "sync",
+        "required": null,
+        "desc": "222",
+        "method": null,
+        "inputData": [
+          {
+            "identifier": "1",
+            "name": "参数",
+            "dataType": "struct",
+            "specs": {
+              "min": null,
+              "max": null,
+              "unit": null,
+              "unitName": null,
+              "size": null,
+              "step": null,
+              "length": null,
+              "type": null,
+              "item": [
+                {
+                  "identifier": "11",
+                  "name": "温度",
+                  "dataType": "int",
+                  "specs": {
+                    "min": -10,
+                    "max": 30,
+                    "unit": "°C",
+                    "unitName": null,
+                    "size": null,
+                    "step": null,
+                    "length": null,
+                    "type": null,
+                    "item": [],
+                    "enumDesc": {}
+                  }
+                },
+                {
+                  "identifier": "22",
+                  "name": "IA地址",
+                  "dataType": "text",
+                  "specs": {
+                    "min": null,
+                    "max": null,
+                    "unit": null,
+                    "unitName": null,
+                    "size": null,
+                    "step": null,
+                    "length": 32,
+                    "type": null,
+                    "item": [],
+                    "enumDesc": {}
+                  }
+                }
+              ],
+              "enumDesc": null
+            }
+          }
+        ],
+        "outputData": [
+          {
+            "identifier": "2",
+            "name": "2",
+            "dataType": "array",
+            "specs": {
+              "min": null,
+              "max": null,
+              "unit": null,
+              "unitName": null,
+              "size": null,
+              "step": null,
+              "length": 22,
+              "type": "struct",
+              "item": [
+                {
+                  "identifier": "22",
+                  "name": "22",
+                  "dataType": "enum",
+                  "specs": {
+                    "min": null,
+                    "max": null,
+                    "unit": null,
+                    "unitName": null,
+                    "size": null,
+                    "step": null,
+                    "length": null,
+                    "type": "int",
+                    "item": [],
+                    "enumDesc": {
+                      "2": "22"
+                    }
+                  }
+                }
+              ],
+              "enumDesc": null
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "success": true
+}

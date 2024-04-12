@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -59,6 +60,8 @@ kotlin {
             implementation(libs.voyager.koin)
 
             api(libs.kotlinx.coroutines.core)
+            implementation(libs.napier)
+            implementation(libs.kotlinx.serialization.json)
 
         }
 

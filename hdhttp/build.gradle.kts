@@ -32,6 +32,9 @@ kotlin {
                 api(libs.ktor.client.cio)
                 api(libs.ktor.client.content.negotiation)
                 api(libs.ktor.serialization.kotlinx.json)
+                api(libs.ktor.serialization.kotlinx.protobuf)
+                implementation(libs.ktor.client.logging)
+                implementation(libs.napier)
 
             }
         }

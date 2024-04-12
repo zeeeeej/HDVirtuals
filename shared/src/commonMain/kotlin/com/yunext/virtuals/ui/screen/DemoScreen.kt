@@ -29,9 +29,13 @@ import com.yunext.kmp.common.util.hdUUID
 import com.yunext.kmp.context.hdContext
 import com.yunext.kmp.db.datasource.DemoDataSource
 import com.yunext.kmp.db.datasource.impl.DemoDataSourceImpl
+import com.yunext.kmp.http.core.HDResult
+import com.yunext.kmp.http.datasource.RemoteTslDatasourceImpl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.yunext.kmp.http.testKtor
+import com.yunext.kmp.resp.tsl.display
+import io.github.aakira.napier.Napier
 
 @Composable
 fun DemoScreen() {
@@ -54,6 +58,19 @@ fun DemoScreen() {
             when (module) {
                 HDBle -> {
                     text = "todo ${module.moduleName}"
+                    // 测试tsl获取
+                    val dataSource = RemoteTslDatasourceImpl()
+                    coroutineScope.launch {
+                        val cid = "DEV:tcuf6vn2ohw4mvhb_twins_test_002_cid_8404"
+                        val result = dataSource.getTsl(cid, "")
+                        val display = when(result){
+                            is HDResult.Fail -> result.error.message?:"error"
+                            is HDResult.Success -> result.data.display
+                        }
+                        text = display
+                        Napier.d("tsl",null,display)
+                    }
+                    // 测试coroutines
                 }
 
                 HDCommon -> {

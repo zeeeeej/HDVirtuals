@@ -1,8 +1,8 @@
 package com.yunext.virtuals.ui.data
 
-import com.yunext.virtuals.ui.HDRes
+import com.yunext.kmp.resource.HDRes
+import com.yunext.kmp.resource.hdRes
 import com.yunext.virtuals.ui.common.DrawableResourceFactory
-import com.yunext.virtuals.ui.hdRes
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 enum class MenuData(val icon: String, val text: String) {

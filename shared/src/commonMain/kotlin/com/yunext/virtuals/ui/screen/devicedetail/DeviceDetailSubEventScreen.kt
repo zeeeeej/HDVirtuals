@@ -11,26 +11,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.yunext.virtuals.ui.common.TwinsEmptyView
+import com.yunext.virtuals.ui.data.PropertyData
 
 class DeviceDetailSubEventScreen : Screen {
 
     @Composable
     override fun Content() {
 
+        DeviceDetailSubEventScreenImpl(emptyList())
+    }
+}
 
-        Box(Modifier.fillMaxSize()) {
-            // HDDebugText("设备详情-事件")
-
-            val list by remember {
-                mutableStateOf(List(20) { it })
-            }
-            if (list.isEmpty()) {
-                TwinsEmptyView()
-            } else {
-                Box(Modifier.padding(horizontal = 16.dp)) {
-                    ListTslEvent(list = list) {
-                        //
-                    }
+@Composable
+internal fun DeviceDetailSubEventScreenImpl(list: List<PropertyData>) {
+    Box(Modifier.fillMaxSize()) {
+        // HDDebugText("设备详情-事件")
+        if (list.isEmpty()) {
+            TwinsEmptyView()
+        } else {
+            Box(Modifier.padding(horizontal = 16.dp)) {
+                ListTslEvent(list = list) {
+                    //
                 }
             }
         }

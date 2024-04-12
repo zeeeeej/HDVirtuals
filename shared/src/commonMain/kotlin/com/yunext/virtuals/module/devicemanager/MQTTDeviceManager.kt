@@ -8,6 +8,8 @@ import com.yunext.virtuals.data.device.MQTTDevice
 import com.yunext.virtuals.data.device.TwinsDevice
 import com.yunext.virtuals.module.repository.DeviceRepository
 import com.yunext.virtuals.module.repository.MemoryDeviceRepositoryImpl
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,9 +17,11 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @Deprecated("delete", ReplaceWith("this.find(id)?.block()"))
 internal suspend fun MQTTDeviceManager.suspendInvokeDeviceStoreWithId(
@@ -51,15 +55,23 @@ internal fun Map<String, DeviceStoreWrapper>.filterOrNull(id: String): DeviceSto
         k == id
     }.values.singleOrNull()?.deviceStore
 }
+
 internal class MQTTDeviceManager internal constructor(
     private val context: HDContext,
     private val projectInfo: ProjectInfo,
 //    private val logRepository: LogRepository,
     private val deviceRepository: DeviceRepository,
 //    private val reportRepository: ReportRepository,
+
+
 ) {
     private val coroutineScope: CoroutineScope =
-        CoroutineScope(Dispatchers.IO + SupervisorJob() + CoroutineName("MQTTDeviceManager"))
+        CoroutineScope(Dispatchers.Main + SupervisorJob() + CoroutineName("MQTTDeviceManager")
+
+//             +   CoroutineExceptionHandler { coroutineContext, throwable ->
+//                    Napier.e("MQTTDeviceManager::coroutineScope error $throwable @${coroutineContext[CoroutineName]?.name}")
+//                }
+        )
 
     private val deviceStoreMapStateFlowInternal: MutableStateFlow<Map<String, DeviceStoreWrapper>> =
         MutableStateFlow(mapOf())
@@ -69,7 +81,7 @@ internal class MQTTDeviceManager internal constructor(
         ld("::init")
     }
 
-    fun add(device: MQTTDevice, auto: Boolean = true) {
+    fun add(device: MQTTDevice, auto: Boolean = true): DeviceStore {
         if (device !is TwinsDevice) {
             error("当前device:${device::class},暂只支持TwinsDevice设备 ")
         }
@@ -81,8 +93,8 @@ internal class MQTTDeviceManager internal constructor(
             if (store != null && !store.isConnected()) {
                 ld("已经添加了该设备,但是未连接 $device")
                 store.connect()
+                return store
             }
-            return
         }
         val todoMap = fixDeviceStoreWhileFull(storeMap).toMutableMap()
         ld("添加设备")
@@ -97,24 +109,28 @@ internal class MQTTDeviceManager internal constructor(
         ld("添加设备完毕:${todoMap.size}")
 
 
-        val job = deviceStore.deviceStateHolderFlow.onEach {
-            // 更新当前设备状态
-            val map = deviceStoreMapStateFlowInternal.value
-            val store =
-                map.filter { (k, v) -> k == (it.device as? MQTTDevice)?.generateId() }.values.singleOrNull()
-                    ?: return@onEach
-            val editMap = map.toMutableMap()
-            editMap[id] = store.deviceStore.wrap()
-            ld("$$$ 更新设备信息$it")
-            this.deviceStoreMapStateFlowInternal.update {
-                editMap
+        val job = deviceStore.deviceStateHolderFlow
+            .onEach {
+                // 更新当前设备状态
+                val map = deviceStoreMapStateFlowInternal.value
+                val store =
+                    map.filter { (k, v) -> k == (it.device as? MQTTDevice)?.generateId() }.values.singleOrNull()
+                        ?: return@onEach
+                val editMap = map.toMutableMap()
+                editMap[id] = store.deviceStore.wrap()
+                ld("$$$ 更新设备信息$it")
+                this.deviceStoreMapStateFlowInternal.update {
+                    editMap
+                }
             }
-        }.launchIn(coroutineScope)
+            .flowOn(Dispatchers.IO)
+            .launchIn(coroutineScope)
         // todo 缓存job 删除时移除job。
         // 开始连接
         if (auto) {
             deviceStore.connect()
         }
+        return deviceStore
     }
 
     fun delete(deviceId: String) {
@@ -147,7 +163,6 @@ internal class MQTTDeviceManager internal constructor(
             v.deviceStore.clear()
         }
     }
-
 
     private fun fixDeviceStoreWhileFull(old: Map<String, DeviceStoreWrapper>): Map<String, DeviceStoreWrapper> {
         ld("检查设备集合 ${old.size}")

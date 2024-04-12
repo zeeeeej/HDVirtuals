@@ -1,10 +1,11 @@
 package com.yunext.virtuals.module.devicemanager
 
 
-import com.yunext.kmp.mqtt.data.HDMqttMessage
+import com.yunext.kmp.http.datasource.hdJson
 import com.yunext.kmp.mqtt.virtuals.protocol.ProtocolMQTTContainer
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.yunext.kmp.mqtt.virtuals.protocol.ProtocolMQTTMessage
+import com.yunext.kmp.mqtt.virtuals.protocol.payload
+import kotlinx.serialization.json.JsonObject
 
 /**
  * 对接受来的MqttMessage消息进行处理
@@ -13,21 +14,20 @@ import kotlinx.serialization.json.Json
 interface MQTTConvertor {
     fun decode(source: ByteArray): ProtocolMQTTContainer<*>
 
-    fun encode(message: HDMqttMessage): ByteArray
+    fun encode(message: ProtocolMQTTMessage): ByteArray
 }
 
 class DefaultMqttConvertor : MQTTConvertor {
     override fun decode(source: ByteArray): ProtocolMQTTContainer<*> {
-        //TODO("序列化")
-        val json = ""//String(charArrayOf(source))
-        val msg =    Json.decodeFromString<ProtocolMQTTContainer<*>>(json)
+        val json = source.decodeToString()
+        val msg = hdJson.decodeFromString<ProtocolMQTTContainer<JsonObject>>(json)
             ?: throw IllegalStateException("decode result is null")
         return msg
     }
 
-    override fun encode(message: HDMqttMessage): ByteArray {
-        //TODO("序列化")
-        return Json.encodeToString(message).encodeToByteArray()
+    override fun encode(message: ProtocolMQTTMessage): ByteArray {
+        val payload = message.payload
+        return payload
     }
 
     private data class Param<T : Any>(val cmd: String, val params: T)

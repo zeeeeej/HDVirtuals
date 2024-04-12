@@ -1,17 +1,10 @@
 package com.yunext.virtuals
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -19,17 +12,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.yunext.kmp.common.logger.HDLogger
-import com.yunext.kmp.common.util.hdMD5
+import com.yunext.kmp.resource.initHDRes
 import com.yunext.virtuals.bridge.OrientationType
 import com.yunext.virtuals.bridge.changeKeyBoardType
 import com.yunext.virtuals.bridge.orientationTypeStateFlow
 import com.yunext.virtuals.bridge.text
 import com.yunext.virtuals.module.devicemanager.initDeviceManager
-import com.yunext.virtuals.ui.initHDRes
+import com.yunext.virtuals.ui.screen.DemoScreen
 import com.yunext.virtuals.ui.screen.VoyagerApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 private val initApp: CoroutineScope.() -> Unit = {
     launch {
@@ -111,9 +103,7 @@ fun App() {
         }
 
         LaunchedEffect(Unit) {
-            runBlocking {
-                initApp()
-            }
+            initApp()
             hasInit = true
         }
         AnimatedVisibility(hasInit) {
@@ -127,7 +117,11 @@ fun App() {
             curOrientationType = orientationType
         }
 
-        Column(modifier = Modifier.padding(start = 100.dp, top = 50.dp)) {
+        Column(
+            modifier = Modifier.padding(start = 100.dp, top = 50.dp).verticalScroll(
+                rememberScrollState()
+            )
+        ) {
 
             Button(onClick = {
                 changeKeyBoardType(
@@ -139,6 +133,20 @@ fun App() {
             }, modifier = Modifier) {
                 Text("->${curOrientationType.text}")
             }
+
+            var showDebug  by remember { mutableStateOf(false) }
+            Button(onClick = {
+                showDebug = !showDebug
+
+            }, modifier = Modifier) {
+                Text("测试")
+            }
+
+            if (showDebug){
+                DemoScreen()
+            }
+
+
         }
 
 

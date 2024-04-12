@@ -1,8 +1,16 @@
 package com.yunext.kmp.mqtt.virtuals.protocol.tsl
 
+import com.yunext.kmp.common.logger.HDLogger
+import com.yunext.kmp.mqtt.virtuals.protocol.hdJson
+import com.yunext.kmp.mqtt.virtuals.repository.convert
+import com.yunext.kmp.resp.tsl.TslItemPropertyResp
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+
 /**
  * Struct内部属性集合
  */
+@Serializable
 class TslItemProperty(
 
     val identifier: String,
@@ -29,23 +37,36 @@ class TslItemProperty(
 //
 //        }.type
 
+
         fun from(json: String): List<TslItemProperty> {
             return try {
-                TODO("序列化")
-//                gson.fromJson<List<TslItemPropertyResp>>(json, TYPE)
-//                    .map(TslItemPropertyResp::convert)
+                hdJson.decodeFromString<List<TslItemPropertyResp>>(json)
+                    .map(TslItemPropertyResp::convert)
+            } catch (e: Throwable) {
+                HDLogger.d("TslItemProperty::from", "e:$e")
+                e.printStackTrace()
+                listOf()
+            }
+        }
 
-            }catch (e:Throwable){
+        fun from(element: JsonElement): List<TslItemProperty> {
+            return try {
+                hdJson.decodeFromString<List<TslItemProperty>>(element.toString())
+            } catch (e: Throwable) {
                 listOf()
             }
         }
     }
 }
 
+//typealias Item = @Serializable List<TslItemProperty>
+
 internal val TslItemProperty.display: String
     get() {
         return "$name<$identifier> [$dataType] "
     }
+
+
 
 
 

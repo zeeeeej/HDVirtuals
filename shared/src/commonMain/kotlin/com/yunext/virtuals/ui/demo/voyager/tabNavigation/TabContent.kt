@@ -33,7 +33,7 @@ fun Tab.TabContent() {
             Column {
                 InnerTabNavigation()
                 screen.Content()
-                HDLogger.d("Navigator", "Last Event: ${navigator.lastEvent}")
+                //HDLogger.d("Navigator", "Last Event: ${navigator.lastEvent}")
             }
         }
     }

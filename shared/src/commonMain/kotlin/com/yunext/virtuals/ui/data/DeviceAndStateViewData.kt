@@ -2,7 +2,7 @@ package com.yunext.virtuals.ui.data
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import com.yunext.virtuals.ui.HDRes
+import com.yunext.kmp.resource.HDRes
 import com.yunext.virtuals.ui.common.DrawableResourceFactory
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -10,14 +10,16 @@ import kotlin.jvm.JvmStatic
 import kotlin.random.Random
 
 
-//@Serializable
-@Immutable
 @Stable
+@Serializable
 data class DeviceAndStateViewData(
     val name: String,
     val communicationId: String,
     val model: String,
     val status: DeviceStatus,
+    val propertyList: List<PropertyData>,
+//    val eventList: List<EventData>,
+//    val serviceList: List<ServiceData>,
 ) {
 
     companion object {
@@ -29,7 +31,8 @@ data class DeviceAndStateViewData(
                     name = "虚拟设备 -> $it",
                     communicationId = "通信id -> $it",
                     model = "设备型号 -> $it",
-                    status = DeviceStatus.random()
+                    status = DeviceStatus.random(), emptyList()
+//                    status = DeviceStatus.random(), emptyList(), emptyList(), emptyList()
                 )
             }
 
@@ -39,7 +42,8 @@ data class DeviceAndStateViewData(
                     name = "虚拟设备 - $it",
                     communicationId = "通信id - $it",
                     model = "设备型号 - $it",
-                    status = DeviceStatus.random()
+                    status = DeviceStatus.random(), emptyList()
+//                    status = DeviceStatus.random(), emptyList(), emptyList(), emptyList()
                 )
             }
         }
@@ -50,9 +54,12 @@ data class DeviceAndStateViewData(
                 "设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01",
                 "通信id",
                 "设备型号",
-                DeviceStatus.random()
+                DeviceStatus.random(), emptyList(),
+//                DeviceStatus.random(), emptyList(), emptyList(), emptyList()
             )
         }
+
+
     }
 }
 
@@ -66,24 +73,28 @@ data class DeviceAndStateViewData(
 //}
 //@Serializable()
 
-@Immutable
+@Serializable
 @Stable
 sealed class DeviceStatus(val type: DeviceType, val state: DeviceState) {
     @Immutable
     @Stable
-    object WiFiOnLine : DeviceStatus(DeviceType.WIFI, DeviceState.ONLINE)
+    @Serializable
+    data object WiFiOnLine : DeviceStatus(DeviceType.WIFI, DeviceState.ONLINE)
 
     @Immutable
     @Stable
-    object WiFiOffLine : DeviceStatus(DeviceType.WIFI, DeviceState.OFFLINE)
+    @Serializable
+    data object WiFiOffLine : DeviceStatus(DeviceType.WIFI, DeviceState.OFFLINE)
 
     @Immutable
     @Stable
-    object GPRSOnLine : DeviceStatus(DeviceType.GPRS, DeviceState.ONLINE)
+    @Serializable
+    data object GPRSOnLine : DeviceStatus(DeviceType.GPRS, DeviceState.ONLINE)
 
     @Immutable
     @Stable
-    object GPRSOffLine : DeviceStatus(DeviceType.GPRS, DeviceState.OFFLINE)
+    @Serializable
+    data object GPRSOffLine : DeviceStatus(DeviceType.GPRS, DeviceState.OFFLINE)
     companion object {
         internal fun random(): DeviceStatus {
             return listOf(WiFiOnLine, WiFiOffLine, GPRSOnLine, GPRSOffLine).random()

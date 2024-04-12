@@ -1,7 +1,6 @@
 package com.yunext.virtuals.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,14 +20,12 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.yunext.virtuals.ui.HDRes
+import com.yunext.kmp.resource.HDRes
 import com.yunext.virtuals.ui.common.HDImage
-import com.yunext.virtuals.ui.hdRes
 import com.yunext.virtuals.ui.screen.devicelist.DeviceListScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 internal class SplashScreen : Screen {

@@ -3,6 +3,7 @@ package com.yunext.virtuals.ui.screen.devicedetail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
@@ -21,87 +23,105 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.valueStr
 import com.yunext.kmp.resource.color.app_appColor
 import com.yunext.kmp.resource.color.app_blue_light
 import com.yunext.kmp.resource.color.app_textColor_333333
 import com.yunext.kmp.resource.color.app_textColor_999999
-import com.yunext.virtuals.ui.data.randomText
+import com.yunext.virtuals.ui.data.PropertyValueWrapper
 import com.yunext.virtuals.ui.theme.ItemDefaults
 
 @Composable
-internal fun <T> StructItemList(list: List<T>) {
-
-    LazyColumn(modifier = Modifier.heightIn(max = ItemDefaults.contentValueMaxHeight)) {
+internal fun StructItemList(list: List<PropertyValueWrapper>) {
+    LazyColumn(modifier = Modifier
+        .heightIn(max = ItemDefaults.contentValueMaxHeight)
+    ) {
         itemsIndexed(list, key = { _, data ->
-            data.toString()
+            data.real.key.identifier
         }) { index, data ->
-            StructItem(data)
-            if (index < list.size) {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(.5.dp)
-                        .background(ItemDefaults.contentBorderColor)
+            StructItem(data, showLine = index < list.size)
+        }
+
+    }
+}
+
+@Composable
+private fun StructItem(data: PropertyValueWrapper, showLine: Boolean) {
+    val type by remember(data) {
+        mutableStateOf(data.real.key.type.text)
+    }
+
+    val name by remember(data) {
+        mutableStateOf(data.real.key.name)
+    }
+
+    val key by remember(data) {
+        mutableStateOf(data.real.key.identifier)
+    }
+
+    val value by remember(data) {
+        mutableStateOf(data.real.valueStr)
+    }
+    Column {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+                .padding(start = 17.dp, end = 26.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(verticalArrangement = Arrangement.Center) {
+                Text(
+                    text = name,
+                    fontSize = 16.sp,
+                    color = app_textColor_333333,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = key,
+                    fontSize = 11.sp,
+                    color = app_textColor_999999,
+                    fontWeight = FontWeight.Normal
                 )
             }
-        }
+            Spacer(modifier = Modifier.width(55.dp))
+            Text(
+                text = value,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Right,
+                color = app_textColor_333333,
+                fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            LabelPart(type, app_appColor, app_blue_light,TextAlign.Right)
 
+
+        }
+        if (showLine) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(.5.dp)
+                    .background(ItemDefaults.contentBorderColor)
+            )
+        }
     }
+
 }
 
 @Composable
-private fun <T> StructItem(data: T) {
-    val type by remember {
-        mutableStateOf(ItemDefaults.valueTypes.random())
-    }
-
-    val name by remember {
-        mutableStateOf(randomText())
-    }
-
-    val key by remember {
-        mutableStateOf(randomText())
-    }
-
-    val value by remember {
-        mutableStateOf(randomText())
-    }
-
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .height(40.dp)
-            .padding(start = 17.dp, end = 26.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(verticalArrangement = Arrangement.Center) {
-            Text(text = name, fontSize = 16.sp,color= app_textColor_333333, fontWeight = FontWeight.Bold)
-            Text(text = key, fontSize = 11.sp,color= app_textColor_999999, fontWeight = FontWeight.Normal)
-        }
-        Spacer(modifier = Modifier.width(55.dp))
-        Text(
-            text = value,
-            fontSize = 16.sp,
-            color = app_textColor_333333,
-            fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        LabelPart(type, app_appColor, app_blue_light)
-    }
-}
-
-@Composable
-internal fun LabelPart(label: String, fontColor: Color, background: Color) {
+internal fun LabelPart(label: String, fontColor: Color, background: Color,textAlign: TextAlign = TextAlign.Center) {
     Text(
         text = label,
         fontSize = 11.sp,
         color = fontColor,
         modifier = Modifier
-
             .background(color = background, shape = ItemDefaults.labelShape)
             .padding(horizontal = 8.dp, vertical = 3.dp)
+            .widthIn(min = 36.dp), textAlign = textAlign
     )
 }
 
@@ -115,5 +135,18 @@ internal fun BottomPart(desc: String) {
         )
     }
 
+}
+
+
+// TODO FIX
+@Composable
+internal fun StructItemListFix(list: List<*>) {
+    LazyColumn(modifier = Modifier.heightIn(max = ItemDefaults.contentValueMaxHeight)) {
+        itemsIndexed(list, key = { _, data ->
+            data.toString()
+        }) { index, data ->
+        }
+
+    }
 }
 

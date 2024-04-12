@@ -1,0 +1,138 @@
+{
+  "id": "659f76a1efca760a8ffd4c67",
+  "version": "20240307091852297",
+  "productKey": "uch7zis3n9rzbnh3",
+  "current": true,
+  "events": [],
+  "properties": [
+    {
+      "identifier": "addPro",
+      "name": "????",
+      "dataType": "int",
+      "specs": {
+        "min": 0,
+        "max": 255,
+        "unit": "min",
+        "unitName": null,
+        "size": null,
+        "step": null,
+        "length": 16,
+        "type": null,
+        "item": null,
+        "enumDesc": null,
+        "coefficient": null,
+        "signed": null,
+        "bigEndian": null,
+        "hexStr": null
+      },
+      "allocated": null,
+      "operateType": null,
+      "accessMode": "r",
+      "required": null,
+      "desc": "??????"
+    },
+    {
+      "identifier": "boolStatus",
+      "name": "????",
+      "dataType": "bool",
+      "specs": {
+        "min": null,
+        "max": null,
+        "unit": null,
+        "unitName": null,
+        "size": null,
+        "step": null,
+        "length": 1,
+        "type": null,
+        "item": null,
+        "enumDesc": {
+          "0": "?",
+          "1": "?"
+        },
+        "coefficient": null,
+        "signed": null,
+        "bigEndian": null,
+        "hexStr": null
+      },
+      "allocated": null,
+      "operateType": null,
+      "accessMode": "rw",
+      "required": null,
+      "desc": ""
+    },
+    {
+      "identifier": "enumStatus",
+      "name": "????",
+      "dataType": "struct",
+      "specs": {
+        "min": null,
+        "max": null,
+        "unit": null,
+        "unitName": null,
+        "size": null,
+        "step": null,
+        "length": 1,
+        "type": null,
+        "item": [
+          {
+            "identifier": "p1",
+            "name": "??1",
+            "dataType": "int",
+            "specs": {
+              "min": 0,
+              "max": 255,
+              "unit": "min",
+              "unitName": null,
+              "size": null,
+              "step": null,
+              "length": 1,
+              "type": null,
+              "item": [],
+              "enumDesc": {},
+              "coefficient": null,
+              "signed": null,
+              "bigEndian": null,
+              "hexStr": null
+            },
+            "allocated": null,
+            "operateType": null
+          },
+          {
+            "identifier": "p2",
+            "name": "??2",
+            "dataType": "float",
+            "specs": {
+              "min": 0,
+              "max": 255,
+              "unit": "unit",
+              "unitName": null,
+              "size": null,
+              "step": null,
+              "length": 1,
+              "type": null,
+              "item": [],
+              "enumDesc": {},
+              "coefficient": null,
+              "signed": null,
+              "bigEndian": null,
+              "hexStr": null
+            },
+            "allocated": null,
+            "operateType": null
+          }
+        ],
+        "enumDesc": null,
+        "coefficient": null,
+        "signed": null,
+        "bigEndian": null,
+        "hexStr": null
+      },
+      "allocated": null,
+      "operateType": null,
+      "accessMode": "r",
+      "required": null,
+      "desc": ""
+    }
+  ],
+  "skills": []
+}

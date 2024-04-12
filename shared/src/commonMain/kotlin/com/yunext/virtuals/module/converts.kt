@@ -1,101 +1,30 @@
 package com.yunext.virtuals.module
 
-import com.yunext.kmp.http.tsl.TslEventResp
-import com.yunext.kmp.http.tsl.TslItemPropertyResp
-import com.yunext.kmp.http.tsl.TslParamResp
-import com.yunext.kmp.http.tsl.TslPropertyResp
-import com.yunext.kmp.http.tsl.TslResp
-import com.yunext.kmp.http.tsl.TslServiceResp
-import com.yunext.kmp.http.tsl.TslSpecResp
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.Tsl
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslEvent
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslItemProperty
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslParam
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslProperty
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslPropertyType
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslService
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslSpec
+import com.yunext.kmp.common.logger.HDLogger
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.BooleanPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.DatePropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.DoubleArrayPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.DoublePropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.FloatArrayPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.FloatPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.IntArrayPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.IntEnumPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.IntPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyValue
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.StructArrayPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.StructArrayPropertyValue
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.StructPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.TextArrayPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.TextEnumPropertyKey
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.TextPropertyKey
 import com.yunext.virtuals.data.device.MQTTDevice
 import com.yunext.virtuals.data.device.TwinsDevice
 import com.yunext.virtuals.module.repository.DeviceDTO
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.DeviceStatus
 import com.yunext.virtuals.ui.data.DeviceType
-
-fun TslResp.convert() = Tsl(
-    id = this.id ?: "",
-    version = this.version ?: "",
-    productKey = this.productKey ?: "",
-    current = this.current ?: false,
-    events = this.events?.map {
-        it.convert()
-    } ?: listOf<TslEvent>(),
-    properties = this.properties?.map(TslPropertyResp::convert) ?: listOf(),
-    services = this.services?.map(TslServiceResp::convert) ?: listOf(),
-
-    )
-
-fun TslEventResp.convert() = TslEvent(
-    identifier = this.identifier ?: "",
-    name = this.name ?: "",
-    type = this.type ?: "",
-    required = this.required ?: false,
-    desc = this.desc ?: "",
-    method = this.method ?: "",
-    outputData = this.outputData?.map { it.converts() } ?: listOf(),
-)
-
-internal fun TslItemPropertyResp.convert() = TslItemProperty(
-    identifier = identifier ?: "",
-    name = name ?: "",
-    dataType = TslPropertyType.from(dataType ?: ""),
-    specs = specs?.convert(),
-)
-
-fun TslParamResp.converts() = this.run {
-    TslParam(
-        identifier = this.identifier ?: "",
-        name = this.name ?: "",
-        dataType = this.dataType ?: "",
-        specs = this.specs?.convert()
-    )
-}
-
-fun TslPropertyResp.convert() = TslProperty(
-    accessMode = accessMode ?: "",
-    required = required ?: false,
-    desc = desc ?: "",
-    identifier = identifier ?: "",
-    name = name ?: "",
-    dataType = TslPropertyType.from(dataType ?: ""),
-    specs = specs?.convert(),
-)
-
-fun TslServiceResp.convert() = TslService(
-    identifier = this.identifier ?: "",
-    name = this.name ?: "",
-    callType = this.callType ?: "",
-    required = this.required ?: false,
-    desc = this.desc ?: "",
-    method = this.method ?: "",
-    inputData = this.inputData?.map(TslParamResp::converts) ?: listOf(),
-    outputData = this.outputData?.map(TslParamResp::converts) ?: listOf(),
-)
-
-fun TslSpecResp.convert() = this.run {
-    TslSpec(
-        min = this.min,
-        max = this.max,
-        unit = this.unit,
-        unitName = this.unitName,
-        size = this.size,
-        step = this.step,
-        length = this.length,
-        type = this.type,
-        item = this.item,
-        enumDesc = this.enumDesc
-    )
-}
+import com.yunext.virtuals.ui.data.PropertyData
+import com.yunext.virtuals.ui.data.PropertyValueWrapper
 
 fun DeviceDTO.toDeviceAndState() = DeviceAndStateViewData(
     name = this.name,
@@ -104,7 +33,8 @@ fun DeviceDTO.toDeviceAndState() = DeviceAndStateViewData(
     status = when (this.type) {
         DeviceType.WIFI -> DeviceStatus.WiFiOffLine
         DeviceType.GPRS -> DeviceStatus.GPRSOffLine
-    }
+    }, propertyList = emptyList(),
+//    }, propertyList = emptyList(), eventList = emptyList(), serviceList = emptyList()
 )
 
 fun DeviceAndStateViewData.toDeviceDTO() = DeviceDTO(
@@ -127,4 +57,63 @@ fun DeviceDTO.toMqttDevice(): MQTTDevice {
         communicationType = this.type
 
     )
+}
+
+
+fun Map<String, PropertyValue<*>>?.toPropertyDataList(): List<PropertyData> {
+    if (this.isNullOrEmpty()) return emptyList()
+    return this.map { (k, v) ->
+        val name: String = v.key.name
+        val key: String = k
+        val required: Boolean = v.key.required
+        val readWrite: PropertyData.ReadWrite = when (v.key.accessMode) {
+            "r" -> PropertyData.ReadWrite.R
+            "rw" -> PropertyData.ReadWrite.RW
+            "w" -> PropertyData.ReadWrite.W
+            else -> PropertyData.ReadWrite.UnKnow
+        }
+        val propertyKey = v.key
+        val type = propertyKey.type
+        val innerType = when (propertyKey) {
+            is DoubleArrayPropertyKey ->  listOf( propertyKey.itemType)
+            is FloatArrayPropertyKey -> listOf( propertyKey.itemType)
+            is IntArrayPropertyKey ->  listOf( propertyKey.itemType)
+            is StructArrayPropertyKey -> listOf( propertyKey.itemType)
+            is TextArrayPropertyKey -> listOf( propertyKey.itemType)
+            is BooleanPropertyKey -> emptyList()
+            is DatePropertyKey -> emptyList()
+            is DoublePropertyKey -> emptyList()
+            is IntEnumPropertyKey -> listOf( propertyKey.enumType)
+            is TextEnumPropertyKey -> listOf( propertyKey.enumType)
+            is FloatPropertyKey -> emptyList()
+            is IntPropertyKey -> emptyList()
+            is StructPropertyKey -> propertyKey.items.map { it.type }
+            is TextPropertyKey -> emptyList()
+        }
+        val desc: String = v.key.desc
+        HDLogger.d(
+            "::toPropertyDataList", "-----------\n" + """
+            id          :   $k
+            type        :   $type
+            v           :   $v
+            v.value     :   ${
+                when (v) {
+                    is StructArrayPropertyValue -> v.value.size.toString()
+                    else -> v.displayValue
+                }
+            }
+            v.display   :   ${v.displayValue}
+        """.trimIndent()
+        )
+        PropertyData(
+            name = name,
+            key = key,
+            required = required,
+            readWrite = readWrite,
+            type = type,
+            innerType = innerType,
+            desc = desc,
+            value = PropertyValueWrapper( v)
+        )
+    }
 }

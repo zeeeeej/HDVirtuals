@@ -1,8 +1,11 @@
-package com.yunext.kmp.http.tsl
+package com.yunext.kmp.resp.tsl
+
+import kotlinx.serialization.Serializable
 
 /**
  * 属性集合
  */
+@Serializable
 class TslPropertyResp(
     /* 属性读写类型：只读（r）或读写（rw） */
     val accessMode:String?,

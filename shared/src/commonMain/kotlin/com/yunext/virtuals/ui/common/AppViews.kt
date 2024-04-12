@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yunext.kmp.resource.HDRes
 import com.yunext.kmp.resource.color.China
 import com.yunext.kmp.resource.color.app_appColor
 import com.yunext.kmp.resource.color.app_background_brush
@@ -53,11 +54,10 @@ import com.yunext.kmp.resource.color.app_button_brush
 import com.yunext.kmp.resource.color.app_textColor_333333
 import com.yunext.kmp.resource.color.app_textColor_666666
 import com.yunext.kmp.resource.color.app_textColor_999999
+import com.yunext.kmp.resource.hdRes
 import com.yunext.kmp.ui.compose.Debug
-import com.yunext.virtuals.ui.HDRes
 import com.yunext.virtuals.ui.data.DeviceStatus
 import com.yunext.virtuals.ui.data.iconRes
-import com.yunext.virtuals.ui.hdRes
 import com.yunext.virtuals.ui.screen.LocalPaddingValues
 import com.yunext.virtuals.ui.theme.Twins
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -173,7 +173,7 @@ fun TwinsEmptyView() {
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun TwinsEmptyViewForDevice() {
-    Debug("TwinsHomePage-内容-设备列表-空")
+    Debug { "TwinsHomePage-内容-设备列表-空" }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

@@ -1,5 +1,7 @@
 package com.yunext.kmp.http.core
 
+import com.yunext.kmp.resp.http.HttpResponse
+
 /* Http接口返回格式比较固定，采用以下方式解析 */
 
 // 接口返回的基本数据
@@ -7,21 +9,21 @@ package com.yunext.kmp.http.core
 interface HttpResponseContainer
 
 // 接口数据
-interface HttpResponse
+// interface HttpResponse
 
 // 解析器
 interface HttpResponseParser<in Container : HttpResponseContainer> {
     // 解析出HttpResult<HttpResponse>
-    fun <RESP : HttpResponse> parse(container: Container): HttpResult<RESP>
+    fun <RESP : HttpResponse> parse(container: Container): HDResult<RESP>
 
     // 解析出HttpResult<Boolean>
-    fun parseToBoolean(container: Container): HttpResult<Boolean>
+    fun parseToBoolean(container: Container): HDResult<Boolean>
 }
 
 // 解析数据过程
 suspend fun <Container : HttpResponseContainer, RESP : HttpResponse> HttpResponseParser<Container>.suspendParse(
     block: suspend () -> Container,
-): HttpResult<RESP> {
+): HDResult<RESP> {
     return try {
         parse<RESP>(block())
     } catch (e: Throwable) {
@@ -33,7 +35,7 @@ suspend fun <Container : HttpResponseContainer, RESP : HttpResponse> HttpRespons
 fun <Container : HttpResponseContainer, RESP : HttpResponse, DATA> HttpResponseParser<Container>.parseToData(
     container: Container,
     map: (RESP) -> DATA
-): HttpResult<DATA> {
+): HDResult<DATA> {
     return parse<RESP>(container).map(map)
 }
 
@@ -41,7 +43,7 @@ fun <Container : HttpResponseContainer, RESP : HttpResponse, DATA> HttpResponseP
 suspend fun <Container : HttpResponseContainer, RESP : HttpResponse, DATA> HttpResponseParser<Container>.suspendParseToData(
     map: (RESP) -> DATA,
     block: suspend () -> Container
-): HttpResult<DATA> {
+): HDResult<DATA> {
     return try {
         parseToData<Container, RESP, DATA>(block(), map)
     } catch (e: Throwable) {
@@ -52,7 +54,7 @@ suspend fun <Container : HttpResponseContainer, RESP : HttpResponse, DATA> HttpR
 // 解析数据过程+转换数据Boolean
 suspend fun <Container : HttpResponseContainer> HttpResponseParser<Container>.suspendParseToBoolean(
     block: suspend () -> Container
-): HttpResult<Boolean> {
+): HDResult<Boolean> {
     return try {
         parseToBoolean(block())
     } catch (e: Throwable) {
@@ -63,7 +65,7 @@ suspend fun <Container : HttpResponseContainer> HttpResponseParser<Container>.su
 
 suspend fun <T, R> parseData(
     convert: (T) -> R, block: suspend () -> T
-): HttpResult<R> {
+): HDResult<R> {
     return try {
         httpSuccess(convert(block()))
     } catch (e: Throwable) {

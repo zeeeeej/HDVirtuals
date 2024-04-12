@@ -1,11 +1,16 @@
 package com.yunext.kmp.mqtt.virtuals.protocol.tsl.property
 
 import com.yunext.kmp.common.logger.HDLogger
+import com.yunext.kmp.mqtt.virtuals.protocol.hdJson
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.Tsl
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslException
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslItemProperty
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslProperty
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslPropertyType
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 
 /**
@@ -19,12 +24,12 @@ import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslPropertyType
  */
 fun Tsl.tslHandleTsl2PropertyValues(): Map<String, PropertyValue<*>> {
     logger.ld("tslHandleTsl2PropertyValues")
-    val parseTsl2PropertyKeys = this.tslHandleParsePropertyKeys()
+    val parseTsl2PropertyKeys = this.toPropertyKeys()
     return parseTsl2PropertyKeys.map {
         val sIdentifier = it.key
         val sPropertyKey = it.value
         val result: Pair<String, PropertyValue<*>> =
-            sIdentifier to sPropertyKey.tslHandleDefaultValue()
+            sIdentifier to sPropertyKey.toDefaultValue()
         result
     }.toMap().also {
         logger.ld("tslHandleTsl2PropertyValues end. size= ${it.size}")
@@ -35,51 +40,11 @@ fun Tsl.tslHandleTsl2PropertyValues(): Map<String, PropertyValue<*>> {
  * StructArrayPropertyKey 创建默认的struct对象
  */
 fun StructArrayPropertyKey.defaultItemValue(): StructPropertyValue {
-    val key: StructPropertyKey = StructPropertyKey.fake(this.itemKeys)
+    val key: StructPropertyKey = StructPropertyKey.fakeKey(this.itemKeys)
     val v = this.itemKeys.map {
-        it to it.tslHandleDefaultValue()
+        it to it.toDefaultValue()
     }.toMap()
     return StructPropertyValue(key, v)
-}
-
-/*
- * 每个PropertyKey 初始化后的默认值
- * PropertyKey -> PropertyValue
- */
-fun PropertyKey.tslHandleDefaultValue(): PropertyValue<*> {
-    return when (this) {
-        is ArrayPropertyKey -> {
-            val arrayPropertyKey: ArrayPropertyKey = this
-            when (arrayPropertyKey) {
-                is IntArrayPropertyKey -> IntArrayPropertyValue(arrayPropertyKey, listOf())
-                is DoubleArrayPropertyKey -> DoubleArrayPropertyValue(
-                    arrayPropertyKey,
-                    listOf()
-                )
-
-                is FloatArrayPropertyKey -> FloatArrayPropertyValue(arrayPropertyKey, listOf())
-                is TextArrayPropertyKey -> TextArrayPropertyValue(arrayPropertyKey, listOf())
-                is StructArrayPropertyKey -> StructArrayPropertyValue(arrayPropertyKey, listOf())
-            }
-        }
-
-        is BooleanPropertyKey -> BoolPropertyValue(this, null)
-        is DatePropertyKey -> DatePropertyValue(this, null)
-        is DoublePropertyKey -> DoublePropertyValue(this, null)
-        is IntEnumPropertyKey -> IntEnumPropertyValue.from(this)
-        is TextEnumPropertyKey -> TextEnumPropertyValue.from(this)
-        is FloatPropertyKey -> FloatPropertyValue(this, null)
-        is IntPropertyKey -> IntPropertyValue(this, null)
-        is StructPropertyKey -> {
-            val items = this.items
-            val map = items.map { propertyKey ->
-                propertyKey to propertyKey.tslHandleDefaultValue()
-            }.toMap()
-            StructPropertyValue(this, map)
-        }
-
-        is TextPropertyKey -> TextPropertyValue(this, null)
-    }
 }
 
 
@@ -152,16 +117,19 @@ fun tslHandleUpdatePropertyValues(
     i("list = $list")
     i("size = " + oldMap.size)
     val iterator = map.iterator()
+    var count = 0
     while (iterator.hasNext()) {
         val next = iterator.next()
         val identifier = next.key
         list.forEach { listPV ->
             if (listPV.key.identifier == identifier) {
                 oldMap[identifier] = listPV
+                count++
             }
+
         }
     }
-    i("###############################################END")
+    i("###############################################END 更新数据$count")
     return oldMap
 }
 
@@ -173,6 +141,8 @@ fun tslHandleUpdatePropertyValues(
  * @return 键值对 key为物的属性id，值为any
  * ============================================================
  */
+
+@Deprecated("delete")
 fun PropertyValue<*>.tslHandleToJsonValue(structInArray: Boolean = false): Pair<String, Any?> {
     val identifier = this.key.identifier
     when (this) {
@@ -275,10 +245,10 @@ fun PropertyValue<*>.tslHandleToJsonValue(structInArray: Boolean = false): Pair<
             val sourceList = this.value
             val list: MutableList<Any> = mutableListOf()
             // 1.先遍历StructArrayPropertyValue::value
-            sourceList.take(size).forEach { structPropertyValue: StructPropertyValue ->
+            sourceList.take(size).forEach { structPropertyValue ->
                 // 2.再遍历StructPropertyValue::itemValues
                 val innerMap: MutableMap<String, Any?> = mutableMapOf()
-                structPropertyValue.itemValues.forEach { innerItem ->
+                structPropertyValue.forEach { innerItem ->
                     val innerKey = innerItem.key
                     val innerValue = innerItem.value
                     val finalValue = innerValue.tslHandleToJsonValue(true)
@@ -292,7 +262,8 @@ fun PropertyValue<*>.tslHandleToJsonValue(structInArray: Boolean = false): Pair<
     }
 }
 
-fun List<PropertyValue<*>>.tslHandleToJsonValues(): Map<String, Any> {
+@Deprecated("use TslValueParser")
+fun List<PropertyValue<*>>.tslHandleToJsonValues(): Map<String, *> {
     val map: MutableMap<String, Any> = mutableMapOf()
     this.map { propertyValue ->
         val r = propertyValue.tslHandleToJsonValue()
@@ -317,15 +288,8 @@ fun List<PropertyValue<*>>.tslHandleToJsonValues(): Map<String, Any> {
 //    return jsonObject.toString()
 //}
 
-/**
- * 解析TslProperty转化成分类的PropertyKey
- *
- * @param tslProperty 未处理未分类过的原始的属性
- * @return 分类好的PropertyKey
- */
-internal fun tslHandleParsePropertyKey(
-    tslProperty: TslProperty,
-): PropertyKey? {
+fun TslProperty.toPropertyKey():PropertyKey? {
+    val tslProperty = this
     val identifier = tslProperty.identifier
     val inner = tslProperty.inner
     val prefix = if (inner) "|————" else "|"
@@ -416,11 +380,18 @@ internal fun tslHandleParsePropertyKey(
 
                 specs = tslProperty.specs?.enumDesc?.let {
                     try {
-                        val json = it.toString()
-                        parseEnumText(json)
+                        val json = when (it) {
+                            is JsonArray -> null
+                            is JsonObject -> it.toString()
+                            is JsonPrimitive -> null
+                            JsonNull -> null
+                        }
+                        parseEnumTextInt(json ?: "").map { (k, v) ->
+                            BoolPropertyValue.KeyValue(k, v)
+                        }
                     } catch (e: Throwable) {
-                        e.printStackTrace()
-                        null
+                        //e.printStackTrace()
+                        emptyList()
                     }
                 }
                     ?: throw TslException("bool类型值异常:${tslProperty.specs?.enumDesc} @${identifier}")
@@ -440,10 +411,16 @@ internal fun tslHandleParsePropertyKey(
                     tslProperty.name,
                     specs = tslProperty.specs?.enumDesc?.let {
                         try {
-                            val json = it.toString()
-                            parseEnumText(json).map { pair ->
-                                IntEnumPropertyValue.KeyValue(pair.first, pair.second)
+                            val json = when (it) {
+                                is JsonArray -> null
+                                is JsonObject -> it.toString()
+                                is JsonPrimitive -> null
+                                JsonNull -> null
+                            } ?: ""
+                            val result = parseEnumTextInt(json).map { (k, v) ->
+                                IntEnumPropertyValue.KeyValue(k, v)
                             }
+                            result
                         } catch (e: Throwable) {
                             e.printStackTrace()
                             null
@@ -460,9 +437,15 @@ internal fun tslHandleParsePropertyKey(
                     tslProperty.name,
                     specs = tslProperty.specs?.enumDesc?.let {
                         try {
-                            val json = it.toString()
-                            parseEnumTextString(json).map { pair ->
-                                TextEnumPropertyValue.KeyValue(pair.first, pair.second)
+                            val json = when (it) {
+                                is JsonArray -> null
+                                is JsonObject -> it.toString()
+                                is JsonPrimitive -> null
+                                JsonNull -> null
+                            } ?: ""
+
+                            parseEnumTextString(json).map { (k, v) ->
+                                TextEnumPropertyValue.KeyValue(k, v)
                             }
                         } catch (e: Throwable) {
                             e.printStackTrace()
@@ -487,12 +470,18 @@ internal fun tslHandleParsePropertyKey(
                 tslProperty.name,
                 items = run {
                     val properties = (tslProperty.specs?.item?.let {
-                        TslItemProperty.from(it.toString())
+                        val json = when (it) {
+                            is JsonArray -> it.toString()
+                            is JsonObject -> null
+                            is JsonPrimitive -> null
+                            JsonNull -> null
+                        } ?: ""
+                        TslItemProperty.from(json)
                     })
-                    if (properties == null || properties.isEmpty()) throw TslException("struct没有指定的item")
-                    properties.map {
-                        tslHandleParsePropertyKey(TslProperty.from(it))
-                    }.filterNotNull()
+                    if (properties.isNullOrEmpty()) throw TslException("struct没有指定的item TslPropertyType.STRUCT @$identifier")
+                    properties.mapNotNull {
+                        TslProperty.from(it).toPropertyKey()
+                    }
                 }
             )
         }
@@ -558,12 +547,28 @@ internal fun tslHandleParsePropertyKey(
                         tslProperty.name,
                         size = tslProperty.specs?.length ?: 0,
                         itemKeys = tslProperty.specs?.item?.let {
-                            val json = it.toString()
+                            val json = when (it) {
+                                is JsonArray -> it.toString()
+                                is JsonObject -> null
+                                is JsonPrimitive -> null
+                                JsonNull -> null
+                            } ?: ""
+
                             val itemProperty = TslItemProperty.from(json)
-                            if (itemProperty.isEmpty()) throw TslException("struct没有指定的item")
-                            itemProperty.map {
-                                tslHandleParsePropertyKey(TslProperty.from(it))
-                            }.filterNotNull()
+                            if (itemProperty.isEmpty()) throw TslException(
+                                """
+                                struct没有指定的item TslPropertyType.ARRAY/TslPropertyType.STRUCT  @$identifier 
+                                identifier = identifier
+                                json       = $json 
+                                item       = $it
+                            """.trimIndent()
+                            )
+
+                            val dest = itemProperty.mapNotNull { property ->
+                                TslProperty.from(property).toPropertyKey()
+                            }
+                            logger.ld("====>TslPropertyType.ARRAY/TslPropertyType.STRUCT dest:$dest")
+                            dest
                         } ?: listOf()
                     )
 
@@ -576,28 +581,47 @@ internal fun tslHandleParsePropertyKey(
     }
 }
 
+/**
+ * 解析TslProperty转化成分类的PropertyKey ok!
+ *
+ * @param tslProperty 未处理未分类过的原始的属性
+ * @return 分类好的PropertyKey
+ */
+@Deprecated(
+    "tslHandleParsePropertyKey废弃了，使用TslProperty.toPropertyKey()代替。",
+    ReplaceWith("tslProperty.toPropertyKey()")
+)
+internal fun tslHandleParsePropertyKey(
+    tslProperty: TslProperty,
+): PropertyKey? {
+    return tslProperty.toPropertyKey()
+}
 
-private fun parseEnumTextString(json: String): List<Pair<String, String>> {
-    if (json.isEmpty()) return listOf()
+/**
+ * 解析:
+ * {"01": "烟雾报警","02": "浸水报警","03": "通讯故障"}
+ * OK
+ */
+private fun parseEnumTextString(json: String): Map<String, String> {
+    if (json.isEmpty()) return emptyMap()
     return try {
-        // TODO("序列化")
-        listOf()
-        //gson.fromJson<Map<String, String>>(json, Map::class.java).toList()
+        hdJson.decodeFromString<Map<String, String>>(json)
     } catch (e: Throwable) {
-        listOf()
+        emptyMap()
     }
 }
 
-private fun parseEnumText(json: String): List<Pair<Int, String>> {
-    if (json.isEmpty()) return listOf()
+/**
+ * 解析:
+ * {"1":"上","2":"下","3":"左","4":"右"}
+ * OK
+ */
+private fun parseEnumTextInt(json: String): Map<Int, String> {
+    if (json.isEmpty()) return emptyMap()
     return try {
-//        gson.fromJson<Map<String, String>>(json, Map::class.java).map {
-//            it.key.toInt() to it.value
-//        }
-        // TODO("序列化")
-        listOf()
+        hdJson.decodeFromString<Map<Int, String>>(json)
     } catch (e: Throwable) {
-        listOf()
+        emptyMap()
     }
 }
 
@@ -993,17 +1017,17 @@ fun PropertyValue<*>.tslHandleUpdatePropertyValueFromJson(json: String?): Proper
 /**
  * 解析Tsl 转化成分类的PropertyKey的集合
  *
- * @return 分类好的PropertyKey的集合map key为物的属性id，值为解析好的分类的PropertyKey
+ * @return 分类好的PropertyKey的集合map 。key为物的属性id，值为解析好的分类的PropertyKey
  */
-fun Tsl.tslHandleParsePropertyKeys(): Map<String, PropertyKey> {
+internal fun Tsl.toPropertyKeys(): Map<String, PropertyKey> {
     return try {
-        logger.ld("tslHandleParsePropertyKeys a")
+        logger.ld("toPropertyKeys a")
         val properties = properties
         if (properties.isEmpty()) return mapOf()
         val all: MutableMap<String, PropertyKey> = mutableMapOf()
         properties.forEach { tslProperty ->
             val id = tslProperty.identifier
-            val key = tslHandleParsePropertyKey(tslProperty)
+            val key = tslProperty.toPropertyKey()
             if (key != null) {
                 all[id] = key
             }
@@ -1011,10 +1035,10 @@ fun Tsl.tslHandleParsePropertyKeys(): Map<String, PropertyKey> {
         all
     } catch (e: Throwable) {
         e.printStackTrace()
-        logger.ld("tslHandleParsePropertyKeys error $e")
+        logger.ld("toPropertyKeys error $e")
         mapOf()
     } finally {
-        logger.ld("tslHandleParsePropertyKeys z")
+        logger.ld("toPropertyKeys z")
     }
 }
 

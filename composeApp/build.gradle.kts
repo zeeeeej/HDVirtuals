@@ -74,6 +74,7 @@ kotlin {
             implementation(libs.mqtt3.client)
             implementation(libs.mqtt3.android.service)
             implementation(libs.androidx.legacy.support.v4)
+            implementation(libs.kotlinx.coroutines.android)
 
         }
         commonMain.dependencies {
@@ -89,10 +90,15 @@ kotlin {
             implementation(projects.hdcontext)
             implementation(projects.hdcommon)
             implementation(projects.hdresource)
+
+            implementation(libs.napier)
+            implementation(libs.kotlinx.coroutines.core)
+
         }
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 }

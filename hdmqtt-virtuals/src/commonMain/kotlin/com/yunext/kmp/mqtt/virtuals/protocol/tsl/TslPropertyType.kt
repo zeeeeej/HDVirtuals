@@ -1,5 +1,7 @@
 package com.yunext.kmp.mqtt.virtuals.protocol.tsl
 
+import kotlinx.serialization.Serializable
+
 /*
     * DataTypeEnum
     * 属性类型
@@ -13,6 +15,8 @@ package com.yunext.kmp.mqtt.virtuals.protocol.tsl
     * struct（结构体类型，可包含前面7种类型，下面使用"specs":[{}]描述包含的对象）
     * array（数组类型，支持int、double、float、text、struct）
     */
+@Serializable
+//@Deprecated("无法区分ENUM<int> ENUM<text> ARRAY<int> ...")
 enum class TslPropertyType( val text: String) {
     INT("int"),
     FLOAT("float"),

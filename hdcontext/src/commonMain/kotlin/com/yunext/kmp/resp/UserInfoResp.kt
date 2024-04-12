@@ -1,6 +1,5 @@
-package com.yunext.kmp.http
+package com.yunext.kmp.resp
 
-import com.yunext.kmp.http.core.HttpResponse
 
 data class UserInfoResp(
     val fileId: String? = null,
@@ -12,6 +11,6 @@ data class UserInfoResp(
     val region: String? = null,
     val address: String? = null,
     val phone: String? = null
-): HttpResponse
+)
 
 

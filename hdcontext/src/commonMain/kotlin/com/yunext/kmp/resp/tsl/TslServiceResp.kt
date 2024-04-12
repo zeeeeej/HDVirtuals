@@ -1,7 +1,9 @@
-package com.yunext.kmp.http.tsl
+package com.yunext.kmp.resp.tsl
 
-import com.yunext.kmp.http.tsl.TslParamResp
+import com.yunext.kmp.resp.tsl.TslParamResp
+import kotlinx.serialization.Serializable
 
+@Serializable
 class TslServiceResp(
     val identifier: String?,
     val name: String?,

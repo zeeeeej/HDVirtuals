@@ -1,5 +1,8 @@
-package com.yunext.kmp.http.tsl
+package com.yunext.kmp.resp.tsl
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 class TslEventResp(
     /* 唯一标识符（产品下唯一，其中post是默认生成的属性上报事件。）*/
     val identifier: String?,
