@@ -140,6 +140,7 @@ class DeviceStore(
     private var refreshTslJob: Job? = null
     private var registerTopicsJob: Job? = null
     private var initWatcherJob: Job? = null
+    private var iniDeviceInfoMakerJob: Job? = null
     /* ********* jobs z *********/
 
     init {
@@ -364,24 +365,32 @@ class DeviceStore(
         }
     }
 
+
     /**
      * 设备属性随机生成器
      */
     private fun iniDeviceInfoMaker() {
-        coroutineScope.launch {
+        iniDeviceInfoMakerJob?.cancel()
+        iniDeviceInfoMakerJob = null
+        iniDeviceInfoMakerJob = coroutineScope.launch {
             while (true) {
                 delay(1000)//
-                val rssi = Random.nextInt(99)
-                li("randomRssi - rssi:$rssi")
-                Napier.e("")
-                deviceStateHolderFlow.value.properties.forEach { (k, v) ->
-                    //li("randomRssi  比较${k}")
-                    if (k == "rssi" || k == "signalStrength") {
-                        val value = v as IntPropertyValue
-                        //li("randomRssi -3 rssi:$rssi $value")
-                        sendProperty(IntPropertyValue(v.key, -rssi), publishLimit = true)
+                if (mqttClient.hdMqttState.isConnected) {
+                    val rssi = Random.nextInt(99)
+                    li("randomRssi - rssi:$rssi")
+                    Napier.e("")
+                    deviceStateHolderFlow.value.properties.forEach { (k, v) ->
+                        //li("randomRssi  比较${k}")
+                        if (k == "rssi" || k == "signalStrength") {
+                            val value = v as IntPropertyValue
+                            sendProperty(
+                                IntPropertyValue.createValue(value.key, -rssi),
+                                publishLimit = true
+                            )
+                        }
                     }
                 }
+
             }
         }
     }

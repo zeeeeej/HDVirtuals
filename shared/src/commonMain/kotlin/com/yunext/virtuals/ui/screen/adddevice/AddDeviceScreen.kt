@@ -9,14 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.yunext.kmp.ui.compose.hdBackground
 import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
-import com.yunext.virtuals.ui.data.Effect
-import com.yunext.virtuals.ui.data.processing
-import com.yunext.virtuals.ui.screen.devicelist.DeviceListScreenModel
+import com.yunext.virtuals.ui.processing
 
 class AddDeviceScreen : Screen {
 

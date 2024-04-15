@@ -25,7 +25,7 @@ import com.yunext.kmp.mqtt.virtuals.test.MQTTVirtualsDemo
 import com.yunext.virtuals.ui.common.dialog.CHAlertDialog
 import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
-import com.yunext.virtuals.ui.data.processing
+import com.yunext.virtuals.ui.processing
 import com.yunext.virtuals.ui.screen.adddevice.AddDeviceScreen
 import com.yunext.virtuals.ui.screen.devicedetail.DeviceDetailScreen
 import io.ktor.utils.io.core.toByteArray

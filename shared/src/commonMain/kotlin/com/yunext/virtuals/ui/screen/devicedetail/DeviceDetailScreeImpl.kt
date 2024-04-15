@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ import com.yunext.kmp.ui.compose.hdBackground
 import com.yunext.virtuals.ui.common.HDImage
 import com.yunext.virtuals.ui.common.TwinsBackgroundBlock
 import com.yunext.virtuals.ui.common.TwinsTitle
+import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
 import com.yunext.virtuals.ui.common.dialog.XPopContainer
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.MenuData
@@ -144,6 +146,14 @@ internal fun DeviceDetailScreenImplNew(
 ) {
     TwinsBackgroundBlock()
     var showMenu by remember { mutableStateOf(false) }
+//    val propertyListSize by remember {
+//        derivedStateOf{
+//            device.propertyList.size
+//        }
+//    }
+
+
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {

@@ -10,11 +10,11 @@ import com.yunext.virtuals.module.devicemanager.DeviceInitializer
 import com.yunext.virtuals.module.devicemanager.MQTTConvertor
 import kotlin.reflect.KClass
 
-interface HDDevice{
-    val id:String
+interface HDDevice {
+    val id: String
 }
 
-class UnSupportDeviceException(clz:KClass<*>) : RuntimeException("暂不支持的设备类型$clz")
+class UnSupportDeviceException(clz: KClass<*>) : RuntimeException("暂不支持的设备类型$clz")
 sealed interface MQTTDevice : HDDevice {
 
     val rule: ProtocolMQTTRule
@@ -45,7 +45,6 @@ fun MQTTDevice.providerMqttConvertor(): MQTTConvertor {
     return when (this) {
         is AndroidDevice -> DefaultMqttConvertor()
         is TwinsDevice -> DefaultMqttConvertor()
-        else -> throw IllegalStateException("non convertor")
     }
 }
 

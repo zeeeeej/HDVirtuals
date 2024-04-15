@@ -16,7 +16,6 @@ import kotlinx.serialization.Serializable
     * array（数组类型，支持int、double、float、text、struct）
     */
 @Serializable
-//@Deprecated("无法区分ENUM<int> ENUM<text> ARRAY<int> ...")
 enum class TslPropertyType( val text: String) {
     INT("int"),
     FLOAT("float"),

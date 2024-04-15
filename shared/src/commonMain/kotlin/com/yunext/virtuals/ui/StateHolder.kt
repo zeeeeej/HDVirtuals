@@ -1,5 +1,6 @@
-package com.yunext.virtuals.ui.data
+package com.yunext.virtuals.ui
 
+import com.yunext.virtuals.ui.data.PlatformSerializable
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,15 +13,24 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 
 interface StateHolder<S, E> {
     val state: StateFlow<S>
 }
 
-sealed interface Effect {
+@Serializable
+sealed interface Effect:PlatformSerializable {
+    @Serializable
     object Idle : Effect
+    @Serializable
     object Processing : Effect
-    data class Fail(val e: Throwable) : Effect
+    @Serializable
+    data class Fail(
+        @Contextual
+        val e: Throwable) : Effect
+    @Serializable
     object Success : Effect
 }
 

@@ -156,6 +156,7 @@ class AndroidMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
     ) {
         mqttInfo("mqtt-android-subscribeTopic")
         if (!::client.isInitialized) return
+        if (!client.isConnected) return
 //        if (checkIsConnected()) {
         client.subscribe(topic, 0, null, object : IMqttActionListener {
             override fun onSuccess(asyncActionToken: IMqttToken?) {
@@ -178,6 +179,7 @@ class AndroidMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
     override fun unsubscribeTopic(topic: String, listener: OnActionListener) {
         mqttInfo("mqtt-android-unsubscribeTopic")
         if (!::client.isInitialized) return
+        if (!client.isConnected) return
         client.unsubscribe(topic, null, object : IMqttActionListener {
             override fun onSuccess(asyncActionToken: IMqttToken?) {
                 mqttInfo("subscribeTopic onSuccess $topic $asyncActionToken")
@@ -201,6 +203,7 @@ class AndroidMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
     ) {
         mqttInfo("mqtt-android-publish")
         if (!::client.isInitialized) return
+        if (!client.isConnected) return
         client.publish(
             topic,
             payload,

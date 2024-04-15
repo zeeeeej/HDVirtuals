@@ -20,7 +20,7 @@ data class DeviceAndStateViewData(
     val propertyList: List<PropertyData>,
 //    val eventList: List<EventData>,
 //    val serviceList: List<ServiceData>,
-) {
+) :PlatformSerializable{
 
     companion object {
 
@@ -75,7 +75,7 @@ data class DeviceAndStateViewData(
 
 @Serializable
 @Stable
-sealed class DeviceStatus(val type: DeviceType, val state: DeviceState) {
+sealed class DeviceStatus(val type: DeviceType, val state: DeviceState):PlatformSerializable {
     @Immutable
     @Stable
     @Serializable

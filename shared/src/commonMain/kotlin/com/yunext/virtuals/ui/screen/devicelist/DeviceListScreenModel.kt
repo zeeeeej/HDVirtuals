@@ -6,10 +6,10 @@ import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.virtuals.module.devicemanager.DeviceStoreWrapper
 import com.yunext.virtuals.module.devicemanager.deviceManager
 import com.yunext.virtuals.module.usecase.DeviceUseCase
+import com.yunext.virtuals.ui.Effect
 import com.yunext.virtuals.ui.common.HDStateScreenModel
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.DeviceStatus
-import com.yunext.virtuals.ui.data.Effect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.launchIn
@@ -18,8 +18,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 
 @Stable
+@Serializable
 data class DeviceListState(
     val list: List<DeviceAndStateViewData>,
     val effect: Effect,

@@ -6,6 +6,7 @@ import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslPropertyType
 import kotlinx.serialization.Serializable
 
 //<editor-fold desc="#PropertyKey">
+@Serializable
 sealed interface PropertyKey {
     /* 属性读写类型：只读（r）或读写（rw） */
     val accessMode: String
@@ -329,7 +330,7 @@ class IntArrayPropertyKey(
     name: String,
     size: Int,
 //    val items: List<PropertyKey>
-) : @Serializable ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
+) :  ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
     override val itemType: TslPropertyType = TslPropertyType.INT
 
     companion object : FakeKey<ArrayPropertyKey> {
@@ -354,7 +355,7 @@ class FloatArrayPropertyKey(
     identifier: String,
     name: String,
     size: Int,
-) : @Serializable ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
+) :  ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
     override val itemType: TslPropertyType = TslPropertyType.FLOAT
 
     companion object : FakeKey<ArrayPropertyKey> {
@@ -380,7 +381,7 @@ class DoubleArrayPropertyKey(
     identifier: String,
     name: String,
     size: Int,
-) : @Serializable ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
+) :  ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
     override val itemType: TslPropertyType = TslPropertyType.DOUBLE
 
     companion object : FakeKey<DoubleArrayPropertyKey> {
@@ -405,7 +406,7 @@ class TextArrayPropertyKey(
     identifier: String,
     name: String,
     size: Int,
-) : @Serializable ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
+) : ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
     override val itemType: TslPropertyType = TslPropertyType.TEXT
 
     companion object : FakeKey<ArrayPropertyKey> {
@@ -430,7 +431,7 @@ class StructArrayPropertyKey(
     name: String,
     size: Int,
     val itemKeys: List<PropertyKey>,
-) : @Serializable ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
+) :  ArrayPropertyKey(item, accessMode, required, desc, identifier, name, size) {
     override val itemType: TslPropertyType = TslPropertyType.STRUCT
 
     companion object : FakeKey<ArrayPropertyKey> {

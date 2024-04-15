@@ -4,7 +4,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.yunext.virtuals.module.usecase.DeviceUseCase
 import com.yunext.virtuals.ui.common.HDStateScreenModel
 import com.yunext.virtuals.ui.data.DeviceType
-import com.yunext.virtuals.ui.data.Effect
+import com.yunext.virtuals.ui.Effect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay

@@ -12,11 +12,11 @@ import com.yunext.virtuals.module.devicemanager.filterOrNull
 import com.yunext.virtuals.module.toDeviceDTO
 import com.yunext.virtuals.module.toMqttDevice
 import com.yunext.virtuals.module.toPropertyDataList
+import com.yunext.virtuals.ui.Effect
 import com.yunext.virtuals.ui.common.HDStateScreenModel
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.DeviceStatus
 import com.yunext.virtuals.ui.data.DeviceType
-import com.yunext.virtuals.ui.data.Effect
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -26,8 +26,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 
 
@@ -65,6 +63,7 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
         loadDataJob = screenModelScope.launch() {
             try {
                 val device = state.value.device
+                mutableState.value = state.value.copy(effect = Effect.Processing)
                 initMqtt(device)
                 delay(5000)
             } catch (e: Throwable) {
@@ -144,6 +143,11 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
         launch {
             deviceStore.deviceStateHolderFlow.collectLatest { deviceHolder ->
                 HDLogger.d(TAG, "::initMqtt changed $deviceHolder")
+                if (deviceHolder.tsl != null && state.value.effect != Effect.Success) {
+                    // 第一次加载
+                    mutableState.value = state.value.copy(effect = Effect.Success)
+                }
+
                 try {
                     val changedDevice =
                         (deviceHolder.device as? TwinsDevice) ?: throw UnSupportDeviceException(
@@ -182,6 +186,7 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
 //                            serviceList = emptyList()
                         ),
                     )
+
 
                 } catch (e: Throwable) {
                     //e.printStackTrace()
