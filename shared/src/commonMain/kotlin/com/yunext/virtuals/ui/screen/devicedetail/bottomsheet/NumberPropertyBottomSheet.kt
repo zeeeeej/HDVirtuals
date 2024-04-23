@@ -32,17 +32,19 @@ import com.yunext.kmp.resource.color.app_gray
 import com.yunext.kmp.resource.color.app_textColor_999999
 import com.yunext.virtuals.ui.common.DividerBlock
 import com.yunext.virtuals.ui.common.EditTextCenterBlock
+import com.yunext.virtuals.ui.common.StableValue
 import com.yunext.virtuals.ui.screen.devicedetail.TslEditor
 
 // <editor-fold desc="[修改int float double]">
 // 修改int float double a
 @Composable
 internal fun NumberPropertyBottomSheet(
-    property: PropertyValue<*>,
+    wrapper: StableValue<PropertyValue<*>>,
     edit:Boolean = true,
     onClose: () -> Unit,
     onCommitted: (PropertyValue<*>) -> Unit,
 ) {
+    val property = wrapper.value
     val title = if (edit) "修改" else "添加"
     val key = property.key
     val msg = key.nameAndKey

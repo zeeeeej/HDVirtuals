@@ -66,7 +66,7 @@ internal fun StructPropertyBottomSheet(
     onClose: () -> Unit,
     onCommitted: (StructPropertyValue) -> Unit,
 ) {
-    val property = wrapper.real
+    val property = wrapper.value
     val title = if (edit) "修改" else "添加"
     val key = property.key
     val spec = key.specDisplay
@@ -84,7 +84,7 @@ internal fun StructPropertyBottomSheet(
 
     TslEditor(title, msg, enable = true, onClose, onCommit = {
         val newValue = StructPropertyValue(property.key, list.associate { item ->
-            item.real.key to item.real
+            item.value.key to item.value
         })
         onCommitted.invoke(newValue)
     }) {
@@ -97,7 +97,7 @@ internal fun StructPropertyBottomSheet(
         ) {
             itemsIndexed(
                 items = list,
-                key = { _, item -> item.real.key.identifier }) { index, item ->
+                key = { _, item -> item.value.key.identifier }) { index, item ->
                 EditStructItem(item) { edit ->
                     list = (list - list[index] + edit).sortDefault()
                 }
@@ -121,8 +121,8 @@ private fun EditStructItem(
     value: PropertyValueWrapper,
     onValueChanged: (PropertyValueWrapper) -> Unit,
 ) {
-    val key = value.real.key.nameAndKey
-    when (val propertyValue = value.real) {
+    val key = value.value.key.nameAndKey
+    when (val propertyValue = value.value) {
         is DoubleArrayPropertyValue -> Struct_Not_Support_Array_Exception
         is FloatArrayPropertyValue -> Struct_Not_Support_Array_Exception
         is IntArrayPropertyValue -> Struct_Not_Support_Array_Exception
@@ -173,7 +173,7 @@ private fun EditStructItem(
             LaunchedEffect(Unit) {
                 doubleValue = propertyValue.value
             }
-            val unit = value.real.key.unitStr
+            val unit = value.value.key.unitStr
             StructItemForNumber(
                 propertyValue.key,
                 key,
@@ -200,7 +200,7 @@ private fun EditStructItem(
             LaunchedEffect(Unit) {
                 floatValue = propertyValue.value
             }
-            val unit = value.real.key.unitStr
+            val unit = value.value.key.unitStr
             StructItemForNumber(
                 propertyValue.key,
                 key,

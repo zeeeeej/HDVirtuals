@@ -169,7 +169,7 @@ private fun HeaderPart(data: PropertyData, onClick: () -> Unit) {
 
 @Composable
 private fun ContentPart(data: PropertyData) {
-    val spec = data.value.real.key.specDisplay
+    val spec = data.value.value.key.specDisplay
     Column(
         modifier = ItemDefaults.borderModifier
     ) {
@@ -183,7 +183,7 @@ private fun ContentPart(data: PropertyData) {
  */
 @Composable
 private fun ContentPartCurrentValue(data: PropertyData) {
-    when (val value = data.value.real) {
+    when (val value = data.value.value) {
         is DoubleArrayPropertyValue -> {
             ContentPartValueArrayForOther(value)
         }

@@ -14,9 +14,9 @@ import com.yunext.virtuals.ui.theme.ItemDefaults
 
 @Composable
 internal fun ContentPartValueStruct(wrapperPropertyData: PropertyValueWrapper) {
-    Debug("[recompose_test_02] ContentPartValueStruct ${wrapperPropertyData.hashCode()}/${wrapperPropertyData.real.key.identifier} ")
+    Debug("[recompose_test_02] ContentPartValueStruct ${wrapperPropertyData.hashCode()}/${wrapperPropertyData.value.key.identifier} ")
     val list by remember(wrapperPropertyData) {
-        val propertyValue = wrapperPropertyData.real as StructPropertyValue
+        val propertyValue = wrapperPropertyData.value as StructPropertyValue
         mutableStateOf(propertyValue.itemValues.values.map {
             it.wrap()
         })

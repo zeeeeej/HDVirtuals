@@ -384,7 +384,8 @@ fun EditTextCenterBlock(
     TextField(
         value = text,
         onValueChange = onValueChange,
-        modifier = modifier,
+        modifier = modifier.background(Color.Transparent),
+
         textStyle = Twins.twins_edit_text.copy(textAlign = textAlign),
         placeholder = {
             Text(
@@ -396,10 +397,11 @@ fun EditTextCenterBlock(
         singleLine = true,
         maxLines = 1,
         shape = RoundedCornerShape(12.dp),
-        colors = TextFieldDefaults.textFieldColors(
+        colors = TextFieldDefaults.colors().copy(
             cursorColor = China.r_luo_xia_hong,
             focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
 
         ), keyboardOptions = keyboardOptions, keyboardActions = keyboardActions
     )

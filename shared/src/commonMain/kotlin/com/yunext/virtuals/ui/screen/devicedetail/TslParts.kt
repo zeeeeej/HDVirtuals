@@ -3,7 +3,6 @@ package com.yunext.virtuals.ui.screen.devicedetail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +39,7 @@ internal fun StructItemList(list: List<PropertyValueWrapper>) {
         .heightIn(max = ItemDefaults.contentValueMaxHeight)
     ) {
         itemsIndexed(list, key = { _, data ->
-            data.real.key.identifier
+            data.value.key.identifier
         }) { index, data ->
             StructItem(data, showLine = index < list.size)
         }
@@ -51,19 +50,19 @@ internal fun StructItemList(list: List<PropertyValueWrapper>) {
 @Composable
 private fun StructItem(data: PropertyValueWrapper, showLine: Boolean) {
     val type by remember(data) {
-        mutableStateOf(data.real.key.type.text)
+        mutableStateOf(data.value.key.type.text)
     }
 
     val name by remember(data) {
-        mutableStateOf(data.real.key.name)
+        mutableStateOf(data.value.key.name)
     }
 
     val key by remember(data) {
-        mutableStateOf(data.real.key.identifier)
+        mutableStateOf(data.value.key.identifier)
     }
 
     val value by remember(data) {
-        mutableStateOf(data.real.valueStr)
+        mutableStateOf(data.value.valueStr)
     }
     Column {
         Row(

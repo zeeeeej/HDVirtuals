@@ -51,6 +51,8 @@ import com.yunext.kmp.resource.color.app_textColor_999999
 import com.yunext.kmp.ui.compose.CHPressedView
 import com.yunext.kmp.ui.compose.Debug
 import com.yunext.virtuals.ui.common.DividerBlock
+import com.yunext.virtuals.ui.common.StableValue
+import com.yunext.virtuals.ui.common.stable
 import com.yunext.virtuals.ui.data.wrapStruct
 import com.yunext.virtuals.ui.screen.devicedetail.TslEditor
 import kotlinx.coroutines.Dispatchers
@@ -61,13 +63,18 @@ import kotlinx.coroutines.withContext
 
 // <editor-fold desc="[修改array]">
 // 修改array a
+
 @Composable
 internal fun ArrayPropertyBottomSheet(
-    property: ArrayPropertyValue,
+    wrapper: StableValue<ArrayPropertyValue>,
     edit: Boolean = true,
     onClose: () -> Unit,
     onCommitted: (ArrayPropertyValue) -> Unit,
 ) {
+    Debug {
+        "ArrayPropertyBottomSheet property:$wrapper"
+    }
+    val property = wrapper.value
     var loading by remember { mutableStateOf(false) }
 
     val title by remember {
@@ -170,10 +177,13 @@ internal fun ArrayPropertyBottomSheet(
     }
 
     if (isAdding) {
+        Debug {
+            "ArrayPropertyBottomSheet isAdding true ->$property"
+        }
         when (property) {
             is DoubleArrayPropertyValue -> {
                 val empty = DoublePropertyValue.createValue(null)
-                NumberPropertyBottomSheet(empty, edit = false, onClose = {
+                NumberPropertyBottomSheet(empty.stable(), edit = false, onClose = {
                     isAdding = false
                 }, onCommitted = {
                     itemList = itemList + it
@@ -183,7 +193,7 @@ internal fun ArrayPropertyBottomSheet(
 
             is FloatArrayPropertyValue -> {
                 val empty = FloatPropertyValue.createValue(null)
-                NumberPropertyBottomSheet(empty, edit = false, onClose = {
+                NumberPropertyBottomSheet(empty.stable(), edit = false, onClose = {
                     isAdding = false
                 }, onCommitted = {
                     itemList = itemList + it
@@ -193,7 +203,7 @@ internal fun ArrayPropertyBottomSheet(
 
             is IntArrayPropertyValue -> {
                 val empty = IntPropertyValue.createValue(null)
-                NumberPropertyBottomSheet(empty, edit = false, onClose = {
+                NumberPropertyBottomSheet(empty.stable(), edit = false, onClose = {
                     isAdding = false
                 }, onCommitted = {
                     itemList = itemList + it
@@ -230,13 +240,13 @@ internal fun ArrayPropertyBottomSheet(
  */
 @Composable
 private fun ArrayItemList(list: List<Pair<String, String>>, onDelete: (Int) -> Unit) {
-    Debug {
-        "ArrayItemList = ${
-            list.joinToString("\n") { (identifier, valueStr) ->
-                "$identifier - $valueStr"
-            }
-        }"
-    }
+//    Debug {
+//        "ArrayItemList = ${
+//            list.joinToString("\n") { (identifier, valueStr) ->
+//                "$identifier - $valueStr"
+//            }
+//        }"
+//    }
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -244,7 +254,7 @@ private fun ArrayItemList(list: List<Pair<String, String>>, onDelete: (Int) -> U
     ) {
         itemsIndexed(
             items = list,
-            key = { _, (identifier, valueStr) -> "$identifier->$valueStr" }) { index, (identifier, valueStr) ->
+            key = { _, (identifier, valueStr) -> "$identifier->$valueStr" }) { index, (_, valueStr) ->
             ArrayItem(index, valueStr) {
                 onDelete.invoke(index)
             }

@@ -1,6 +1,7 @@
 package com.yunext.virtuals.ui.screen.devicedetail
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -22,15 +23,13 @@ import com.yunext.virtuals.ui.data.PropertyData
 import com.yunext.virtuals.ui.screen.devicedetail.bottomsheet.PropertyBottomSheet
 import com.yunext.virtuals.ui.screen.devicedetail.property.ListTslProperty
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 internal class DeviceDetailSubPropertyScreen(val device: DeviceAndStateViewData) : Screen {
 
 
     @Composable
     override fun Content() {
-        DeviceDetailSubPropertyScreenImpl(emptyList()){}
+        DeviceDetailSubPropertyScreenImpl(emptyList()) {}
     }
 }
 
@@ -45,9 +44,7 @@ internal fun DeviceDetailSubPropertyScreenImpl(
         val coroutineScope = rememberCoroutineScope()
         // 要修改的属性
         var editingProperty: PropertyData? by remember { mutableStateOf(null) }
-        // 是否添加属性
-        var addProperty by remember { mutableStateOf(false) }
-        //
+
         var showTips by remember {
             mutableStateOf("")
         }
@@ -64,53 +61,9 @@ internal fun DeviceDetailSubPropertyScreenImpl(
             }
         }
 
-        // 属性修改
-        val temp = editingProperty
-        if (temp != null) {
-            Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                PropertyBottomSheet(temp, onClose = {
-                    editingProperty = null
-                }, onCommitted = {
-                    editingProperty = null
-                    Napier.v("修改结果：${it.value.real.displayValue}")
-                    onPropertyChanged.invoke(it)
-//                    coroutineScope.launch {
-//                        showTips = "选择了$it"
-//                        Napier.v("修改结果：${it.value.displayValue}")
-//                        delay(3000)
-//                        showTips = ""
-//                    }
-                }, onAdd = false to {
-                    addProperty = true
-                })
-            }
-        }
-
-        // 属性添加
-        if (addProperty) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                ) {
-
-                    PropertyBottomSheet(editingProperty!!/* TODO */, onClose = {
-                        addProperty = false
-                    }, onCommitted = {
-                        addProperty = false
-                        coroutineScope.launch {
-                            showTips = "添加了$it"
-                            delay(3000)
-                            showTips = ""
-                        }
-
-                    }, onAdd = true to {
-
-                    }
-                    )
-                }
-            }
-        }
+        onEditing(editingProperty, onClose = {
+            editingProperty = null
+        }, onPropertyChanged)
 
         if (showTips.isNotEmpty()) {
             CHLoadingDialog(showTips) {
@@ -128,5 +81,34 @@ internal fun DeviceDetailSubPropertyScreenImpl(
 //                Napier.d("screenModel:${screenModel.hashCode()}")
         }
 
+    }
+}
+
+@Composable
+private fun BoxScope.onEditing(
+    editingProperty: PropertyData?,
+    onClose: () -> Unit,
+    onPropertyChanged: (PropertyData) -> Unit,
+) {
+    Debug {
+        "onEditing:${editingProperty.hashCode()}"
+    }
+    // 属性修改
+    if (editingProperty != null) {
+        Box(modifier = Modifier.Companion.align(Alignment.BottomCenter)) {
+            PropertyBottomSheet(editingProperty, onClose = {
+                onClose()
+            }, onCommitted = {
+                onClose()
+                Napier.v("修改结果：${it.value.value.displayValue}")
+                onPropertyChanged.invoke(it)
+//                    coroutineScope.launch {
+//                        showTips = "选择了$it"
+//                        Napier.v("修改结果：${it.value.displayValue}")
+//                        delay(3000)
+//                        showTips = ""
+//                    }
+            })
+        }
     }
 }

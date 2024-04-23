@@ -27,6 +27,8 @@ import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.nameAndKey
 import com.yunext.kmp.resource.color.app_appColor
 import com.yunext.kmp.resource.color.app_gray_f4f5f7
 import com.yunext.kmp.resource.color.app_textColor_333333
+import com.yunext.kmp.ui.compose.Debug
+import com.yunext.virtuals.ui.common.StableValue
 import com.yunext.virtuals.ui.screen.devicedetail.TslEditor
 
 // <editor-fold desc="[修改enum]">
@@ -36,11 +38,15 @@ import com.yunext.virtuals.ui.screen.devicedetail.TslEditor
  */
 @Composable
 internal fun EnumIntPropertyBottomSheet(
-    property: PropertyValue<*>,
+    wrapper: StableValue<PropertyValue<*>>,
     edit:Boolean = true,
     onClose: () -> Unit,
     onSelected: (PropertyValue<*>) -> Unit,
 ) {
+    Debug {
+        "EnumIntPropertyBottomSheet property:$wrapper"
+    }
+    val property = wrapper.value
     val title = if (edit) "修改" else "添加"
     val key = property.key
     val msg = key.nameAndKey
