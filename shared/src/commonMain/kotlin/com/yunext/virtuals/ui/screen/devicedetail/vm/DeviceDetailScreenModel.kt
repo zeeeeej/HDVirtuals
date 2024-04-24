@@ -1,9 +1,8 @@
-package com.yunext.virtuals.ui.screen.devicedetail
+package com.yunext.virtuals.ui.screen.devicedetail.vm
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.valueStr
 import com.yunext.virtuals.data.device.TwinsDevice
 import com.yunext.virtuals.data.device.UnSupportDeviceException
 import com.yunext.virtuals.module.devicemanager.DeviceStore
@@ -68,7 +67,7 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
                 delay(5000)
             } catch (e: Throwable) {
 //                e.printStackTrace()
-                Napier.e("${TAG}::loadData error $e")
+                Napier.e("$TAG::loadData error $e")
                 if (e is CancellationException) throw e
             } finally {
 
@@ -182,8 +181,8 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
 
                             // TODO
                             propertyList = deviceHolder.properties.toPropertyDataList(),
-//                            eventList = emptyList(),
-//                            serviceList = emptyList()
+                            eventList = emptyList(),
+                            serviceList = emptyList()
                         ),
                     )
 

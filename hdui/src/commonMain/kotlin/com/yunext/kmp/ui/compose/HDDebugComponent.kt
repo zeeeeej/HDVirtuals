@@ -20,7 +20,7 @@ fun Debug(msg: String, tag: String = TAG, debug: Boolean = DEBUG) {
 fun Debug(tag: String = TAG, debug: Boolean = DEBUG, msg: () -> String) {
     if (debug) {
         SideEffect {
-            println("_${tag}_ $msg")
+            println("_${tag}_ ${msg.invoke()}")
         }
     }
 }

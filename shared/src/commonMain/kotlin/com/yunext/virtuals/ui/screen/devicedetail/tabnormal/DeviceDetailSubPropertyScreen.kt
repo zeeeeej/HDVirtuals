@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail
+package com.yunext.virtuals.ui.screen.devicedetail.tabnormal
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,10 +36,13 @@ internal class DeviceDetailSubPropertyScreen(val device: DeviceAndStateViewData)
 
 @Composable
 internal fun DeviceDetailSubPropertyScreenImpl(
-    list: List<PropertyData>,
+    source: List<PropertyData>,
     onPropertyChanged: (PropertyData) -> Unit,
 ) {
-    Debug("[recompose_test_01] DeviceDetailSubPropertyScreenImpl size:${list.size} ")
+    Debug("[recompose_test_01] DeviceDetailSubPropertyScreenImpl size:${source.size} ")
+    val list by rememberSaveable(source) {
+        mutableStateOf(source)
+    }
     Box(Modifier.fillMaxSize()) {
         // HDDebugText("设备详情-属性")
         val coroutineScope = rememberCoroutineScope()

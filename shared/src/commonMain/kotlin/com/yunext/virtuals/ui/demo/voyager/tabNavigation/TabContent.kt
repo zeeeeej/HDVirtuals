@@ -20,7 +20,7 @@ import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.virtuals.ui.demo.voyager.basicNavigationScreen.BasicNavigationScreen
 
 @Composable
-fun Tab.TabContent() {
+fun Tab.TabContent(msg:String,onMsgChanged:(String)->Unit = {}) {
     val tabTitle = options.title
 
     LifecycleEffect(
@@ -31,7 +31,19 @@ fun Tab.TabContent() {
     Navigator(BasicNavigationScreen(index = 0)) { navigator ->
         SlideTransition(navigator) { screen ->
             Column {
-                InnerTabNavigation()
+                Row(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    TabNavigationButton(HomeTab)
+
+                    Spacer(modifier = Modifier.weight(.05f))
+
+                    TabNavigationButton(FavoritesTab(msg,onMsgChanged))
+
+                    Spacer(modifier = Modifier.weight(.05f))
+
+                    TabNavigationButton(ProfileTab)
+                }
                 screen.Content()
                 //HDLogger.d("Navigator", "Last Event: ${navigator.lastEvent}")
             }
@@ -41,24 +53,12 @@ fun Tab.TabContent() {
 
 @Composable
 private fun InnerTabNavigation() {
-    Row(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        TabNavigationButton(HomeTab)
 
-        Spacer(modifier = Modifier.weight(.05f))
-
-        TabNavigationButton(FavoritesTab)
-
-        Spacer(modifier = Modifier.weight(.05f))
-
-        TabNavigationButton(ProfileTab)
-    }
 }
 
 @Composable
 private fun RowScope.TabNavigationButton(
-    tab: Tab
+    tab: Tab,
 ) {
     val tabNavigator = LocalTabNavigator.current
 

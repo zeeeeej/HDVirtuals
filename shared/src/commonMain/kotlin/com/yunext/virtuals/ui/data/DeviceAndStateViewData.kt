@@ -18,8 +18,8 @@ data class DeviceAndStateViewData(
     val model: String,
     val status: DeviceStatus,
     val propertyList: List<PropertyData>,
-//    val eventList: List<EventData>,
-//    val serviceList: List<ServiceData>,
+    val eventList: List<EventData>,
+    val serviceList: List<ServiceData>,
 ) :PlatformSerializable{
 
     companion object {
@@ -31,8 +31,7 @@ data class DeviceAndStateViewData(
                     name = "虚拟设备 -> $it",
                     communicationId = "通信id -> $it",
                     model = "设备型号 -> $it",
-                    status = DeviceStatus.random(), emptyList()
-//                    status = DeviceStatus.random(), emptyList(), emptyList(), emptyList()
+                    status = DeviceStatus.random(), emptyList(), emptyList(), emptyList()
                 )
             }
 
@@ -42,8 +41,7 @@ data class DeviceAndStateViewData(
                     name = "虚拟设备 - $it",
                     communicationId = "通信id - $it",
                     model = "设备型号 - $it",
-                    status = DeviceStatus.random(), emptyList()
-//                    status = DeviceStatus.random(), emptyList(), emptyList(), emptyList()
+                    status = DeviceStatus.random(), emptyList(), emptyList(), emptyList()
                 )
             }
         }
@@ -54,8 +52,7 @@ data class DeviceAndStateViewData(
                 "设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01",
                 "通信id",
                 "设备型号",
-                DeviceStatus.random(), emptyList(),
-//                DeviceStatus.random(), emptyList(), emptyList(), emptyList()
+                DeviceStatus.random(), emptyList(), emptyList(), emptyList()
             )
         }
 

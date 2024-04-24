@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail
+package com.yunext.virtuals.ui.screen.devicedetail.tabnormal
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,18 +14,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
-import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import cafe.adriel.voyager.transitions.SlideTransition
-import com.yunext.kmp.common.logger.HDLogger
+import com.yunext.virtuals.ui.screen.devicedetail.SelectedHDDeviceTab
 
 internal sealed interface HDDeviceTab : Tab
 
-internal val deviceDetailTabs  by lazy{
-    listOf(PropertiesTab,EventsTab,ServicesTab)
+internal val HDDeviceTab.index: Int
+    get() = when (this) {
+        EventsTab -> 1
+        PropertiesTab -> 0
+        ServicesTab -> 2
+    }
+
+internal val deviceDetailTabs by lazy {
+    listOf(PropertiesTab, EventsTab, ServicesTab)
 }
 
 internal data object PropertiesTab : HDDeviceTab {
@@ -113,7 +117,7 @@ private fun InnerTabNavigation() {
 // tab+content
 @Composable
 private fun Tab.DeviceTabContent() {
-    val tabList by remember { mutableStateOf(listOf( PropertiesTab,EventsTab,ServicesTab)) }
+    val tabList by remember { mutableStateOf(listOf(PropertiesTab, EventsTab, ServicesTab)) }
 //    val tabTitle = options.title
 //    LifecycleEffect(
 //        onStarted = { HDLogger.d("Navigator", "Start tab $tabTitle") },
@@ -128,7 +132,7 @@ private fun Tab.DeviceTabContent() {
             val tabNavigator = LocalTabNavigator.current
             tabList.forEach { cur ->
                 SelectedHDDeviceTab(
-                    cur,
+                    cur.options.title,
                     this@DeviceTabContent == cur
                 ) {
                     tabNavigator.current = cur
@@ -173,7 +177,7 @@ private fun RowScope.TabNavigationImpl(
     val tabNavigator = LocalTabNavigator.current
     Box(Modifier.weight(1F)) {
         SelectedHDDeviceTab(
-            tab = tab,
+            tab = tab.options.title,
             selected = tabNavigator.current.key == tab.key
         ) {
             tabNavigator.current = tab

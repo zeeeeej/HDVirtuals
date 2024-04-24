@@ -26,6 +26,6 @@ object HomeTab : Tab {
 
     @Composable
     override fun Content() {
-        TabContent()
+        TabContent("home")
     }
 }

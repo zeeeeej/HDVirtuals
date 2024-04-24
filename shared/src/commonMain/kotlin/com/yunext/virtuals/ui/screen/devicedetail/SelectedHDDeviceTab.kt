@@ -15,7 +15,7 @@ import com.yunext.kmp.ui.compose.clickablePure
 
 @Composable
 internal fun SelectedHDDeviceTab(
-    tab: HDDeviceTab,
+    tab: String,
     selected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -23,7 +23,7 @@ internal fun SelectedHDDeviceTab(
         onClick()
     }, contentAlignment = Alignment.Center) {
         Text(
-            tab.options.title,
+            tab,
             style = TextStyle(color = if (selected) China.r_luo_xia_hong else Color.Black),
             modifier = Modifier
 

@@ -9,6 +9,7 @@ plugins {
 }
 
 kotlin {
+
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -17,7 +18,9 @@ kotlin {
         }
     }
 
-    jvm("desktop")
+    jvm("desktop"){
+
+    }
 
     listOf(
         iosX64(),
@@ -76,6 +79,9 @@ kotlin {
             implementation(libs.androidx.legacy.support.v4)
             implementation(libs.kotlinx.coroutines.android)
 
+
+
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -103,6 +109,8 @@ kotlin {
     }
 }
 
+
+
 android {
     namespace = "com.yunext.virtuals"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -117,6 +125,8 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+
+        multiDexEnabled = true
     }
     packaging {
         resources {
@@ -131,9 +141,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+
+        // https://developer.android.com/studio/write/java8-support#library-desugaring
+        // isCoreLibraryDesugaringEnabled = true
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+        // https://developer.android.com/studio/write/java8-support#library-desugaring
+        // coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     }
 }
 

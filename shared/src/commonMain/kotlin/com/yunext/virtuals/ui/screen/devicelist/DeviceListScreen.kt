@@ -27,10 +27,12 @@ import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.processing
 import com.yunext.virtuals.ui.screen.adddevice.AddDeviceScreen
-import com.yunext.virtuals.ui.screen.devicedetail.DeviceDetailScreen
+import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.DeviceDetailScreen
+import com.yunext.virtuals.ui.screen.devicedetail.tabvoyager.VoyagerDeviceDetailScreen
 import io.ktor.utils.io.core.toByteArray
 
 private val testHDMQTT2: MQTTVirtualsDemo by lazy { MQTTVirtualsDemo() }
+private const val UseVoyagerTab = false
 
 class DeviceListScreen : Screen {
 
@@ -60,7 +62,9 @@ class DeviceListScreen : Screen {
                     screenModel.doGetAllDevice()
                 },
                 onDeviceSelected = {
-                    navigator.push(DeviceDetailScreen(it))
+                    val detailScreen =
+                        if (UseVoyagerTab) VoyagerDeviceDetailScreen(it) else DeviceDetailScreen(it)
+                    navigator.push(detailScreen)
                 },
                 onActionAdd = {
                     navigator.push(AddDeviceScreen())

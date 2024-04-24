@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail
+package com.yunext.virtuals.ui.screen.devicedetail.tabnormal
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,27 +11,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.yunext.virtuals.ui.common.TwinsEmptyView
-import com.yunext.virtuals.ui.data.PropertyData
+import com.yunext.virtuals.ui.screen.devicedetail.ListTslService
 
-class DeviceDetailSubEventScreen : Screen {
+class DeviceDetailSubServiceScreen : Screen {
 
     @Composable
     override fun Content() {
-
-        DeviceDetailSubEventScreenImpl(emptyList())
+        DeviceDetailSubServiceScreenImpl()
     }
 }
 
 @Composable
-internal fun DeviceDetailSubEventScreenImpl(list: List<PropertyData>) {
+internal fun DeviceDetailSubServiceScreenImpl() {
     Box(Modifier.fillMaxSize()) {
-        // HDDebugText("设备详情-事件")
+        //HDDebugText("设备详情-服务")
+
+        val list by remember {
+            mutableStateOf(List(20) { it })
+        }
         if (list.isEmpty()) {
             TwinsEmptyView()
         } else {
             Box(Modifier.padding(horizontal = 16.dp)) {
-                ListTslEvent(list = list) {
-                    //
+                ListTslService(list = list) {
+
                 }
             }
         }

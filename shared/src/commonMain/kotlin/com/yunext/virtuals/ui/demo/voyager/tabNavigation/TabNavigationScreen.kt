@@ -22,14 +22,14 @@ import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 
 @Composable
-fun TabNavigationScreen() {
+fun TabNavigationScreen(msg:String,onMsgChanged:(String)->Unit) {
 
     TabNavigator(
         HomeTab,
         tabDisposable = {
             TabDisposable(
                 navigator = it,
-                tabs = listOf(HomeTab, FavoritesTab, ProfileTab)
+                tabs = listOf(HomeTab, FavoritesTab(msg,onMsgChanged), ProfileTab)
             )
         }
     ) { tabNavigator ->
@@ -45,7 +45,7 @@ fun TabNavigationScreen() {
             bottomBar = {
                 BottomNavigation {
                     TabNavigationItem(HomeTab)
-                    TabNavigationItem(FavoritesTab)
+                    TabNavigationItem(FavoritesTab(msg,onMsgChanged),)
                     TabNavigationItem(ProfileTab)
                 }
             }

@@ -6,7 +6,7 @@
 	<integer>10</integer>
 	<key>logs</key>
 	<dict>
-		<key>EA0FEA5D-742F-4A04-A5A3-09427BE4A1A7</key>
+		<key>1A409C40-442E-4590-B66C-944EDCC40F2F</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -15,7 +15,7 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>EA0FEA5D-742F-4A04-A5A3-09427BE4A1A7.xcactivitylog</string>
+			<string>1A409C40-442E-4590-B66C-944EDCC40F2F.xcactivitylog</string>
 			<key>hasPrimaryLog</key>
 			<true/>
 			<key>primaryObservable</key>
@@ -34,15 +34,15 @@
 			<key>signature</key>
 			<string>Resolve Packages</string>
 			<key>timeStartedRecording</key>
-			<real>734865640.40017998</real>
+			<real>735642517.30765998</real>
 			<key>timeStoppedRecording</key>
-			<real>734865650.82577395</real>
+			<real>735642520.00267506</real>
 			<key>title</key>
 			<string>Resolve Packages</string>
 			<key>uniqueIdentifier</key>
-			<string>EA0FEA5D-742F-4A04-A5A3-09427BE4A1A7</string>
+			<string>1A409C40-442E-4590-B66C-944EDCC40F2F</string>
 		</dict>
-		<key>EA97E3BB-A286-41CE-A8AE-816D3B647355</key>
+		<key>29B1118A-5583-4483-9707-524750F4094B</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -51,7 +51,7 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>EA97E3BB-A286-41CE-A8AE-816D3B647355.xcactivitylog</string>
+			<string>29B1118A-5583-4483-9707-524750F4094B.xcactivitylog</string>
 			<key>hasPrimaryLog</key>
 			<true/>
 			<key>primaryObservable</key>
@@ -70,13 +70,13 @@
 			<key>signature</key>
 			<string>Resolve Packages</string>
 			<key>timeStartedRecording</key>
-			<real>734856290.59895599</real>
+			<real>735642504.68540299</real>
 			<key>timeStoppedRecording</key>
-			<real>734856293.69158697</real>
+			<real>735642516.55833602</real>
 			<key>title</key>
 			<string>Resolve Packages</string>
 			<key>uniqueIdentifier</key>
-			<string>EA97E3BB-A286-41CE-A8AE-816D3B647355</string>
+			<string>29B1118A-5583-4483-9707-524750F4094B</string>
 		</dict>
 	</dict>
 </dict>

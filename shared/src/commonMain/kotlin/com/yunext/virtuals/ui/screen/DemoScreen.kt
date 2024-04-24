@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,8 @@ import kotlinx.coroutines.launch
 import com.yunext.kmp.http.testKtor
 import com.yunext.kmp.resp.tsl.display
 import io.github.aakira.napier.Napier
+
+expect fun gotoSetting()
 
 @Composable
 fun DemoScreen() {
@@ -74,6 +77,7 @@ fun DemoScreen() {
                 }
 
                 HDCommon -> {
+
                     coroutineScope.launch {
                         text = "md:${hdMD5(text)} ,random:${hdUUID(4)}"
                     }
@@ -118,6 +122,7 @@ fun DemoScreen() {
 
                 HDMqtt -> {
                     text = "todo ${module.moduleName}"
+
                 }
 
                 HDResource -> {
@@ -139,6 +144,8 @@ fun DemoScreen() {
                 coroutineScope.launch {
                     text = "md:${hdMD5(text)} ,random:${hdUUID(4)}"
                 }
+
+                gotoSetting()
             }) {
                 Text("hdcommon")
             }

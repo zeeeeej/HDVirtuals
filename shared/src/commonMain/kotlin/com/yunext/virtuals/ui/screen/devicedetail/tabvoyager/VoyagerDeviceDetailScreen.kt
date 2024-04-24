@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail
+package com.yunext.virtuals.ui.screen.devicedetail.tabvoyager
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,15 +18,22 @@ import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.MenuData
 import com.yunext.virtuals.ui.processing
 import com.yunext.virtuals.ui.screen.configwifi.ConfigWiFiScreen
+import com.yunext.virtuals.ui.screen.devicedetail.vm.DeviceDetailScreenModel
+import com.yunext.virtuals.ui.screen.devicedetail.vm.DeviceDetailState
 import com.yunext.virtuals.ui.screen.logger.LoggerScreen
 import com.yunext.virtuals.ui.screen.setting.SettingScreen
 
-data class DeviceDetailScreen(private val deviceAndState: DeviceAndStateViewData) : Screen {
-
+@Deprecated("详细见注释")
+/**
+ * 关于Screen的参数，必须支持kotlin.serialization。State<T>不行，回调也不行。
+ * 关于Screen下的Tab共享数据，ScreenModel不支持。
+ */
+data class VoyagerDeviceDetailScreen(
+    private val deviceAndState: DeviceAndStateViewData,
+) : Screen {
     @Composable
     override fun Content() {
-        // Old() // 传统TabRow实现
-        // TabNavigationScreen() // 参考嵌套tab
+
         val navigator = LocalNavigator.currentOrThrow
         val screenModel = rememberScreenModel {
             DeviceDetailScreenModel(
@@ -38,9 +45,9 @@ data class DeviceDetailScreen(private val deviceAndState: DeviceAndStateViewData
         }
 
         val state by screenModel.state.collectAsState()
-        Debug("[recompose_test_01] DeviceDetailScreen ${state.hashCode()} ")
-
-        DeviceDetailScreenImplNew(device = state.device, onLeft = {
+        Debug("[recompose_test_01] DeviceDetailScreen property size = ${state.device.propertyList.size} ")
+        // 内容
+        VoyagerDeviceDetailScreenImpl(device = state.device, onLeft = {
             navigator.pop()
         }, onMenuClick = {
             when (it) {
@@ -55,8 +62,9 @@ data class DeviceDetailScreen(private val deviceAndState: DeviceAndStateViewData
             screenModel.changeProperty(it)
         })
 
+        // 弹窗 loading 等
         var loading by remember { mutableStateOf(true) }
-        LaunchedEffect(state){
+        LaunchedEffect(state) {
             val effect = state.effect
             loading = effect.processing
         }

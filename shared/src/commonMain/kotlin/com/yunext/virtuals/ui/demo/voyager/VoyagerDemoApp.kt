@@ -8,9 +8,9 @@ import com.yunext.virtuals.ui.demo.voyager.tabNavigation.TabNavigationScreen
 
 @Composable
 fun VoyagerDemoApp() {
-    BasicNavigationScreen()
-//    BottomSheetNavigationScreen()
+//    BasicNavigationScreen()
+    BottomSheetNavigationScreen()
 //    KoinScreen()
 //    TabNavigationScreen()
-    NestedNavigationScreen()
+//    NestedNavigationScreen()
 }

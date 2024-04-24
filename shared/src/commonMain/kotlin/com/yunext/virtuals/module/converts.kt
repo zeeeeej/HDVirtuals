@@ -33,8 +33,7 @@ fun DeviceDTO.toDeviceAndState() = DeviceAndStateViewData(
     status = when (this.type) {
         DeviceType.WIFI -> DeviceStatus.WiFiOffLine
         DeviceType.GPRS -> DeviceStatus.GPRSOffLine
-    }, propertyList = emptyList(),
-//    }, propertyList = emptyList(), eventList = emptyList(), serviceList = emptyList()
+    }, propertyList = emptyList(), eventList = emptyList(), serviceList = emptyList()
 )
 
 fun DeviceAndStateViewData.toDeviceDTO() = DeviceDTO(

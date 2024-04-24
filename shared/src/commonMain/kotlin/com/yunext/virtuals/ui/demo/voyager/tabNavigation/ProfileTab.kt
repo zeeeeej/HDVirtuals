@@ -26,6 +26,6 @@ object ProfileTab : Tab {
 
     @Composable
     override fun Content() {
-        TabContent()
+        TabContent("profile")
     }
 }
