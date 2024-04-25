@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail.property
+package com.yunext.virtuals.ui.screen.devicedetail.deviceproperty
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -56,8 +56,6 @@ import com.yunext.kmp.ui.compose.hdBackgroundBrush
 import com.yunext.virtuals.ui.data.PropertyData
 
 import com.yunext.virtuals.ui.data.typeStr
-import com.yunext.virtuals.ui.screen.devicedetail.BottomPart
-import com.yunext.virtuals.ui.screen.devicedetail.LabelPart
 import com.yunext.virtuals.ui.theme.ItemDefaults
 
 // ----------------- properties ----------------- //

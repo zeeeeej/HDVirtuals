@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail.tabvoyager
+package com.yunext.virtuals.ui.screen.devicedetail.screenvoyager
 
 import HDDebugText
 import androidx.compose.foundation.layout.Box
@@ -12,7 +12,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,17 +23,12 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.yunext.kmp.ui.compose.clickablePure
 import com.yunext.kmp.ui.compose.hdBackground
-import com.yunext.virtuals.ui.data.EventData
-import com.yunext.virtuals.ui.data.PropertyData
-import com.yunext.virtuals.ui.data.ServiceData
 import com.yunext.virtuals.ui.data.randomText
-import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.DeviceDetailSubPropertyScreenImpl
-import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.EventsTab
-import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.HDDeviceTab
-import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.PropertiesTab
+import com.yunext.virtuals.ui.screen.devicedetail.screennormal.EventsTab
+import com.yunext.virtuals.ui.screen.devicedetail.screennormal.HDDeviceTab
+import com.yunext.virtuals.ui.screen.devicedetail.screennormal.PropertiesTab
 import com.yunext.virtuals.ui.screen.devicedetail.SelectedHDDeviceTab
-import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.ServicesTab
-import kotlinx.serialization.Contextual
+import com.yunext.virtuals.ui.screen.devicedetail.screennormal.ServicesTab
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 

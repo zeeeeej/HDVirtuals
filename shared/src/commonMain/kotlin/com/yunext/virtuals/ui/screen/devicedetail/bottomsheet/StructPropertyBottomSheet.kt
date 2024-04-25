@@ -117,7 +117,7 @@ internal fun StructPropertyBottomSheet(
 }
 
 @Composable
-private fun EditStructItem(
+internal fun EditStructItem(
     value: PropertyValueWrapper,
     onValueChanged: (PropertyValueWrapper) -> Unit,
 ) {

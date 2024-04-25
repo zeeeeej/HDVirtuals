@@ -599,7 +599,7 @@ val PropertyKey.nameAndKey: String
  * 每个PropertyKey 初始化后的默认值
  * PropertyKey -> PropertyValue
  */
-internal fun PropertyKey.toDefaultValue(): PropertyValue<*> {
+ fun PropertyKey.toDefaultValue(): PropertyValue<*> {
     return when (this) {
         is ArrayPropertyKey -> {
             val arrayPropertyKey: ArrayPropertyKey = this

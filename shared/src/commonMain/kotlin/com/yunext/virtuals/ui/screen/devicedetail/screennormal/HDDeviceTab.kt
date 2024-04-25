@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail.tabnormal
+package com.yunext.virtuals.ui.screen.devicedetail.screennormal
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

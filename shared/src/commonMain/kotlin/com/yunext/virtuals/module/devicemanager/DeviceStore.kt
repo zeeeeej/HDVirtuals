@@ -1,5 +1,6 @@
 package com.yunext.virtuals.module.devicemanager
 
+import androidx.compose.runtime.Stable
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.common.util.currentTime
 import com.yunext.kmp.context.HDContext
@@ -20,12 +21,15 @@ import com.yunext.kmp.mqtt.virtuals.protocol.tsl.event.tslHandleTsl2EventKeys
 import com.yunext.kmp.mqtt.virtuals.coroutine.hdMqttDisconnectSuspend
 import com.yunext.kmp.mqtt.virtuals.coroutine.hdMqttPublishSuspend
 import com.yunext.kmp.mqtt.virtuals.protocol.ProtocolMQTTMessage
+import com.yunext.kmp.mqtt.virtuals.protocol.ReplyServiceMQTTMessage
 import com.yunext.kmp.mqtt.virtuals.protocol.ReportMQTTMessage
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.Tsl
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslValueParser
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.display
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.DatePropertyValue
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.IntPropertyValue
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyValue
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.toDefaultValue
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.tslHandleToJsonValues
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.tslHandleTsl2PropertyValues
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.tslHandleUpdatePropertyValues
@@ -74,6 +78,14 @@ data class DeviceStateHolder(
     val properties: Map<String, PropertyValue<*>>,
     val events: Map<String, EventKey>,
     val services: Map<String, ServiceKey>,
+    val serviceHandlers: List<ServiceHandler>,
+)
+
+data class ServiceHandler(
+    val serviceKey: ServiceKey,
+    val input: List<PropertyValue<*>> = emptyList(),
+    val output: List<PropertyValue<*>> = emptyList(),
+    val auto: Boolean = false,
 )
 
 internal fun DeviceStore.wrap() = DeviceStoreWrapper(this)
@@ -101,7 +113,8 @@ class DeviceStore(
                 device = device,
                 properties = emptyMap(),
                 events = emptyMap(),
-                services = emptyMap()
+                services = emptyMap(),
+                serviceHandlers = emptyList()
             )
         )
     val deviceStateHolderFlow: StateFlow<DeviceStateHolder> =
@@ -345,7 +358,7 @@ class DeviceStore(
                 watcherList.forEach { hdWatcher ->
                     val watch = hdWatcher.watch(holder.properties)
                     if (watch != null) {
-                        sendEvent(
+                        sendEventInternal(
                             watch.first,
                             watch.second
                         )
@@ -374,7 +387,7 @@ class DeviceStore(
         iniDeviceInfoMakerJob = null
         iniDeviceInfoMakerJob = coroutineScope.launch {
             while (true) {
-                delay(1000)//
+                delay(10000)//
                 if (mqttClient.hdMqttState.isConnected) {
                     val rssi = Random.nextInt(99)
                     li("randomRssi - rssi:$rssi")
@@ -430,7 +443,17 @@ class DeviceStore(
      * 主动触发事件
      * todo
      */
-    fun sendEvent(key: EventKey, value: List<PropertyValue<*>>): Boolean {
+    fun sendEvent(key: String, value: List<PropertyValue<*>>): Boolean {
+        val stateHolder = deviceStateHolderFlow.value
+        val eventKey = stateHolder.events[key]
+        if (eventKey == null) {
+            lw("key:$key 不存在")
+            return false
+        }
+        return sendEventInternal(eventKey, value)
+    }
+
+    private fun sendEventInternal(key: EventKey, value: List<PropertyValue<*>>): Boolean {
         ld("sendEvent ${key.identifier}")
         val properties: MutableMap<String, PropertyValue<*>> = mutableMapOf()
         value.forEach { entry ->
@@ -440,14 +463,59 @@ class DeviceStore(
                 }
             }
         }
-
-        val finalMap = properties.values.toList().tslHandleToJsonValues()
-        if (finalMap.isEmpty()) return true
-        val map = mapOf(key.identifier to finalMap)
-//        TODO()
-//        publishInternal(ReportMQTTMessage(map), "::sendEvent")
+        val payload = TslValueParser.eventToJson(key, value).encodeToByteArray()
+        publishInternal(ReportMQTTMessage(payload), "::sendEvent")
         return true
     }
+
+    suspend fun handleService(
+        key: String,
+        input: List<PropertyValue<*>>,
+        delay: Long = 3000L,
+    ): Boolean {
+        val stateHolder = deviceStateHolderFlow.value
+        val serviceKey = stateHolder.services[key]
+        if (serviceKey == null) {
+            lw("key:$key 不存在")
+            return false
+        }
+        delay(delay)
+        handleServiceInternal(serviceKey, input)
+        return true
+    }
+
+    internal fun handleServiceInternal(serviceKey: ServiceKey, input: List<PropertyValue<*>>) {
+        val identifier = serviceKey.identifier
+        when (identifier) {
+            "requestTime" -> {
+                val outputValue = serviceKey.outputData.map {
+                    it.toDefaultValue()
+                }.map { propertyValue ->
+                    when {
+                        "time" == propertyValue.key.identifier && propertyValue is DatePropertyValue -> {
+                            // 处理input
+                            val size = input.size
+                            DatePropertyValue.createValue(propertyValue.key, currentTime().toString())
+                        }
+
+                        "time2" == propertyValue.key.identifier && propertyValue is DatePropertyValue -> {
+                            // 处理input
+                            DatePropertyValue.createValue(propertyValue.key, currentTime().toString())
+                        }
+
+                        else -> propertyValue
+                    }
+                }
+                val payload = TslValueParser.serviceToJson(serviceKey,input,outputValue).encodeToByteArray()
+                publishInternal(ReplyServiceMQTTMessage(payload, identifier), "::handleServiceInternal")
+            }
+
+            else -> {
+                lw("handleServiceInternal 不支持的服务$serviceKey")
+            }
+        }
+    }
+
     /* ********** api ************ z */
 
     private fun savePropertiesLocal(source: Map<String, PropertyValue<*>>, tag: String) {

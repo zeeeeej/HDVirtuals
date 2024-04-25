@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail
+package com.yunext.virtuals.ui.screen.devicedetail.deviceproperty
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyKey
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.valueStr
 import com.yunext.kmp.resource.color.app_appColor
 import com.yunext.kmp.resource.color.app_blue_light
@@ -35,8 +36,9 @@ import com.yunext.virtuals.ui.theme.ItemDefaults
 
 @Composable
 internal fun StructItemList(list: List<PropertyValueWrapper>) {
-    LazyColumn(modifier = Modifier
-        .heightIn(max = ItemDefaults.contentValueMaxHeight)
+    LazyColumn(
+        modifier = Modifier
+            .heightIn(max = ItemDefaults.contentValueMaxHeight)
     ) {
         itemsIndexed(list, key = { _, data ->
             data.value.key.identifier
@@ -47,6 +49,9 @@ internal fun StructItemList(list: List<PropertyValueWrapper>) {
     }
 }
 
+/**
+ * 参考[StructItemOnlyKey]
+ */
 @Composable
 private fun StructItem(data: PropertyValueWrapper, showLine: Boolean) {
     val type by remember(data) {
@@ -95,7 +100,7 @@ private fun StructItem(data: PropertyValueWrapper, showLine: Boolean) {
                 fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(16.dp))
-            LabelPart(type, app_appColor, app_blue_light,TextAlign.Right)
+            LabelPart(type, app_appColor, app_blue_light, TextAlign.Right)
 
 
         }
@@ -112,7 +117,12 @@ private fun StructItem(data: PropertyValueWrapper, showLine: Boolean) {
 }
 
 @Composable
-internal fun LabelPart(label: String, fontColor: Color, background: Color,textAlign: TextAlign = TextAlign.Center) {
+internal fun LabelPart(
+    label: String,
+    fontColor: Color,
+    background: Color,
+    textAlign: TextAlign = TextAlign.Center,
+) {
     Text(
         text = label,
         fontSize = 11.sp,
@@ -137,15 +147,79 @@ internal fun BottomPart(desc: String) {
 }
 
 
-// TODO FIX
 @Composable
-internal fun StructItemListFix(list: List<*>) {
+internal fun StructItemListFix(list: List<PropertyKey>) {
     LazyColumn(modifier = Modifier.heightIn(max = ItemDefaults.contentValueMaxHeight)) {
         itemsIndexed(list, key = { _, data ->
             data.toString()
         }) { index, data ->
+            StructItemOnlyKey(data, index < list.size)
         }
 
     }
+}
+
+/**
+ * 参考[StructItem]
+ */
+@Composable
+private fun StructItemOnlyKey(propertyKey: PropertyKey, showLine: Boolean) {
+    val type by remember(propertyKey) {
+        mutableStateOf(propertyKey.type.text)
+    }
+
+    val name by remember(propertyKey) {
+        mutableStateOf(propertyKey.name)
+    }
+
+    val key by remember(propertyKey) {
+        mutableStateOf(propertyKey.identifier)
+    }
+
+    Column {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+                .padding(start = 17.dp, end = 26.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(verticalArrangement = Arrangement.Center) {
+                Text(
+                    text = name,
+                    fontSize = 16.sp,
+                    color = app_textColor_333333,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = key,
+                    fontSize = 11.sp,
+                    color = app_textColor_999999,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+            Spacer(modifier = Modifier.width(55.dp))
+            Text(
+                text = "",
+                fontSize = 16.sp,
+                textAlign = TextAlign.Right,
+                color = app_textColor_333333,
+                fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            LabelPart(type, app_appColor, app_blue_light, TextAlign.Right)
+
+
+        }
+        if (showLine) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(.5.dp)
+                    .background(ItemDefaults.contentBorderColor)
+            )
+        }
+    }
+
 }
 

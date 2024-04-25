@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail.property
+package com.yunext.virtuals.ui.screen.devicedetail.deviceproperty
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -9,7 +9,6 @@ import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.StructPropertyValue
 import com.yunext.kmp.ui.compose.Debug
 import com.yunext.virtuals.ui.data.PropertyValueWrapper
 import com.yunext.virtuals.ui.data.wrap
-import com.yunext.virtuals.ui.screen.devicedetail.StructItemList
 import com.yunext.virtuals.ui.theme.ItemDefaults
 
 @Composable

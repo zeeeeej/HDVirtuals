@@ -27,8 +27,8 @@ import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.processing
 import com.yunext.virtuals.ui.screen.adddevice.AddDeviceScreen
-import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.DeviceDetailScreen
-import com.yunext.virtuals.ui.screen.devicedetail.tabvoyager.VoyagerDeviceDetailScreen
+import com.yunext.virtuals.ui.screen.devicedetail.screennormal.DeviceDetailScreen
+import com.yunext.virtuals.ui.screen.devicedetail.screenvoyager.VoyagerDeviceDetailScreen
 import io.ktor.utils.io.core.toByteArray
 
 private val testHDMQTT2: MQTTVirtualsDemo by lazy { MQTTVirtualsDemo() }

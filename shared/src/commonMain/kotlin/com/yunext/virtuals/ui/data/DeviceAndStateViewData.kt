@@ -1,6 +1,5 @@
 package com.yunext.virtuals.ui.data
 
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.yunext.kmp.resource.HDRes
 import com.yunext.virtuals.ui.common.DrawableResourceFactory
@@ -8,7 +7,6 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import kotlin.jvm.JvmStatic
 import kotlin.random.Random
-
 
 @Stable
 @Serializable
@@ -20,12 +18,13 @@ data class DeviceAndStateViewData(
     val propertyList: List<PropertyData>,
     val eventList: List<EventData>,
     val serviceList: List<ServiceData>,
-) :PlatformSerializable{
+) : PlatformSerializable {
 
     companion object {
 
         @JvmStatic
-        fun randomList(): List<DeviceAndStateViewData> =
+        @PublishedApi
+        internal fun randomList(): List<DeviceAndStateViewData> =
             List(Random.nextInt(10)) {
                 DeviceAndStateViewData(
                     name = "虚拟设备 -> $it",
@@ -35,7 +34,8 @@ data class DeviceAndStateViewData(
                 )
             }
 
-        val DEBUG_LIST: List<DeviceAndStateViewData> by lazy {
+        @PublishedApi
+        internal val DEBUG_LIST: List<DeviceAndStateViewData> by lazy {
             List(19) {
                 DeviceAndStateViewData(
                     name = "虚拟设备 - $it",
@@ -46,8 +46,9 @@ data class DeviceAndStateViewData(
             }
         }
 
+        @PublishedApi
         @JvmStatic
-        val DEBUG_ITEM by lazy {
+        internal val DEBUG_ITEM by lazy {
             DeviceAndStateViewData(
                 "设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01设备测试01",
                 "通信id",
@@ -72,23 +73,19 @@ data class DeviceAndStateViewData(
 
 @Serializable
 @Stable
-sealed class DeviceStatus(val type: DeviceType, val state: DeviceState):PlatformSerializable {
-    @Immutable
+sealed class DeviceStatus(val type: DeviceType, val state: DeviceState) : PlatformSerializable {
     @Stable
     @Serializable
     data object WiFiOnLine : DeviceStatus(DeviceType.WIFI, DeviceState.ONLINE)
 
-    @Immutable
     @Stable
     @Serializable
     data object WiFiOffLine : DeviceStatus(DeviceType.WIFI, DeviceState.OFFLINE)
 
-    @Immutable
     @Stable
     @Serializable
     data object GPRSOnLine : DeviceStatus(DeviceType.GPRS, DeviceState.ONLINE)
 
-    @Immutable
     @Stable
     @Serializable
     data object GPRSOffLine : DeviceStatus(DeviceType.GPRS, DeviceState.OFFLINE)

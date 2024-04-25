@@ -2,6 +2,7 @@ package com.yunext.kmp.mqtt.virtuals.protocol.tsl
 
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.mqtt.virtuals.protocol.hdJson
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.event.EventKey
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.BoolPropertyValue
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.BooleanPropertyKey
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.DatePropertyKey
@@ -34,8 +35,8 @@ import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.TextPropertyKey
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.TextPropertyValue
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.isEmpty
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.toPropertyKey
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.tslHandleParsePropertyKey
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.tslHandleToJsonValues
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.service.ServiceKey
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -85,6 +86,14 @@ interface TslValueParser {
      */
     fun fromJson(tsl: Tsl, json: String): List<PropertyValue<*>>
 
+
+    fun eventToJson(key: EventKey, values: List<PropertyValue<*>>): String
+    fun serviceToJson(
+        key: ServiceKey,
+        input: List<PropertyValue<*>>,
+        output: List<PropertyValue<*>>,
+    ): String
+
     companion object : TslValueParser by KotlinSerializableTslParser()
 }
 
@@ -100,6 +109,54 @@ class KotlinSerializableTslParser(private val kjson: Json = hdJson) : TslValuePa
                 }
             }
 
+        return kjson.encodeToString(result).also {
+            HDLogger.d("KotlinSerializableTslParser", "json = $it")
+        }
+    }
+
+    override fun eventToJson(key: EventKey, values: List<PropertyValue<*>>): String {
+        val k = key.identifier
+        val v =
+            buildJsonObject {
+                values.forEach { propertyValue ->
+                    toJsonSingle(propertyValue)
+                }
+            }
+        val result = buildJsonObject {
+            put(k, v)
+        }
+        return kjson.encodeToString(result).also {
+            HDLogger.d("KotlinSerializableTslParser", "json = $it")
+        }
+    }
+
+    override fun serviceToJson(
+        key: ServiceKey,
+        input: List<PropertyValue<*>>,
+        output: List<PropertyValue<*>>,
+    ): String {
+        val k = key.identifier
+        val inputObj =
+            buildJsonObject {
+                input.forEach { propertyValue ->
+                    toJsonSingle(propertyValue)
+                }
+            }
+
+        val outputObj =
+            buildJsonObject {
+                output.forEach { propertyValue ->
+                    toJsonSingle(propertyValue)
+                }
+            }
+
+        val v = buildJsonObject {
+            put("input", inputObj)
+            put("output", outputObj)
+        }
+        val result = buildJsonObject {
+            put(k, v)
+        }
         return kjson.encodeToString(result).also {
             HDLogger.d("KotlinSerializableTslParser", "json = $it")
         }
@@ -527,6 +584,18 @@ class GsonTslParser(private val gson: Gson) : TslValueParser {
         return gson.toJSon(result).also {
             HDLogger.d("GsonTslParser", "json = $it")
         }
+    }
+
+    override fun eventToJson(key: EventKey, values: List<PropertyValue<*>>): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun serviceToJson(
+        key: ServiceKey,
+        input: List<PropertyValue<*>>,
+        output: List<PropertyValue<*>>,
+    ): String {
+        TODO("Not yet implemented")
     }
 
     override fun fromJson(tsl: Tsl, json: String): List<PropertyValue<*>> {

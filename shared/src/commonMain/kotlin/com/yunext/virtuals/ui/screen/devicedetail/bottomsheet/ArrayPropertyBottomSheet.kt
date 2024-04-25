@@ -236,7 +236,7 @@ internal fun ArrayPropertyBottomSheet(
 }
 
 /**
- * 比较差异：[com.yunext.virtuals.ui.screen.devicedetail.property.ArrayItemList]
+ * 比较差异：[com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.ArrayItemList]
  */
 @Composable
 private fun ArrayItemList(list: List<Pair<String, String>>, onDelete: (Int) -> Unit) {

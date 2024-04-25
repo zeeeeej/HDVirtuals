@@ -386,7 +386,6 @@
               "allocated": null,
               "operateType": null
             },
-
             {
               "identifier": "p3",
               "name": "testDate",
@@ -596,16 +595,16 @@
         ]
       },
       {
-        "identifier": "service2",
-        "name": "控制指令",
+        "identifier": "requestTime",
+        "name": "请求当前时间",
         "callType": "sync",
         "required": null,
         "desc": "222",
         "method": null,
         "inputData": [
           {
-            "identifier": "1",
-            "name": "参数",
+            "identifier": "timezone",
+            "name": "时区",
             "dataType": "struct",
             "specs": {
               "min": null,
@@ -618,7 +617,7 @@
               "type": null,
               "item": [
                 {
-                  "identifier": "11",
+                  "identifier": "temp",
                   "name": "温度",
                   "dataType": "int",
                   "specs": {
@@ -635,7 +634,7 @@
                   }
                 },
                 {
-                  "identifier": "22",
+                  "identifier": "address",
                   "name": "IA地址",
                   "dataType": "text",
                   "specs": {
@@ -658,41 +657,40 @@
         ],
         "outputData": [
           {
-            "identifier": "2",
-            "name": "2",
-            "dataType": "array",
+            "identifier": "time",
+            "name": "当前时间",
+            "dataType": "date",
             "specs": {
               "min": null,
               "max": null,
-              "unit": null,
+              "unit": "毫秒",
               "unitName": null,
               "size": null,
               "step": null,
-              "length": 22,
-              "type": "struct",
-              "item": [
-                {
-                  "identifier": "22",
-                  "name": "22",
-                  "dataType": "enum",
-                  "specs": {
-                    "min": null,
-                    "max": null,
-                    "unit": null,
-                    "unitName": null,
-                    "size": null,
-                    "step": null,
-                    "length": null,
-                    "type": "int",
-                    "item": [],
-                    "enumDesc": {
-                      "2": "22"
-                    }
-                  }
-                }
-              ],
+              "length": null,
+              "type": null,
+              "item": null,
               "enumDesc": null
-            }
+            },
+            "desc": "连接超时时间1"
+          },
+          {
+            "identifier": "time2",
+            "name": "当前时间2",
+            "dataType": "date",
+            "specs": {
+              "min": null,
+              "max": null,
+              "unit": "毫秒",
+              "unitName": null,
+              "size": null,
+              "step": null,
+              "length": null,
+              "type": null,
+              "item": null,
+              "enumDesc": null
+            },
+            "desc": "连接超时时间2"
           }
         ]
       }

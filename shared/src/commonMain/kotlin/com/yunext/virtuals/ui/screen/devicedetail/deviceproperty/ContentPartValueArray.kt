@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail.property
+package com.yunext.virtuals.ui.screen.devicedetail.deviceproperty
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,19 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.ArrayPropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.DoubleArrayPropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.DoublePropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.FloatArrayPropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.FloatPropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.IntArrayPropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.IntPropertyValue
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyValue
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.StructArrayPropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.StructPropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.TextArrayPropertyValue
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.TextPropertyValue
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.asPropertyValueList
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.asStringList
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.valueStr
 import com.yunext.kmp.resource.color.app_appColor
 import com.yunext.kmp.resource.color.app_blue_light
@@ -53,12 +43,10 @@ import com.yunext.kmp.resource.color.app_gray_light
 import com.yunext.kmp.resource.color.app_textColor_333333
 import com.yunext.kmp.resource.color.app_textColor_999999
 import com.yunext.kmp.ui.compose.Debug
-import com.yunext.virtuals.ui.screen.devicedetail.LabelPart
 import com.yunext.virtuals.ui.theme.ItemDefaults
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @Composable

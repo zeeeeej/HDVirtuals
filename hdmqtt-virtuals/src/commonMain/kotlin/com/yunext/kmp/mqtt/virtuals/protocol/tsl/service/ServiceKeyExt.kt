@@ -56,7 +56,7 @@ private fun tslHandleParseServiceKey(
             required = tslEvent.required,
             desc = tslEvent.desc,
             method = tslEvent.desc,
-            inputData = tslEvent.outputData.map {
+            inputData = tslEvent.inputData.map {
                 val tslProperty = TslProperty.from(it)
                 tslHandleParsePropertyKey(tslProperty)
             }.filterNotNull(),

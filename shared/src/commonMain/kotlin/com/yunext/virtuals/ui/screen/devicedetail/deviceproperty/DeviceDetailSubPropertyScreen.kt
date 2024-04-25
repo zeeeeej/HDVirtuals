@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail.tabnormal
+package com.yunext.virtuals.ui.screen.devicedetail.deviceproperty
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -22,7 +22,6 @@ import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.PropertyData
 import com.yunext.virtuals.ui.screen.devicedetail.bottomsheet.PropertyBottomSheet
-import com.yunext.virtuals.ui.screen.devicedetail.property.ListTslProperty
 import io.github.aakira.napier.Napier
 
 internal class DeviceDetailSubPropertyScreen(val device: DeviceAndStateViewData) : Screen {

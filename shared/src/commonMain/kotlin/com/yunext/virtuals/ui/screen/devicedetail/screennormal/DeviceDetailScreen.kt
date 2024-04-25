@@ -1,8 +1,9 @@
-package com.yunext.virtuals.ui.screen.devicedetail.tabvoyager
+package com.yunext.virtuals.ui.screen.devicedetail.screennormal
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,6 +15,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.yunext.kmp.ui.compose.Debug
 import com.yunext.virtuals.ui.Effect
 import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
+import com.yunext.virtuals.ui.common.dialog.CHTipsDialog
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.MenuData
 import com.yunext.virtuals.ui.processing
@@ -23,17 +25,11 @@ import com.yunext.virtuals.ui.screen.devicedetail.vm.DeviceDetailState
 import com.yunext.virtuals.ui.screen.logger.LoggerScreen
 import com.yunext.virtuals.ui.screen.setting.SettingScreen
 
-@Deprecated("详细见注释")
-/**
- * 关于Screen的参数，必须支持kotlin.serialization。State<T>不行，回调也不行。
- * 关于Screen下的Tab共享数据，ScreenModel不支持。
- */
-data class VoyagerDeviceDetailScreen(
-    private val deviceAndState: DeviceAndStateViewData,
+data class DeviceDetailScreen(private val deviceAndState: DeviceAndStateViewData
 ) : Screen {
+
     @Composable
     override fun Content() {
-
         val navigator = LocalNavigator.currentOrThrow
         val screenModel = rememberScreenModel {
             DeviceDetailScreenModel(
@@ -45,9 +41,8 @@ data class VoyagerDeviceDetailScreen(
         }
 
         val state by screenModel.state.collectAsState()
-        Debug("[recompose_test_01] DeviceDetailScreen property size = ${state.device.propertyList.size} ")
-        // 内容
-        VoyagerDeviceDetailScreenImpl(device = state.device, onLeft = {
+        Debug("[recompose_test_01] DeviceDetailScreen ${state.hashCode()} ")
+        DeviceDetailScreenImplNew(device = state.device, onLeft = {
             navigator.pop()
         }, onMenuClick = {
             when (it) {
@@ -60,17 +55,31 @@ data class VoyagerDeviceDetailScreen(
             }
         }, onPropertyEdit = {
             screenModel.changeProperty(it)
+        }, onEventTrigger = { key, value ->
+            screenModel.triggerEvent(key, value)
+        }, onServiceListener = {key,input->
+            screenModel.triggerService(key,input)
         })
 
-        // 弹窗 loading 等
         var loading by remember { mutableStateOf(true) }
+        var alert: String? by remember { mutableStateOf(null) }
         LaunchedEffect(state) {
             val effect = state.effect
             loading = effect.processing
+            alert = state.alert
         }
         if (loading) {
             CHLoadingDialog("数据加载中...") {
                 loading = false
+            }
+        }
+
+        val t by remember {
+            derivedStateOf { alert ?: "" }
+        }
+        if (t.isNotEmpty()) {
+            CHTipsDialog(text = t) {
+                alert = null
             }
         }
     }

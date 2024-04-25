@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail
+package com.yunext.virtuals.ui.screen.devicedetail.deviceevent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -24,34 +25,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yunext.kmp.resource.color.app_appColor
 import com.yunext.kmp.resource.color.app_blue_light
-import com.yunext.kmp.resource.color.app_orange
-import com.yunext.kmp.resource.color.app_orange_light
 import com.yunext.kmp.resource.color.app_red
 import com.yunext.kmp.resource.color.app_red_light
 import com.yunext.kmp.resource.color.app_textColor_333333
 import com.yunext.kmp.resource.color.app_textColor_999999
 import com.yunext.kmp.ui.compose.CHItemShadowShape
-import com.yunext.virtuals.ui.data.ServiceData
+import com.yunext.virtuals.ui.data.EventData
+import com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.BottomPart
+import com.yunext.virtuals.ui.screen.devicedetail.InputPart
+import com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.LabelPart
 import com.yunext.virtuals.ui.theme.ItemDefaults
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-// ----------------- services ----------------- //
+
+// ----------------- events ----------------- //
 
 /**
- * 服务列表
+ * 事件列表
  */
 @Composable
-internal fun <T> ListTslService(list: List<T>, onClick: (T) -> Unit) {
-    val realList = list.map {
-        ServiceData.random()
-    }
+fun ListTslEvent(list: List<EventData>, onClick: (EventData) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        itemsIndexed(items = realList, key = { _, it ->
+        itemsIndexed(items = list, key = { _, it ->
             it.toString()
         }) { index, it ->
-            ServiceItem(it) {
+            EventItem(it) {
                 onClick(list[index])
             }
         }
@@ -59,9 +60,7 @@ internal fun <T> ListTslService(list: List<T>, onClick: (T) -> Unit) {
 }
 
 @Composable
-private fun ServiceItem(data: ServiceData, onClick: () -> Unit) {
-    val desc = "说明信息显示处，如无，则不显示该区域"
-
+private fun EventItem(data: EventData, onClick: () -> Unit) {
     CHItemShadowShape() {
         Column(
             modifier = Modifier
@@ -71,34 +70,43 @@ private fun ServiceItem(data: ServiceData, onClick: () -> Unit) {
                 .padding(16.dp)
         ) {
             // 头部基本信息
-            HeaderParts(data = data) {
+            EventHeaderPart(data = data) {
                 onClick()
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            // 输入
-            InputPart("输入", data.input)
-            Spacer(modifier = Modifier.height(16.dp))
             // 输出
-            InputPart("输出", data.output)
-            Spacer(modifier = Modifier.height(16.dp))
+            if (data.output.isNotEmpty()) {
+                InputPart("输出", data.output)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             // desc
-            BottomPart(desc)
+            BottomPart(data.desc)
         }
     }
 }
 
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
-private fun HeaderParts(data: ServiceData, onClick: () -> Unit) {
-
+private fun EventHeaderPart(data: EventData, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
+//            .hdBorder(true)
     ) {
-        Column(modifier = Modifier.weight(1f, true)) {
-            Row(modifier = Modifier) {
+        Column(
+            modifier = Modifier.weight(1f, true), verticalArrangement = Arrangement.Center,
+
+            ) {
+            // 名称
+            Row(
+                modifier = Modifier,
+                //.weight(1f, true)
+//                    .hdBackground()
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = data.name.run { this.ifEmpty { "未知" } },
                     fontSize = 16.sp,
@@ -109,10 +117,21 @@ private fun HeaderParts(data: ServiceData, onClick: () -> Unit) {
                     if (this.isEmpty()) "-" else "(${this})"
                 }, fontSize = 16.sp, color = app_textColor_999999, fontWeight = FontWeight.Bold)
 
+                //
+//                HDImage(
+//                    resource = {
+//                        HDRes.drawable.icon_twins_log
+//                    }, null,
+//                    modifier = Modifier.clickablePure {
+//                        // 查看详情
+//                    }
+//                    //.size(24.dp)
+//                )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
 
+            Spacer(modifier = Modifier.height(8.dp))
+            // 状态
             Row(modifier = Modifier) {
                 val required = if (data.required) "必须" else "非必须"
                 val requiredColor =
@@ -123,16 +142,16 @@ private fun HeaderParts(data: ServiceData, onClick: () -> Unit) {
                     requiredColor.second
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                val async = if (data.async) "async" else "sync"
-                val asyncColor =
-                    if (data.async) app_orange to app_orange_light else app_appColor to app_blue_light
 
-                LabelPart(async, asyncColor.first, asyncColor.second)
+                val text = data.eventType.text
+                val color = data.eventType.color
+                LabelPart(text, color.first, color.second)
                 Spacer(modifier = Modifier.width(8.dp))
 
             }
         }
         Spacer(modifier = Modifier.width(8.dp))
+        // 修改
         Text(
             modifier = Modifier
                 .clip(ItemDefaults.editShape)
@@ -141,12 +160,14 @@ private fun HeaderParts(data: ServiceData, onClick: () -> Unit) {
                     onClick()
                 }
                 .padding(horizontal = 8.dp, vertical = 6.dp),
-            text = "模拟",
+            text = "触发",
             fontSize = 13.sp,
             color = app_appColor
         )
     }
 }
+
+
 
 
 

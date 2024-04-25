@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail.property
+package com.yunext.virtuals.ui.screen.devicedetail.deviceproperty
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

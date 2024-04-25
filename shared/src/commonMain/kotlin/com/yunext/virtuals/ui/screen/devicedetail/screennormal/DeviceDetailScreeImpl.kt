@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail.tabnormal
+package com.yunext.virtuals.ui.screen.devicedetail.screennormal
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,10 +41,20 @@ import com.yunext.virtuals.ui.common.TwinsBackgroundBlock
 import com.yunext.virtuals.ui.common.TwinsTitle
 import com.yunext.virtuals.ui.common.dialog.XPopContainer
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
+import com.yunext.virtuals.ui.data.EventData
 import com.yunext.virtuals.ui.data.MenuData
 import com.yunext.virtuals.ui.data.iconRes
 import com.yunext.virtuals.ui.screen.devicedetail.SelectedHDDeviceTab
-import com.yunext.virtuals.ui.screen.devicedetail.tabviewpager.DeviceDetailContentWithViewPager
+import com.yunext.virtuals.ui.screen.devicedetail.deviceevent.DeviceDetailSubEventScreen
+import com.yunext.virtuals.ui.screen.devicedetail.deviceevent.DeviceDetailSubEventScreenImpl
+import com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.DeviceDetailSubPropertyScreen
+import com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.DeviceDetailSubPropertyScreenImpl
+import com.yunext.virtuals.ui.screen.devicedetail.deviceservice.DeviceDetailSubServiceScreen
+import com.yunext.virtuals.ui.screen.devicedetail.deviceservice.DeviceDetailSubServiceScreenImpl
+import com.yunext.virtuals.ui.screen.devicedetail.deviceservice.OnEventListener
+import com.yunext.virtuals.ui.screen.devicedetail.deviceservice.OnPropertyListener
+import com.yunext.virtuals.ui.screen.devicedetail.deviceservice.OnServiceListener
+import com.yunext.virtuals.ui.screen.devicedetail.screenviewpager.DeviceDetailContentWithViewPager
 import com.yunext.virtuals.ui.screen.devicelist.DeviceCommunicationIdAndModel
 import com.yunext.virtuals.ui.theme.ItemDefaults
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -57,7 +66,9 @@ private const val VP = true
 internal fun DeviceDetailScreenImplNew(
     device: DeviceAndStateViewData,
     onMenuClick: (MenuData) -> Unit,
-    onPropertyEdit: (PropertyValue<*>) -> Unit,
+    onPropertyEdit: OnPropertyListener,
+    onEventTrigger: OnEventListener,
+    onServiceListener: OnServiceListener,
     onLeft: () -> Unit,
 ) {
     TwinsBackgroundBlock()
@@ -107,9 +118,9 @@ internal fun DeviceDetailScreenImplNew(
                             propertyList = device.propertyList,
                             eventList = device.eventList,
                             serviceList = device.serviceList,
-                            onPropertyEdit = {
-                                onPropertyEdit.invoke(it)
-                            }
+                            onPropertyListener = onPropertyEdit,
+                            onEventListener = onEventTrigger,
+                            onServiceListener = onServiceListener
                         )
                     } else {
                         // warn：一开始的实现，数据没有缓存，切换tab会重新刷新tab里的页面
@@ -123,8 +134,13 @@ internal fun DeviceDetailScreenImplNew(
                                     onPropertyEdit.invoke(it.value.value)
                                 }
 
-                                EventsTab -> DeviceDetailSubEventScreenImpl(device.eventList)
-                                ServicesTab -> DeviceDetailSubServiceScreenImpl()
+                                EventsTab -> DeviceDetailSubEventScreenImpl(device.eventList) { key, value ->
+                                }
+
+                                ServicesTab -> DeviceDetailSubServiceScreenImpl(
+                                    device.serviceList,
+                                    onServiceListener
+                                )
                             }
 
                             // 暂且不用 voyager tab 实现

@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail.tabvoyager
+package com.yunext.virtuals.ui.screen.devicedetail.screenvoyager
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -33,9 +33,9 @@ import com.yunext.virtuals.ui.common.TwinsTitle
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.MenuData
 import com.yunext.virtuals.ui.data.iconRes
-import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.DeviceDetailTab
-import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.MenuList
-import com.yunext.virtuals.ui.screen.devicedetail.tabnormal.Top
+import com.yunext.virtuals.ui.screen.devicedetail.screennormal.DeviceDetailTab
+import com.yunext.virtuals.ui.screen.devicedetail.screennormal.MenuList
+import com.yunext.virtuals.ui.screen.devicedetail.screennormal.Top
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 

@@ -1,5 +1,6 @@
 package com.yunext.virtuals.ui.screen.devicedetail.vm
 
+import androidx.compose.runtime.ProvidedValue
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyValue
@@ -9,13 +10,17 @@ import com.yunext.virtuals.module.devicemanager.DeviceStore
 import com.yunext.virtuals.module.devicemanager.deviceManager
 import com.yunext.virtuals.module.devicemanager.filterOrNull
 import com.yunext.virtuals.module.toDeviceDTO
+import com.yunext.virtuals.module.toEventDataList
 import com.yunext.virtuals.module.toMqttDevice
 import com.yunext.virtuals.module.toPropertyDataList
+import com.yunext.virtuals.module.toServiceDataList
 import com.yunext.virtuals.ui.Effect
 import com.yunext.virtuals.ui.common.HDStateScreenModel
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.data.DeviceStatus
 import com.yunext.virtuals.ui.data.DeviceType
+import com.yunext.virtuals.ui.data.EventData
+import com.yunext.virtuals.ui.data.ServiceData
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +36,7 @@ import kotlinx.coroutines.launch
 internal data class DeviceDetailState(
     val device: DeviceAndStateViewData,
     val effect: Effect,
+    val alert: String? = null,
 )
 
 internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
@@ -178,11 +184,9 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
                                     DeviceStatus.GPRSOnLine
                                 } else DeviceStatus.GPRSOffLine
                             },
-
-                            // TODO
                             propertyList = deviceHolder.properties.toPropertyDataList(),
-                            eventList = emptyList(),
-                            serviceList = emptyList()
+                            eventList = deviceHolder.events.toEventDataList(),
+                            serviceList = deviceHolder.services.toServiceDataList()
                         ),
                     )
 
@@ -211,6 +215,53 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
                 ?: return
 
         checkDeviceStore.sendProperty(propertyValue)
+    }
+
+    private var triggerEventJob: Job? = null
+    private var triggerServiceJob: Job? = null
+    fun triggerEvent(key: EventData, value: List<PropertyValue<*>>) {
+        triggerEventJob?.cancel()
+        triggerEventJob = screenModelScope.launch {
+            try {
+                val device = tryGetDevice()
+                val checkDeviceStore =
+                    deviceManager.deviceStoreMapStateFlow.value.filterOrNull(device.communicationId)
+                        ?: return@launch
+                // TODO 是否同步记录到本地属性 如果有的话？
+                val sendEvent = checkDeviceStore.sendEvent(key.key, value)
+                if (sendEvent) {
+                    mutableState.value = state.value.copy(alert = "触发成功")
+                } else {
+                    mutableState.value = state.value.copy(alert = "触发失败")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                mutableState.value = state.value.copy(alert = "触发失败$e")
+            } finally {
+                delay(3000)
+                mutableState.value = state.value.copy(alert = "")
+            }
+        }
+
+    }
+
+    // 自己手动触发服务
+    fun triggerService(key: ServiceData, input: List<PropertyValue<*>>) {
+        triggerServiceJob?.cancel()
+        triggerServiceJob = screenModelScope.launch {
+            try {
+                val device = tryGetDevice()
+                val checkDeviceStore =
+                    deviceManager.deviceStoreMapStateFlow.value.filterOrNull(device.communicationId)
+                        ?: return@launch
+                checkDeviceStore.handleService(key.key, input)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+            }
+        }
+
     }
 
 }

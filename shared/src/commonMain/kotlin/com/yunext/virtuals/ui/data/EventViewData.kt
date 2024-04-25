@@ -3,6 +3,7 @@ package com.yunext.virtuals.ui.data
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 import com.yunext.kmp.common.util.hdUUID
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyKey
 import com.yunext.kmp.resource.color.app_appColor
 import com.yunext.kmp.resource.color.app_blue_light
 import com.yunext.kmp.resource.color.app_orange
@@ -21,7 +22,7 @@ data class EventData(
     val key: String,
     val required: Boolean,
     val eventType: EventType,
-    val output: List<JsonElement>,
+    val output: List<PropertyKey>,
     val desc: String,
 ) {
 
@@ -37,8 +38,8 @@ data class EventData(
             name = hdUUID(4),
             key = randomText(),
             required = Random.nextBoolean(),
-            eventType = EventType.values().random(),
-            output = List(Random.nextInt(4)) { JsonPrimitive(it) },
+            eventType = EventType.entries.toTypedArray().random(),
+            output = emptyList(),//List(Random.nextInt(4)) { JsonPrimitive(it) },
             desc = randomText(),
         )
     }

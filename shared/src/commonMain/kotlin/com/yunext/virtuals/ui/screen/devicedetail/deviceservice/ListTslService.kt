@@ -1,4 +1,4 @@
-package com.yunext.virtuals.ui.screen.devicedetail
+package com.yunext.virtuals.ui.screen.devicedetail.deviceservice
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,33 +24,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yunext.kmp.resource.color.app_appColor
 import com.yunext.kmp.resource.color.app_blue_light
+import com.yunext.kmp.resource.color.app_orange
+import com.yunext.kmp.resource.color.app_orange_light
 import com.yunext.kmp.resource.color.app_red
 import com.yunext.kmp.resource.color.app_red_light
 import com.yunext.kmp.resource.color.app_textColor_333333
 import com.yunext.kmp.resource.color.app_textColor_999999
 import com.yunext.kmp.ui.compose.CHItemShadowShape
-import com.yunext.virtuals.ui.data.EventData
+import com.yunext.virtuals.ui.data.ServiceData
+import com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.BottomPart
+import com.yunext.virtuals.ui.screen.devicedetail.InputPart
+import com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.LabelPart
 import com.yunext.virtuals.ui.theme.ItemDefaults
 
-
-// ----------------- events ----------------- //
+// ----------------- services ----------------- //
 
 /**
- * 事件列表
+ * 服务列表
+ * 当收到服务cmd时，全局弹窗让用户回复或者自动回复。
+ * 比如收到查询时间的cmd，弹出一个弹窗显示输入参数input，提示用户填写当前时间（output）或者点击自动按钮回复。
+ * 或者配置一个脚本来处理输入参数并且回复输出，没有配置时弹窗让用户填写。
  */
 @Composable
-fun <T> ListTslEvent(list: List<T>, onClick: (T) -> Unit) {
-    val realList = list.map {
-        EventData.random()
-    }
+internal fun  ListTslService(list: List<ServiceData>, onClick: (ServiceData) -> Unit) {
+
     LazyColumn(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        itemsIndexed(items = realList, key = { _, it ->
+        itemsIndexed(items = list, key = { _, it ->
             it.toString()
         }) { index, it ->
-            EventItem(it) {
+            ServiceItem(it) {
                 onClick(list[index])
             }
         }
@@ -58,7 +63,9 @@ fun <T> ListTslEvent(list: List<T>, onClick: (T) -> Unit) {
 }
 
 @Composable
-private fun EventItem(data: EventData, onClick: () -> Unit) {
+private fun ServiceItem(data: ServiceData, onClick: () -> Unit) {
+    val desc = data.desc
+
     CHItemShadowShape() {
         Column(
             modifier = Modifier
@@ -73,28 +80,29 @@ private fun EventItem(data: EventData, onClick: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+            // 输入
+            InputPart("输入", data.input)
+            Spacer(modifier = Modifier.height(16.dp))
             // 输出
-            if (data.output.isNotEmpty()) {
-                InputPart("输出", data.output)
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            InputPart("输出", data.output)
+            Spacer(modifier = Modifier.height(16.dp))
             // desc
-            BottomPart(data.desc)
+            BottomPart(desc)
         }
     }
 }
 
 
 @Composable
-private fun HeaderParts(data: EventData, onClick: () -> Unit) {
+private fun HeaderParts(data: ServiceData, onClick: () -> Unit) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
         Column(modifier = Modifier.weight(1f, true)) {
-            // 名称
-            Row(modifier = Modifier.weight(1f, true)) {
+            Row(modifier = Modifier) {
                 Text(
                     text = data.name.run { this.ifEmpty { "未知" } },
                     fontSize = 16.sp,
@@ -107,9 +115,8 @@ private fun HeaderParts(data: EventData, onClick: () -> Unit) {
 
             }
 
-
             Spacer(modifier = Modifier.height(8.dp))
-            // 状态
+
             Row(modifier = Modifier) {
                 val required = if (data.required) "必须" else "非必须"
                 val requiredColor =
@@ -120,16 +127,16 @@ private fun HeaderParts(data: EventData, onClick: () -> Unit) {
                     requiredColor.second
                 )
                 Spacer(modifier = Modifier.width(8.dp))
+                val async = if (data.async) "async" else "sync"
+                val asyncColor =
+                    if (data.async) app_orange to app_orange_light else app_appColor to app_blue_light
 
-                val text = data.eventType.text
-                val color = data.eventType.color
-                LabelPart(text, color.first, color.second)
+                LabelPart(async, asyncColor.first, asyncColor.second)
                 Spacer(modifier = Modifier.width(8.dp))
 
             }
         }
         Spacer(modifier = Modifier.width(8.dp))
-        // 修改
         Text(
             modifier = Modifier
                 .clip(ItemDefaults.editShape)
@@ -138,14 +145,12 @@ private fun HeaderParts(data: EventData, onClick: () -> Unit) {
                     onClick()
                 }
                 .padding(horizontal = 8.dp, vertical = 6.dp),
-            text = "触发",
+            text = "模拟",
             fontSize = 13.sp,
             color = app_appColor
         )
     }
 }
-
-
 
 
 

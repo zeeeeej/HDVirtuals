@@ -13,22 +13,23 @@ class Tsl(
 val Tsl.display: String
     get() {
         return """
-            // Tsl
-            id          :       $id
-            version     :       $version
-            productKey  :       $productKey
-            current     :       $current
-            events      :       ${events.size}
-            properties  :       ${properties.size}
-            services    :       ${services.size}
-            // 属性
-            ${properties.display(TslProperty::display)}
-            // 事件
-            ${events.display { it.display }}
-            // 服务
-            ${services.display { it.display }}
-            
-        """.trimIndent()
+            |
+            |// Tsl
+            |id          :       $id
+            |version     :       $version
+            |productKey  :       $productKey
+            |current     :       $current
+            |events      :       ${events.size}
+            |properties  :       ${properties.size}
+            |services    :       ${services.size}
+            |// 属性
+            |${properties.display(TslProperty::display)}
+            |// 事件
+            |${events.display { it.display }}
+            |// 服务
+            |${services.display { it.display }}
+            |
+        """.trimMargin()
     }
 
 

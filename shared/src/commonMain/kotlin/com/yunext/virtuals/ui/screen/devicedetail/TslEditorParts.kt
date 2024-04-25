@@ -20,12 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyKey
 import com.yunext.kmp.resource.color.China
 import com.yunext.kmp.resource.color.app_textColor_333333
 import com.yunext.kmp.resource.color.app_textColor_666666
 import com.yunext.kmp.ui.compose.CHItemShadowShape
 import com.yunext.kmp.ui.compose.clickableX
 import com.yunext.virtuals.ui.common.CommitButtonBlock
+import com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.StructItemListFix
 import com.yunext.virtuals.ui.theme.ItemDefaults
 
 // <editor-fold desc="[base]">
@@ -93,7 +95,7 @@ internal fun TslEditor(
 // </editor-fold>
 
 @Composable
-internal fun InputPart(label: String, list: List<*>) {
+internal fun InputPart(label: String, list: List<PropertyKey>) {
     Column(modifier = ItemDefaults.borderModifier.padding(12.dp)) {
         Text(text = label, color = app_textColor_666666, fontSize = 13.sp)
         Spacer(modifier = Modifier.height(16.dp))
