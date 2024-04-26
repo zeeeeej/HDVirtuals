@@ -210,10 +210,11 @@ fun TwinsDeviceStatus(modifier: Modifier = Modifier, deviceStatus: DeviceStatus)
     )
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun TwinsLabelText(modifier: Modifier = Modifier, text: String) {
+    @OptIn(ExperimentalResourceApi::class)
     Box(modifier = modifier.widthIn(min = 60.dp, max = 60.dp)) {
+
         HDImage(
             resource = { HDRes.drawable.icon_twins_label_bg },
 //            painter = painterResource(DrawableResource("icon_twins_label_bg.png")),//id = R.mipmap.icon_twins_label_bg),
@@ -226,7 +227,7 @@ fun TwinsLabelText(modifier: Modifier = Modifier, text: String) {
                 .align(
                     Alignment.CenterStart
                 )
-                .padding(horizontal = 6.dp)
+                .padding(horizontal = 6.dp, vertical = 4.dp)
         )
     }
 }

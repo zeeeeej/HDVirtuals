@@ -1,6 +1,7 @@
 package com.yunext.virtuals.ui.screen.devicedetail.screennormal
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -190,10 +191,11 @@ internal fun DeviceDetailTabs(
     tabs: List<HDDeviceTab>,
     onClick: (HDDeviceTab) -> Unit,
 ) {
-    Row(Modifier.fillMaxWidth()) {
+    //Row(Modifier.fillMaxWidth()) {
+    Row(Modifier, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         tabs.forEach { tab ->
             key(tab.key) {
-                DeviceDetailTab(tab.options.title, selected = tab == selected) {
+                DeviceDetailTabV2(tab.options.title, selected = tab == selected) {
                     onClick(tab)
                 }
             }
@@ -204,7 +206,14 @@ internal fun DeviceDetailTabs(
 @Composable
 internal fun RowScope.DeviceDetailTab(tab: String, selected: Boolean, onClick: () -> Unit) {
     Box(Modifier.weight(1f)) {
-        SelectedHDDeviceTab(tab, selected, onClick)
+        SelectedHDDeviceTab(Modifier.fillMaxWidth().height(44.dp),tab, selected, onClick)
+    }
+}
+
+@Composable
+internal fun RowScope.DeviceDetailTabV2(tab: String, selected: Boolean, onClick: () -> Unit) {
+    Box(Modifier) {
+        SelectedHDDeviceTab(Modifier.height(44.dp),tab, selected, onClick)
     }
 }
 

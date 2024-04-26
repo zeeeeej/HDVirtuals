@@ -15,13 +15,30 @@ import com.yunext.kmp.ui.compose.clickablePure
 
 @Composable
 internal fun SelectedHDDeviceTab(
+    modifier: Modifier = Modifier,
     tab: String,
     selected: Boolean,
     onClick: () -> Unit,
 ) {
-    Box(Modifier.fillMaxWidth().height(44.dp).clickablePure {
+    Box(modifier.clickablePure {
         onClick()
     }, contentAlignment = Alignment.Center) {
+        Text(
+            tab,
+            style = TextStyle(color = if (selected) China.r_luo_xia_hong else Color.Black),
+            modifier = Modifier
+
+        )
+    }
+}
+
+@Composable
+internal fun SelectedHDDeviceTabV2(
+    modifier: Modifier = Modifier,
+    tab: String,
+    selected: Boolean,
+) {
+    Box(modifier, contentAlignment = Alignment.Center) {
         Text(
             tab,
             style = TextStyle(color = if (selected) China.r_luo_xia_hong else Color.Black),

@@ -2,26 +2,51 @@ package com.yunext.virtuals.ui.screen.devicedetail.screenviewpager
 
 import HDDebugText
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.yunext.kmp.resource.color.China
+import com.yunext.kmp.resource.color.app_appColor
+import com.yunext.kmp.resource.color.app_textColor_333333
+import com.yunext.kmp.resource.color.app_textColor_666666
 import com.yunext.virtuals.ui.data.EventData
 import com.yunext.virtuals.ui.data.PropertyData
 import com.yunext.virtuals.ui.data.ServiceData
+import com.yunext.virtuals.ui.screen.devicedetail.SelectedHDDeviceTab
+import com.yunext.virtuals.ui.screen.devicedetail.SelectedHDDeviceTabV2
 import com.yunext.virtuals.ui.screen.devicedetail.deviceservice.OnServiceListener
 import com.yunext.virtuals.ui.screen.devicedetail.deviceevent.DeviceDetailSubEventScreenImpl
 import com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.DeviceDetailSubPropertyScreenImpl
 import com.yunext.virtuals.ui.screen.devicedetail.deviceservice.DeviceDetailSubServiceScreenImpl
 import com.yunext.virtuals.ui.screen.devicedetail.deviceservice.OnEventListener
 import com.yunext.virtuals.ui.screen.devicedetail.deviceservice.OnPropertyListener
+import com.yunext.virtuals.ui.screen.devicedetail.screennormal.DeviceDetailTabV2
 import com.yunext.virtuals.ui.screen.devicedetail.screennormal.DeviceDetailTabs
 import com.yunext.virtuals.ui.screen.devicedetail.screennormal.EventsTab
 import com.yunext.virtuals.ui.screen.devicedetail.screennormal.HDDeviceTab
@@ -39,7 +64,7 @@ internal fun DeviceDetailContentWithViewPager(
     serviceList: List<ServiceData>,
     onPropertyListener: OnPropertyListener,
     onEventListener: OnEventListener,
-    onServiceListener:OnServiceListener,
+    onServiceListener: OnServiceListener,
 ) {
     HDDebugText("${propertyList.size}/${eventList.size}/${serviceList.size}")
     Column {
@@ -63,28 +88,106 @@ internal fun DeviceDetailContentWithViewPager(
 
         val coroutineScope = rememberCoroutineScope()
 
-        DeviceDetailTabs(curTab, tabs) {
-            curTab = it
-            coroutineScope.launch {
-                val pos = curTab.index
-                pageState.animateScrollToPage(pos)
+        // tab
+        val tabsBlock = @Composable {
+            DeviceDetailTabs(curTab, tabs) {
+                curTab = it
+                coroutineScope.launch {
+                    val pos = curTab.index
+                    pageState.animateScrollToPage(pos)
+                }
             }
         }
 
+        Row(modifier = Modifier.fillMaxWidth()) {
+            TabRow(
+                modifier = Modifier.weight(1f),
+                selectedTabIndex = curTab.index,
+                backgroundColor = Color.Transparent,
+                divider = {
+                    TabRowDefaults.Divider(
+                        color = Color.Transparent
+                    )
+                },
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        color = app_appColor,
+                        height = TabRowDefaults.IndicatorHeight * 2,
+                        modifier = Modifier.tabIndicatorOffset(tabPositions[curTab.index])
+                    )
+                },
 
+                tabs = {
+                    tabs.forEach { tab ->
+                        key(tab.key) {
+                            Tab(text = {
+                                SelectedHDDeviceTabV2(
+                                    Modifier,
+                                    tab = tab.options.title, selected = curTab == tab
+                                )
+                            }, selected = curTab == tab, onClick = {
+                                curTab = tab
+                                coroutineScope.launch {
+                                    val pos = curTab.index
+                                    pageState.animateScrollToPage(pos)
+                                }
+                            })
+
+                        }
+                    }
+                }
+            )
+
+            CountInfo(
+                Modifier.weight(1f),
+                when (curTab) {
+                    EventsTab -> eventList.size
+                    PropertiesTab -> propertyList.size
+                    ServicesTab -> serviceList.size
+                }
+            )
+        }
+
+
+        // content
         HorizontalPager(state = pageState) { pos ->
             when (tabs[pos]) {
                 PropertiesTab -> DeviceDetailSubPropertyScreenImpl(propertyList) {
                     onPropertyListener.invoke(it.value.value)
                 }
 
-                EventsTab -> DeviceDetailSubEventScreenImpl(eventList,onEventListener)
-                ServicesTab -> DeviceDetailSubServiceScreenImpl(serviceList,onServiceListener)
+                EventsTab -> DeviceDetailSubEventScreenImpl(eventList, onEventListener)
+                ServicesTab -> DeviceDetailSubServiceScreenImpl(serviceList, onServiceListener)
             }
         }
 
 
     }
+}
+
+@Composable
+fun CountInfo(modifier: Modifier, size: Int) {
+    Box(modifier.padding(16.dp), contentAlignment = Alignment.CenterEnd) {
+        Row(Modifier, verticalAlignment = Alignment.CenterVertically) {
+
+            Text(
+                "共计", style = TextStyle.Default.copy(
+                    fontSize = 12.sp, color = app_textColor_666666
+                )
+            )
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            Text(
+                "$size", style = TextStyle.Default.copy(
+                    fontSize = 18.sp, color = app_textColor_333333
+                )
+            )
+
+        }
+    }
+
+
 }
 
 
