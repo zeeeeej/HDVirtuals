@@ -1,15 +1,19 @@
 package com.yunext.virtuals
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.resource.initHDRes
@@ -19,7 +23,9 @@ import com.yunext.virtuals.bridge.orientationTypeStateFlow
 import com.yunext.virtuals.bridge.text
 import com.yunext.virtuals.module.devicemanager.initDeviceManager
 import com.yunext.virtuals.ui.screen.DemoScreen
+import com.yunext.virtuals.ui.screen.LocalPaddingValues
 import com.yunext.virtuals.ui.screen.VoyagerApp
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -79,7 +85,6 @@ private val initApp: CoroutineScope.() -> Unit = {
 fun App() {
 
 
-    MaterialTheme {
 //        var showContent by remember { mutableStateOf(false) }
 //        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
 //
@@ -98,58 +103,74 @@ fun App() {
 //        }
 //        VoyagerDemoApp()
 //        SplashScreen()
-        var hasInit by remember {
-            mutableStateOf(false)
+    var hasInit by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(Unit) {
+        initApp()
+        hasInit = true
+    }
+    Scaffold {padding->
+        SideEffect {
+            Napier.w {
+                "App::padding:$padding"
+            }
+            LocalPaddingValues.provides(padding)
         }
 
-        LaunchedEffect(Unit) {
-            initApp()
-            hasInit = true
-        }
-        AnimatedVisibility(hasInit) {
-            VoyagerApp()
-        }
-
-        val orientationType by orientationTypeStateFlow.collectAsState()
-        var curOrientationType: OrientationType by remember { mutableStateOf(OrientationType.Port) }
-
-        LaunchedEffect(orientationType) {
-            curOrientationType = orientationType
-        }
-
-        Column(
-            modifier = Modifier.padding(start = 100.dp, top = 50.dp).verticalScroll(
-                rememberScrollState()
-            )
+        AnimatedVisibility(hasInit, modifier = Modifier.padding(padding)
+//            .safeContentPadding()
         ) {
+//            if (hasInit){
+                VoyagerApp()
+//            }
+        }
 
-            Button(onClick = {
-                changeKeyBoardType(
-                    when (curOrientationType) {
-                        OrientationType.Port -> OrientationType.Land
-                        OrientationType.Land -> OrientationType.Port
-                    }, true
-                )
-            }, modifier = Modifier) {
-                Text("->${curOrientationType.text}")
-            }
+        //Text("$padding")
+    }
 
-            var showDebug  by remember { mutableStateOf(false) }
-            Button(onClick = {
-                showDebug = !showDebug
+    val orientationType by orientationTypeStateFlow.collectAsState()
+    var curOrientationType: OrientationType by remember { mutableStateOf(OrientationType.Port) }
 
-            }, modifier = Modifier) {
-                Text("测试")
-            }
+    LaunchedEffect(orientationType) {
+        curOrientationType = orientationType
+    }
 
-            if (showDebug){
-                DemoScreen()
-            }
+    Column(
+        modifier = Modifier.padding(start = 100.dp, top = 50.dp).verticalScroll(
+            rememberScrollState()
+        )
+    ) {
 
+        Button(onClick = {
+            changeKeyBoardType(
+                when (curOrientationType) {
+                    OrientationType.Port -> OrientationType.Land
+                    OrientationType.Land -> OrientationType.Port
+                }, true
+            )
+        }, modifier = Modifier) {
+            Text("->${curOrientationType.text}")
+        }
 
+        var showDebug by remember { mutableStateOf(false) }
+        Button(onClick = {
+            showDebug = !showDebug
+
+        }, modifier = Modifier) {
+            Text("测试")
+        }
+
+        if (showDebug) {
+            DemoScreen()
         }
 
 
     }
+
+
 }
+
+
 

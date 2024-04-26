@@ -41,7 +41,7 @@ data class DeviceDetailScreen(private val deviceAndState: DeviceAndStateViewData
         }
 
         val state by screenModel.state.collectAsState()
-        Debug("[recompose_test_01] DeviceDetailScreen ${state.hashCode()} ")
+        Debug { "[recompose_test_01] DeviceDetailScreen ${state.hashCode()} " }
         DeviceDetailScreenImplNew(device = state.device, onLeft = {
             navigator.pop()
         }, onMenuClick = {

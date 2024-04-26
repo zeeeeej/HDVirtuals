@@ -16,6 +16,7 @@ import com.yunext.virtuals.App
 import com.yunext.virtuals.bridge.OrientationType
 import com.yunext.virtuals.bridge.curOrientationType
 import com.yunext.virtuals.bridge.updateOrientationTypeFlow
+import com.yunext.virtuals.theme.HDTheme
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -65,7 +66,9 @@ fun main() = application {
             true
         }
     ) {
-        App()
+        HDTheme {
+            App()
+        }
     }
 }
 

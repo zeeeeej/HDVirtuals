@@ -79,6 +79,8 @@ kotlin {
             implementation(libs.androidx.legacy.support.v4)
             implementation(libs.kotlinx.coroutines.android)
 
+            implementation (libs.accompanist.systemuicontroller)
+
 
 
 

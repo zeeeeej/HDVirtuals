@@ -14,6 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +39,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 
-import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.PropertyValue
+import com.yunext.kmp.resource.color.app_appColor
 import com.yunext.kmp.resource.color.app_background_70
 import com.yunext.kmp.resource.color.app_textColor_333333
 import com.yunext.kmp.ui.compose.CHItemShadowShape
@@ -42,10 +49,10 @@ import com.yunext.virtuals.ui.common.TwinsBackgroundBlock
 import com.yunext.virtuals.ui.common.TwinsTitle
 import com.yunext.virtuals.ui.common.dialog.XPopContainer
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
-import com.yunext.virtuals.ui.data.EventData
 import com.yunext.virtuals.ui.data.MenuData
 import com.yunext.virtuals.ui.data.iconRes
 import com.yunext.virtuals.ui.screen.devicedetail.SelectedHDDeviceTab
+import com.yunext.virtuals.ui.screen.devicedetail.SelectedHDDeviceTabV2
 import com.yunext.virtuals.ui.screen.devicedetail.deviceevent.DeviceDetailSubEventScreen
 import com.yunext.virtuals.ui.screen.devicedetail.deviceevent.DeviceDetailSubEventScreenImpl
 import com.yunext.virtuals.ui.screen.devicedetail.deviceproperty.DeviceDetailSubPropertyScreen
@@ -98,7 +105,7 @@ internal fun DeviceDetailScreenImplNew(
 
         // 2 内容
         Box(Modifier.fillMaxWidth()) {
-            Column() {
+            Column {
                 // 2.1 top
                 Column(
                     Modifier
@@ -126,7 +133,7 @@ internal fun DeviceDetailScreenImplNew(
                     } else {
                         // warn：一开始的实现，数据没有缓存，切换tab会重新刷新tab里的页面
                         Column {
-                            var curTab: HDDeviceTab by remember() { mutableStateOf(PropertiesTab) }
+                            var curTab: HDDeviceTab by remember { mutableStateOf(PropertiesTab) }
                             DeviceDetailTabs(curTab, deviceDetailTabs) {
                                 curTab = it
                             }
@@ -135,7 +142,7 @@ internal fun DeviceDetailScreenImplNew(
                                     onPropertyEdit.invoke(it.value.value)
                                 }
 
-                                EventsTab -> DeviceDetailSubEventScreenImpl(device.eventList) { key, value ->
+                                EventsTab -> DeviceDetailSubEventScreenImpl(device.eventList) { _, _ ->
                                 }
 
                                 ServicesTab -> DeviceDetailSubServiceScreenImpl(
@@ -186,6 +193,87 @@ private class DeviceDetailTabsScreen(
 }
 
 @Composable
+internal fun DeviceDetailTabsV3(
+    modifier: Modifier,
+    curTab: HDDeviceTab,
+    tabs: List<HDDeviceTab>,
+    onClick: (HDDeviceTab) -> Unit,
+) {
+    TabRow(
+        modifier = modifier,
+        selectedTabIndex = curTab.index,
+        backgroundColor = Color.Transparent,
+        divider = {
+            TabRowDefaults.Divider(
+                color = Color.Transparent
+            )
+        },
+        indicator = { tabPositions ->
+            TabRowDefaults.Indicator(
+                color = app_appColor,
+                height = TabRowDefaults.IndicatorHeight * 2,
+                modifier = Modifier.tabIndicatorOffset(tabPositions[curTab.index])
+            )
+        },
+
+        tabs = {
+            HDSelectedTabs(tabs, curTab, onClick)
+        }
+    )
+}
+
+@Composable
+private fun HDSelectedTabs(
+    tabs: List<HDDeviceTab>,
+    curTab: HDDeviceTab,
+    onClick: (HDDeviceTab) -> Unit,
+) {
+    tabs.forEach { tab ->
+        key(tab.key) {
+            Tab(text = {
+                SelectedHDDeviceTabV2(
+                    Modifier,
+                    tab = tab.options.title, selected = curTab == tab
+                )
+            }, selected = curTab == tab, onClick = {
+                onClick.invoke(tab)
+            })
+
+        }
+    }
+}
+
+@Deprecated("for test")
+@Composable
+internal fun DeviceDetailTabsV4(
+    modifier: Modifier,
+    curTab: HDDeviceTab,
+    tabs: List<HDDeviceTab>,
+    onClick: (HDDeviceTab) -> Unit,
+) {
+    ScrollableTabRow(
+        selectedTabIndex = curTab.index,
+        modifier = modifier,
+        edgePadding = 0.dp,
+        containerColor = Color.Transparent,
+        divider = {
+            TabRowDefaults.Divider(
+                color = Color.Transparent
+            )
+        },
+        indicator = { tabPositions ->
+            androidx.compose.material3.TabRowDefaults.SecondaryIndicator(
+                color = app_appColor,
+                height = TabRowDefaults.IndicatorHeight * 2,
+                modifier = Modifier.tabIndicatorOffset(tabPositions[curTab.index])
+            )
+        },
+    ) {
+        HDSelectedTabs(tabs, curTab, onClick)
+    }
+}
+
+@Composable
 internal fun DeviceDetailTabs(
     selected: HDDeviceTab,
     tabs: List<HDDeviceTab>,
@@ -206,14 +294,14 @@ internal fun DeviceDetailTabs(
 @Composable
 internal fun RowScope.DeviceDetailTab(tab: String, selected: Boolean, onClick: () -> Unit) {
     Box(Modifier.weight(1f)) {
-        SelectedHDDeviceTab(Modifier.fillMaxWidth().height(44.dp),tab, selected, onClick)
+        SelectedHDDeviceTab(Modifier.fillMaxWidth().height(44.dp), tab, selected, onClick)
     }
 }
 
 @Composable
-internal fun RowScope.DeviceDetailTabV2(tab: String, selected: Boolean, onClick: () -> Unit) {
+internal fun DeviceDetailTabV2(tab: String, selected: Boolean, onClick: () -> Unit) {
     Box(Modifier) {
-        SelectedHDDeviceTab(Modifier.height(44.dp),tab, selected, onClick)
+        SelectedHDDeviceTab(Modifier.height(44.dp), tab, selected, onClick)
     }
 }
 
@@ -228,11 +316,11 @@ internal fun Top(
 @Composable
 internal fun MenuList(
     modifier: Modifier = Modifier,
-    onDismiss: () -> kotlin.Unit,
+    onDismiss: () -> Unit,
     onMenuClick: (MenuData) -> Unit,
 ) {
     val list: Array<MenuData> by remember {
-        mutableStateOf(MenuData.values())
+        mutableStateOf(MenuData.entries.toTypedArray())
     }
     XPopContainer(onDismiss = {
         onDismiss()

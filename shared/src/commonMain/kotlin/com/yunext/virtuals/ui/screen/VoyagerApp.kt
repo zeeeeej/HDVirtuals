@@ -23,7 +23,10 @@ fun VoyagerApp() {
         })
 }
 
+
+@Deprecated("使用Modifier.statusBarsPadding()", ReplaceWith(".statusBarsPadding()"))
 /**
  * 适配android沉浸式
+ * 参考：https://developer.aliyun.com/article/974588
  */
 val LocalPaddingValues = compositionLocalOf { PaddingValues() }
