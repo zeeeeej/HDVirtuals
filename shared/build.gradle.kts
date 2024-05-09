@@ -64,6 +64,8 @@ kotlin {
             implementation(libs.napier)
             implementation(libs.kotlinx.serialization.json)
 
+            implementation(libs.kmp.datetime.picker)
+
         }
 
 

@@ -5,20 +5,17 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Lifecycle
+import androidx.core.view.WindowCompat
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.virtuals.bridge.OrientationType
 import com.yunext.virtuals.bridge.updateOrientationTypeFlow
 import com.yunext.virtuals.theme.HDThemeInternal
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -42,16 +39,23 @@ class MainActivity : ComponentActivity() {
 
     }
 
-
-
+    private val chen_jin_shi = false
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        //WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        if (chen_jin_shi){
+            enableEdgeToEdge()
+        }
 
         setContent {
-            HDThemeInternal{
-                App()
+            HDThemeInternal {
+                Surface {
+                    App()
+                }
+
             }
+
         }
 //        launcher.launch(   android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
 

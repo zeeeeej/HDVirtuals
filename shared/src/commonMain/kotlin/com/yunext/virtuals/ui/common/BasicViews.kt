@@ -40,7 +40,7 @@ private fun HDImage(
 typealias DrawableResourceFactory = HDResProvider.() -> DrawableResource
 
 @Composable
-fun HDImage(
+fun HDImage( // TODO 自定义scope
     @OptIn(ExperimentalResourceApi::class)
     resource: DrawableResourceFactory,
     contentDescription: String?,

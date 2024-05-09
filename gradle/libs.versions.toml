@@ -6,6 +6,7 @@ android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.8.2"
 androidx-appcompat = "1.6.1"
+kmpDateTimePicker = "1.0.2"
 legacy-support-v4 = "1.0.0"
 support-v4 = "30.4.1"
 androidx-constraintlayout = "2.1.4"
@@ -23,7 +24,7 @@ ksp = "1.9.22-1.0.17" # ksp
 kotlinpoet-ksp = "1.12.0"
 kotlinpoet = "1.15.2"
 nexus-publish = "2.0.0-rc-1" # publish lib
-kotlinx-datetime = "0.5.0"
+kotlinx-datetime = "0.6.0-RC.2"
 kotlinx-serialization = "1.6.0"
 coreI18n = "1.0.0-alpha01"
 kotlinx-coroutines = "1.8.0"
@@ -50,6 +51,8 @@ napier = "2.7.1"
 
 
 [libraries]
+# third-lib
+kmp-datetime-picker = { module = "network.chaintech:kmp-date-time-picker", version.ref = "kmpDateTimePicker" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 # test
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -98,6 +101,7 @@ nexus-publish = { module = "io.github.gradle-nexus.publish-plugin:io.github.grad
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet-ksp" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+# reflect
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 # kotlinx
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }

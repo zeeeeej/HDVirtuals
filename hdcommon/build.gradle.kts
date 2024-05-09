@@ -30,6 +30,7 @@ kotlin {
                 //put your multiplatform dependencies here
                 implementation(libs.kotlinx.datetime)
                 implementation(projects.hdcontext)
+                implementation(libs.kotlin.reflect)
             }
         }
         val commonTest by getting {

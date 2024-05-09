@@ -32,6 +32,10 @@ class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
 
     // 标志
     private var reference: String? = null
+    private var _param: HDMqttParam? = null
+
+    val param: HDMqttParam?
+        get() = _param
 
     // kotlin -> Swift
     private val outOpt = HDCocoaMQTTInterOpOut
@@ -113,6 +117,7 @@ class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
         )
         mqttInfo("$TAG::connect success ! ref:$ref")
         this.reference = ref ?: ""
+        this._param = param
     }
 
     override fun subscribeTopic(
@@ -157,6 +162,8 @@ class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
         inOpt.unregisterMessage(messageCallback)
         onStateChangedListener = null
         onMessageChangedListener = null
+        _param = null
+        reference = null
 
     }
 

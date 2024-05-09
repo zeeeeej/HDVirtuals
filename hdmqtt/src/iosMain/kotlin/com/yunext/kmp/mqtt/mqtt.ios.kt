@@ -1,18 +1,18 @@
 package com.yunext.kmp.mqtt
 
-import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.context.hdContext
 import com.yunext.kmp.mqtt.core.OnHDMqttActionListener
-import com.yunext.kmp.mqtt.core.IOSHDMqttClientImpl
 import com.yunext.kmp.mqtt.core.InterOpHDMqttClientImpl
 import com.yunext.kmp.mqtt.core.OnActionListener
 import com.yunext.kmp.mqtt.core.OnHDMqttMessageChangedListener
 import com.yunext.kmp.mqtt.core.OnHDMqttStateChangedListener
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
-import kotlinx.coroutines.delay
 
 actual typealias HDMqttClient = InterOpHDMqttClientImpl
+
+actual val HDMqttClient.hdClientId: String
+    get() = this.param?.clientId?:""
 
 actual fun createHdMqttClient(): HDMqttClient {
     return InterOpHDMqttClientImpl(hdContext)

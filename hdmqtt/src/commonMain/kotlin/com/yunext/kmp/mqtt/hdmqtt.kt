@@ -16,6 +16,8 @@ fun hdDebug(debug: Boolean) {
 }
 
 expect val HDMqttClient.hdMqttState: HDMqttState
+expect val HDMqttClient.hdClientId: String
+
 
 expect fun HDMqttClient.hdMqttInit()
 expect fun HDMqttClient.hdMqttConnect(

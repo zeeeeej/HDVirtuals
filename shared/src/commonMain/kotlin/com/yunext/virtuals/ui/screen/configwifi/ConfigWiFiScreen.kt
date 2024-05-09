@@ -12,6 +12,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.yunext.kmp.ui.compose.clickablePure
 import com.yunext.kmp.ui.compose.hdBackground
+import com.yunext.virtuals.ui.demo.PullRefreshSample
+import com.yunext.virtuals.ui.demo.PullToRefreshSampleCustomState
+import com.yunext.virtuals.ui.demo.rememberstate.TestRememberState
 
 class ConfigWiFiScreen :Screen {
 
@@ -22,13 +25,19 @@ class ConfigWiFiScreen :Screen {
         val screenViewModel  = rememberScreenModel {
             ConfigWiFiScreenViewModel("123")
         }
-        Box(Modifier.fillMaxSize().hdBackground()) {
+        Box(Modifier.fillMaxSize()) {
             Box(Modifier.clickablePure {
                 navigator.pop()
             }){
                 HDDebugText("配网")
             }
 
+
+
         }
+
+//        PullRefreshSample()
+//        PullToRefreshSampleCustomState()
+        TestRememberState()
     }
 }

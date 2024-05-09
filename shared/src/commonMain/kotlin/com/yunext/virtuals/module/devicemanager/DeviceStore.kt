@@ -12,6 +12,7 @@ import com.yunext.kmp.mqtt.core.OnHDMqttMessageChangedListener
 import com.yunext.kmp.mqtt.createHdMqttClient
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.isConnected
+import com.yunext.kmp.mqtt.hdClientId
 import com.yunext.kmp.mqtt.hdMqttConnect
 import com.yunext.kmp.mqtt.hdMqttInit
 import com.yunext.kmp.mqtt.hdMqttState
@@ -23,6 +24,7 @@ import com.yunext.kmp.mqtt.virtuals.coroutine.hdMqttPublishSuspend
 import com.yunext.kmp.mqtt.virtuals.protocol.ProtocolMQTTMessage
 import com.yunext.kmp.mqtt.virtuals.protocol.ReplyServiceMQTTMessage
 import com.yunext.kmp.mqtt.virtuals.protocol.ReportMQTTMessage
+import com.yunext.kmp.mqtt.virtuals.protocol.payload
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.Tsl
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.TslValueParser
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.display
@@ -36,12 +38,14 @@ import com.yunext.kmp.mqtt.virtuals.protocol.tsl.property.tslHandleUpdatePropert
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.service.ServiceKey
 import com.yunext.kmp.mqtt.virtuals.protocol.tsl.service.tslHandleTsl2ServiceKeys
 import com.yunext.virtuals.data.ProjectInfo
+import com.yunext.virtuals.data.UpLog
 import com.yunext.virtuals.data.device.HDDevice
 import com.yunext.virtuals.data.device.MQTTDevice
 import com.yunext.virtuals.data.device.TwinsDevice
 import com.yunext.virtuals.data.device.UnSupportDeviceException
 import com.yunext.virtuals.data.device.generateTopic
 import com.yunext.virtuals.data.device.providerMqttConvertor
+import com.yunext.virtuals.module.repository.LogRepository
 import com.yunext.virtuals.module.repository.TslRepository
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
@@ -98,6 +102,7 @@ class DeviceStore(
 
     private val mqttClient: HDMqttClient = createHdMqttClient()
     private val tslRepository: TslRepository = TslRepository
+    private val logRepository: LogRepository = LogRepository
     private val tslParser: TslValueParser = TslValueParser
 
     val createTime: Long = currentTime()
@@ -301,22 +306,38 @@ class DeviceStore(
     override fun publish(message: ProtocolMQTTMessage) {
         li("::publish $message")
         coroutineScope.launch {
-            if (device !is TwinsDevice) throw UnSupportDeviceException(device::class)
+            require(device is TwinsDevice){
+                " throw UnSupportDeviceException(device::class)"
+            }
             val topic: String = device.generateTopic(projectInfo, message.topic)
             val qos = message.qos
             val retention = message.retain == 1
             val payload = device.providerMqttConvertor().encode(message)
-            mqttClient.hdMqttPublishSuspend(
+            val result = mqttClient.hdMqttPublishSuspend(
                 topic,
                 payload,
                 qos = qos,
                 retained = retention
             )
+            coroutineScope.launch(Dispatchers.IO) {
+                logRepository.add(UpLog(
+                    id= 0,
+                    timestamp = currentTime(),
+                    deviceId = device.id,
+                    clientId = mqttClient.hdClientId ,//?:device.createMqttParam(projectInfo).clientId,
+                    topic =topic,
+                    cmd = message.cmd.cmd,
+                    payload = payload.decodeToString(),
+                    state = result.success
+                ))
+            }
         }
     }
 
     private fun publishInternal(mqttMessage: ProtocolMQTTMessage, tag: String) {
         li("::publish $mqttMessage @$tag")
+
+
         publish(mqttMessage)
     }
 
@@ -387,7 +408,7 @@ class DeviceStore(
         iniDeviceInfoMakerJob = null
         iniDeviceInfoMakerJob = coroutineScope.launch {
             while (true) {
-                delay(10000)//
+
                 if (mqttClient.hdMqttState.isConnected) {
                     val rssi = Random.nextInt(99)
                     li("randomRssi - rssi:$rssi")
@@ -403,6 +424,7 @@ class DeviceStore(
                         }
                     }
                 }
+                delay(10000)
 
             }
         }

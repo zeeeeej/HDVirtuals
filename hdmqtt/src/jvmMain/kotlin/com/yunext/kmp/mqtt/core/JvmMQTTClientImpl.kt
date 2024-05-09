@@ -20,6 +20,10 @@ class JvmMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
 
     private var currentClint: MqttClient? = null
 
+    private var _param: HDMqttParam? = null
+
+    val param: HDMqttParam?
+        get() = _param
     internal var onStateChangedListener: OnStateChangedListener? = null
     internal var onMessageChangedListener: OnMessageChangedListener? = null
 
@@ -30,6 +34,7 @@ class JvmMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
     override fun connect(param: HDMqttParam, listener: OnActionListener) {
         mqttInfo("mqtt-desktop-connect")
         try {
+            this._param = param
             val broker = param.url
             val memoryPersistence = MemoryPersistence()
             val ssl = param.ssl
@@ -68,6 +73,7 @@ class JvmMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
             val result = client.connectWithResult(connOpts)
             result.waitForCompletion(5000L)
             currentClint = client
+
             mqttInfo("Connecting Success: $result")
             listener.onSuccess(result)
             stateInternal = HDMqttState.Connected
@@ -147,6 +153,7 @@ class JvmMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
         mqttInfo("mqtt-desktop-clear")
         currentClint ?: return
         currentClint = null
+        this._param = null
     }
 
     private var stateInternal: HDMqttState = HDMqttState.Init

@@ -8,6 +8,10 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
 import com.yunext.kmp.ui.compose.hdBackground
+import com.yunext.virtuals.ui.demo.HorizontalPagerWithScrollableContent
+import com.yunext.virtuals.ui.demo.PullToRefreshSample
+import com.yunext.virtuals.ui.demo.SimpleHorizontalPagerSample
+import com.yunext.virtuals.ui.demo.TestApp
 
 class SettingScreen : Screen {
 
@@ -15,7 +19,13 @@ class SettingScreen : Screen {
     @Composable
     override fun Content() {
         Box(Modifier.fillMaxSize().hdBackground()) {
-            HDDebugText("设置")
+//            HDDebugText("设置")
+//            PullToRefreshSample()
+//            SimpleHorizontalPagerSample()
+
+//            HorizontalPagerWithScrollableContent()
+
+            TestApp()
         }
     }
 }

@@ -21,7 +21,7 @@ interface DeviceRepository {
 suspend fun DeviceRepository.delete(communicationId: String) =
     this.delete(communicationIdAsDeviceDTO(communicationId))
 
-class MemoryDeviceRepositoryImpl : DeviceRepository {
+private class MemoryDeviceRepositoryImpl : DeviceRepository {
     private val memoryDeviceDatasource: MemoryDeviceDatasource by lazy {
         MemoryDeviceDatasource()
     }
@@ -83,7 +83,7 @@ class MemoryDeviceRepositoryImpl : DeviceRepository {
 
 }
 
-class DBDeviceRepositoryImpl : DeviceRepository {
+private class DBDeviceRepositoryImpl : DeviceRepository {
     override suspend fun add(deviceDTO: DeviceDTO): Boolean {
         TODO("Not yet implemented")
     }

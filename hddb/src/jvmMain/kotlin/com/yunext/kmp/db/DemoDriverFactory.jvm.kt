@@ -4,6 +4,7 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.yunext.kmp.context.HDContext
 import com.yunext.kmp.database.DemoDatabase
+import com.yunext.kmp.db.database.DEFAULT_ADAPTER
 import java.io.File
 
 private const val JDBC_SCHEMA = "jdbc:sqlite:"
@@ -23,5 +24,7 @@ internal actual class DemoDriverFactory(private val memory: Boolean = false) {
 }
 
 actual fun createDatabase(context: HDContext): DemoDatabase {
-    return DemoDatabase(DemoDriverFactory(false).createDriver())
+    return DemoDatabase(
+        DemoDriverFactory(false).createDriver(), hd_logAdapter = DEFAULT_ADAPTER
+    )
 }

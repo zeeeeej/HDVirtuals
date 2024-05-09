@@ -7,9 +7,6 @@ import com.yunext.virtuals.data.ProjectInfo
 import com.yunext.virtuals.data.device.MQTTDevice
 import com.yunext.virtuals.data.device.TwinsDevice
 import com.yunext.virtuals.module.repository.DeviceRepository
-import com.yunext.virtuals.module.repository.MemoryDeviceRepositoryImpl
-import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +18,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 @Deprecated("delete", ReplaceWith("this.find(id)?.block()"))
 internal suspend fun MQTTDeviceManager.suspendInvokeDeviceStoreWithId(
@@ -45,7 +41,7 @@ fun initDeviceManager() {
             secret = "skeleton_2se32Hssa_2212",
             brand = "skeleton"
         ),
-        deviceRepository = MemoryDeviceRepositoryImpl()
+        deviceRepository = DeviceRepository
     )
 }
 

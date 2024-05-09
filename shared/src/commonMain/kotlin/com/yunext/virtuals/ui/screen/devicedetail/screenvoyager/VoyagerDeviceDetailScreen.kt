@@ -53,7 +53,7 @@ data class VoyagerDeviceDetailScreen(
             when (it) {
                 MenuData.ConfigWiFi -> navigator.push(ConfigWiFiScreen())
                 MenuData.Setting -> navigator.push(SettingScreen())
-                MenuData.Logger -> navigator.push(LoggerScreen())
+                MenuData.Logger -> navigator.push(LoggerScreen(deviceAndState))
                 MenuData.UpdateTsl -> {
                     // TODO update tsl
                 }

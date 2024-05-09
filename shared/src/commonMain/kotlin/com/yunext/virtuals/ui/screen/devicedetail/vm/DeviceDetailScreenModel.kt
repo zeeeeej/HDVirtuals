@@ -70,7 +70,7 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
                 val device = state.value.device
                 mutableState.value = state.value.copy(effect = Effect.Processing)
                 initMqtt(device)
-                delay(5000)
+                //delay(5000)
             } catch (e: Throwable) {
 //                e.printStackTrace()
                 Napier.e("$TAG::loadData error $e")

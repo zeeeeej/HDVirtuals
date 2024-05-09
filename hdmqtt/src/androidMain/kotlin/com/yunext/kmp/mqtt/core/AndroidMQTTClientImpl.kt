@@ -35,6 +35,11 @@ class AndroidMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
     override val state: HDMqttState
         get() = stateInternal.get()
 
+    private var _param: HDMqttParam? = null
+
+    val param: HDMqttParam?
+        get() = _param
+
     private val mTopics: CopyOnWriteArraySet<String> = CopyOnWriteArraySet()
 
     internal var onStateChangedListener: OnStateChangedListener? = null
@@ -115,6 +120,7 @@ class AndroidMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
         client = MqttAndroidClient(ctx.applicationContext, param.url, param.clientId).also {
             it.setCallback(internalMqttCallback)
         }
+        _param = param
         val options = MqttConnectOptions().apply {
             // 是否自动重新连接。当客户端网络异常或进入后台后导致连接中断，在这期间会不断的尝试重连，
             // 重连等待最初会等待1 秒钟, 每次重连失败等待时间就会加倍，直到 2 分钟，此时延迟将保持在 2 分钟。
@@ -235,6 +241,7 @@ class AndroidMQTTClientImpl(hdContext: HDContext) : IHDMqttClient {
         mqttInfo("mqtt-android-clear")
         onMessageChangedListener = null
         onStateChangedListener = null
+        _param = null
     }
 
 

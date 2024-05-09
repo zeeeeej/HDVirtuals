@@ -17,6 +17,9 @@ actual fun createHdMqttClient(): HDMqttClient {
     return HDMqttClient(hdContext)
 }
 
+actual val HDMqttClient.hdClientId: String
+    get() = this.param?.clientId?:""
+
 actual val HDMqttClient.hdMqttState: HDMqttState
     get() = this.state
 

@@ -1,3 +1,4 @@
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,7 +17,6 @@ import com.yunext.virtuals.App
 import com.yunext.virtuals.bridge.OrientationType
 import com.yunext.virtuals.bridge.curOrientationType
 import com.yunext.virtuals.bridge.updateOrientationTypeFlow
-import com.yunext.virtuals.theme.HDTheme
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -66,7 +66,7 @@ fun main() = application {
             true
         }
     ) {
-        HDTheme {
+        MaterialTheme {
             App()
         }
     }

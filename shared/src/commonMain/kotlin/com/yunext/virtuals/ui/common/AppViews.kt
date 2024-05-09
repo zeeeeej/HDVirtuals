@@ -80,7 +80,7 @@ fun TwinsTitle(
 ) {
     Row(
         modifier = modifier.fillMaxWidth()
-            .padding( LocalPaddingValues.current)
+            .padding(LocalPaddingValues.current)
 //            .statusBarsPadding()
             .safeContentPadding()
             .height(TwinsTitleDefaults.height),
@@ -215,6 +215,8 @@ fun TwinsDeviceStatus(modifier: Modifier = Modifier, deviceStatus: DeviceStatus)
     )
 }
 
+
+
 @Composable
 fun TwinsLabelText(modifier: Modifier = Modifier, text: String) {
     @OptIn(ExperimentalResourceApi::class)
@@ -232,7 +234,7 @@ fun TwinsLabelText(modifier: Modifier = Modifier, text: String) {
                 .align(
                     Alignment.CenterStart
                 )
-                .padding(horizontal = 6.dp, vertical = 4.dp)
+                .padding(horizontal = 6.dp, vertical = 2.dp)
         )
     }
 }
@@ -347,7 +349,7 @@ fun EditTextBlock(
     text: String,
     hint: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-    keyboardActions: KeyboardActions = KeyboardActions(),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     onValueChange: (String) -> Unit,
 ) {
     TextField(
@@ -367,12 +369,24 @@ fun EditTextBlock(
         singleLine = true,
         maxLines = 1,
         shape = RoundedCornerShape(12.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            cursorColor = China.r_luo_xia_hong,
+//        colors = TextFieldDefaults.textFieldColors(
+//            cursorColor = China.r_luo_xia_hong,
+//            focusedIndicatorColor = Color.Transparent,
+//            unfocusedIndicatorColor = Color.Transparent
+//
+//        )
+        colors = TextFieldDefaults.colors().copy(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
+            unfocusedIndicatorColor = Color.Transparent,
+            errorIndicatorColor = Color.Transparent,
 
-        )
+            cursorColor = China.r_luo_xia_hong,
+
+
+            )
     )
 }
 
@@ -409,7 +423,7 @@ fun EditTextCenterBlock(
             unfocusedIndicatorColor = Color.Transparent,
             disabledContainerColor = Color.Transparent,
 
-        ), keyboardOptions = keyboardOptions, keyboardActions = keyboardActions
+            ), keyboardOptions = keyboardOptions, keyboardActions = keyboardActions
     )
 }
 

@@ -100,7 +100,7 @@ fun Modifier.hdBackgroundBrush(brush: () -> Brush ): Modifier {
 //}
 
 
-fun Modifier.clip(shape: Shape) = graphicsLayer(shape = shape, clip = true)
+fun Modifier.hdClip(shape: Shape) = graphicsLayer(shape = shape, clip = true)
 
 @Composable
 fun Modifier.clickablePure(

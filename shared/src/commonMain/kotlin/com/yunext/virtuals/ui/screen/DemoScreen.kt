@@ -15,6 +15,8 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalContext
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,11 +27,15 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.common.util.hdMD5
 import com.yunext.kmp.common.util.hdUUID
 import com.yunext.kmp.context.hdContext
 import com.yunext.kmp.db.datasource.DemoDataSource
+import com.yunext.kmp.db.datasource.LogDatasource
 import com.yunext.kmp.db.datasource.impl.DemoDataSourceImpl
+import com.yunext.kmp.db.datasource.impl.LogDatasourceImpl
+import com.yunext.kmp.db.entity.LogEntity
 import com.yunext.kmp.http.core.HDResult
 import com.yunext.kmp.http.datasource.RemoteTslDatasourceImpl
 import kotlinx.coroutines.delay
@@ -37,6 +43,11 @@ import kotlinx.coroutines.launch
 import com.yunext.kmp.http.testKtor
 import com.yunext.kmp.resp.tsl.display
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.isActive
 
 expect fun gotoSetting()
 
@@ -48,6 +59,22 @@ fun DemoScreen() {
         var text by remember { mutableStateOf("DemoScreen") }
         val demoDataSource: DemoDataSource by remember {
             mutableStateOf(DemoDataSourceImpl())
+        }
+
+//        LaunchedEffect(Unit){
+//            launch(Dispatchers.IO) {
+//                while (true){
+//
+//                }
+//            }
+//
+//        }
+//        DisposableEffect(Unit){
+//            onDispose {  }
+//        }
+
+        val logDatasource: LogDatasource by remember {
+            mutableStateOf(LogDatasourceImpl())
         }
         val coroutineScope = rememberCoroutineScope()
         Text(
@@ -66,12 +93,12 @@ fun DemoScreen() {
                     coroutineScope.launch {
                         val cid = "DEV:tcuf6vn2ohw4mvhb_twins_test_002_cid_8404"
                         val result = dataSource.getTsl(cid, "")
-                        val display = when(result){
-                            is HDResult.Fail -> result.error.message?:"error"
+                        val display = when (result) {
+                            is HDResult.Fail -> result.error.message ?: "error"
                             is HDResult.Success -> result.data.display
                         }
                         text = display
-                        Napier.d("tsl",null,display)
+                        Napier.d("tsl", null, display)
                     }
                     // 测试coroutines
                 }
@@ -81,6 +108,8 @@ fun DemoScreen() {
                     coroutineScope.launch {
                         text = "md:${hdMD5(text)} ,random:${hdUUID(4)}"
                     }
+
+
                 }
 
                 HDContext -> {
@@ -99,13 +128,39 @@ fun DemoScreen() {
 
                 HDDb -> {
                     coroutineScope.launch {
-                        text = "start test db"
-                        delay(2000)
-                        text = "db ..."
-                        demoDataSource.add()
-                        val all = demoDataSource.findAll()
-                        delay(2000)
-                        text = "db result[${all.size}]:$all"
+                        launch {
+                            text = "start test db"
+                            delay(2000)
+                            text = "db ..."
+                            demoDataSource.add()
+                            val all = demoDataSource.findAll()
+                            delay(2000)
+                            text = "db result[${all.size}]:$all"
+                        }
+
+                        launch {
+                            HDLogger.d("testLogDB", "========== a")
+//                            HDLogger.d("testLogDB", "add...")
+//                            logDatasource.add(LogEntity.fake(0))
+//                            delay(1000)
+//                            val all = logDatasource.findAll()
+//                            HDLogger.d("testLogDB", "findAll:$all")
+//                            HDLogger.d("testLogDB", "deleteAll")
+//                            logDatasource.clearById(*all.map { it.lid }.toLongArray())
+//                            val afterDeleteAll = logDatasource.findAll()
+//                            HDLogger.d("testLogDB", "afterDeleteAll:$afterDeleteAll")
+                            val searchAll = logDatasource.searchAll(
+                                "twins_test_001_cid",
+                                LogDatasource.Sign.ALL,
+                                "testD",
+                                pageNumber = 1,
+                                pageSize = 100,
+                                start = 0L,
+                                end = 0L
+                            )
+                            HDLogger.d("testLogDB", "searchAll:$searchAll")
+                            HDLogger.d("testLogDB", "========== z")
+                        }
                     }
                 }
 

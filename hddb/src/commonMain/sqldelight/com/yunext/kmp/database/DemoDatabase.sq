@@ -1,3 +1,6 @@
+import kotlin.Boolean;
+import kotlin.Long;
+
 CREATE TABLE hd_user (
   player_number INTEGER PRIMARY KEY NOT NULL,
   full_name TEXT NOT NULL
@@ -19,3 +22,104 @@ VALUES (?, ?);
 insertFullPlayerObject:
 INSERT INTO hd_user(player_number, full_name)
 VALUES ?;
+
+-- 日志
+CREATE TABLE hd_log (
+    lid INTEGER  AS Long NOT NULL PRIMARY KEY AUTOINCREMENT,
+    timestamp INTEGER AS Long NOT NULL ,
+    device_id TEXT NOT NULL,
+    client_id TEXT NOT NULL,
+    type TEXT NOT NULL,
+    topic TEXT NOT NULL,
+    cmd TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    payload_raw BLOB NOT NULL,
+    online INTEGER AS Boolean NOT NULL,
+    state INTEGER AS Boolean NOT NULL
+);
+
+CREATE INDEX HDLog_client_id ON hd_log(device_id);
+
+selectAllLog:
+SELECT *
+FROM hd_log;
+
+insertLog:
+INSERT INTO hd_log(timestamp, device_id,client_id,type,topic,cmd,payload,payload_raw,online,state)
+VALUES (?, ?,?,?,?,?,?,?,?,?);
+
+searchAllLog:
+SELECT *
+FROM hd_log
+WHERE lid < :lastId
+AND timestamp >= :start
+AND timestamp <= :end
+AND device_id = :deviceId
+AND (
+    client_id LIKE  (:search )
+    OR cmd LIKE  (:search )
+    OR topic LIKE  (:search )
+    OR payload LIKE  (:search )
+)
+ORDER BY timestamp DESC
+LIMIT :pageSize OFFSET :offset
+;
+
+searchAllLogByState:
+SELECT *
+FROM hd_log
+WHERE lid < :lastId
+AND timestamp >= :start
+AND timestamp <= :end
+AND state = :state
+AND (
+    device_id LIKE  ('%' || :deviceId ||'%')
+    OR
+    client_id LIKE  ('%' || :search ||'%' )
+    OR
+    topic LIKE  ('%' || :search ||'%' )
+    OR
+    cmd LIKE  ('%' || :search ||'%' )
+    OR
+    payload LIKE  ('%' || :search ||'%' )
+)
+ORDER BY timestamp DESC
+LIMIT :pageSize OFFSET :offset
+;
+
+
+searchAllLogByType:
+SELECT *
+FROM hd_log
+WHERE lid < :lastId
+AND timestamp >= :start
+AND timestamp <= :end
+AND type = :type
+AND (
+    device_id LIKE  ('%' || :deviceId ||'%')
+    OR
+    client_id LIKE  ('%' || :search ||'%' )
+    OR
+    topic LIKE  ('%' || :search ||'%' )
+    OR
+    cmd LIKE  ('%' || :search ||'%' )
+    OR
+    payload LIKE  ('% ' || :search  )
+    OR
+    payload LIKE  (:search || ' %' )
+)
+
+ORDER BY timestamp DESC
+LIMIT :pageSize OFFSET :offset
+;
+
+deleteLogById:
+DELETE FROM hd_log
+WHERE lid =:id;
+
+deleteLogByDeviceId:
+DELETE FROM hd_log
+WHERE device_id = :deviceId;
+
+deleteAllLog:
+DELETE FROM hd_log;
