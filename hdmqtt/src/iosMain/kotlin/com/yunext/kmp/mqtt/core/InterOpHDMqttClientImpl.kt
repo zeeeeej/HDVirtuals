@@ -3,6 +3,7 @@ package com.yunext.kmp.mqtt.core
 import com.yunext.kmp.context.HDContext
 import com.yunext.kmp.mqtt.data.HDMqttParam
 import com.yunext.kmp.mqtt.data.HDMqttState
+import com.yunext.kmp.mqtt.hdClientId
 import com.yunext.kmp.mqtt.interop.HDCocoaMQTTInterOpIn
 import com.yunext.kmp.mqtt.interop.HDCocoaMQTTInterOpOut
 import com.yunext.kmp.mqtt.interop.HDInterOpMqttMessage
@@ -142,9 +143,15 @@ class InterOpHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
         retained: Boolean,
         listener: OnActionListener,
     ) {
-        mqttInfo("$TAG::publish ${outOpt.publish}")
-        val ref = reference ?: return
-        outOpt.publish?.invoke(topic, payload.decodeToString(), ref)
+        try {
+            val ref = reference ?: return
+            mqttInfo("$TAG::publish ${outOpt.publish}")
+            outOpt.publish?.invoke(topic, payload.decodeToString(), ref)
+            listener.onSuccess(this.hdClientId)
+        } catch (e: Exception) {
+            listener.onFailure(this.hdClientId, e)
+        }
+
     }
 
     override fun disconnect() {

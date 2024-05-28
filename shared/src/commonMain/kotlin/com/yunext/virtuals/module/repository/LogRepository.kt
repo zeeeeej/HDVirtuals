@@ -1,10 +1,12 @@
 package com.yunext.virtuals.module.repository
 
+import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.db.datasource.LogDatasource
 import com.yunext.kmp.db.datasource.impl.LogDatasourceImpl
 import com.yunext.kmp.db.entity.LogEntity
 import com.yunext.virtuals.data.Log
 import com.yunext.virtuals.data.convert
+import com.yunext.virtuals.module.devicemanager.DeviceStore
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -32,12 +34,16 @@ interface LogRepository {
 private class LogRepositoryImpl : LogRepository {
     private val logDatasource: LogDatasource = LogDatasourceImpl()
     override suspend fun add(log: Log): Boolean {
+        HDLogger.d("LogScreenModel::add", "log:$log")
         return suspendCancellableCoroutine { con ->
             try {
+                HDLogger.d("LogScreenModel::add", "log:$log 1111")
                 val logEntity = log.convert()
                 logDatasource.add(logEntity)
                 con.resume(true)
+                HDLogger.d("LogScreenModel::add", "log:$log 2222")
             } catch (e: Exception) {
+                HDLogger.d("LogScreenModel::add", "error: $e")
                 con.resumeWithException(e)
             }
             con.invokeOnCancellation {
@@ -86,6 +92,7 @@ private class LogRepositoryImpl : LogRepository {
     ): List<Log> {
         return suspendCancellableCoroutine { con ->
             try {
+                HDLogger.d("LogScreenModel", "doSearch 555555  =>1")
                 val list = logDatasource.searchAll(
                     deviceId = deviceId,
                     sign = sign,
@@ -96,12 +103,15 @@ private class LogRepositoryImpl : LogRepository {
                     pageSize = pageSize
                 )
                     .map(LogEntity::convert)
+                HDLogger.d("LogScreenModel", "doSearch 555555  =>2")
                 con.resume(list)
             } catch (e: Exception) {
                 con.resumeWithException(e)
+                HDLogger.d("LogScreenModel", "doSearch 555555  =>3 ${e.message}")
             }
             con.invokeOnCancellation {
                 // ignore
+                HDLogger.d("LogScreenModel", "doSearch 555555  =>4")
             }
         }
     }

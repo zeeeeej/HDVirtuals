@@ -38,7 +38,6 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
         pageNumber: Int,
         pageSize: Int,
     ): List<LogEntity> {
-
         val realStart = if (start <= 0) 0 else start
         val realEnd = if (end <= 0) currentTime() else end
         require(realStart >= 0) {
@@ -68,7 +67,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
                 updateLatestLogId(sign, toList[0].lid)
             }
         }
-
+        DBLog.d("LogDatasourceImpl::searchAll 1111 $sign")
         val list = when (sign) {
             LogDatasource.Sign.ALL -> {
                 queries.searchAllLog(
@@ -140,6 +139,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
                 offset = pageSize * (pageNumber - 1).toLong()
             ).executeAsList()
         }.map(Hd_log::toEntity)
+        DBLog.d("LogDatasourceImpl::searchAll 2222")
         applyLatest(list)
         DBLog.d("LogDatasourceImpl::searchAll size = $list")
         return list
@@ -147,6 +147,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
     }
 
     override fun add(logEntity: LogEntity) {
+        DBLog.d("LogDatasourceImpl::add")
         val (_, timestamp, deviceId, clientId, type, topic, cmd, payload, state, onLine) = logEntity
         queries.insertLog(
             timestamp = timestamp,

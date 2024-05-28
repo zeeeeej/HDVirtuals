@@ -165,9 +165,9 @@ internal class DeviceDetailScreenModel(initialState: DeviceDetailState) :
 //                        return@collect
 //                    }
 
-                    Napier.w {
-                        "abcdefg oldState : ${oldState}"
-                    }
+//                    Napier.w {
+//                        "abcdefg oldState : ${oldState}"
+//                    }
                     mutableState.value = oldState.copy(
                         device = DeviceAndStateViewData(
                             name = device.name,

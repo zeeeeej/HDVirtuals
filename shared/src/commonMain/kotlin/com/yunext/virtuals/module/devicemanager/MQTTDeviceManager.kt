@@ -62,7 +62,7 @@ internal class MQTTDeviceManager internal constructor(
 
 ) {
     private val coroutineScope: CoroutineScope =
-        CoroutineScope(Dispatchers.Main + SupervisorJob() + CoroutineName("MQTTDeviceManager")
+        CoroutineScope(Dispatchers.Main.immediate + SupervisorJob() + CoroutineName("MQTTDeviceManager")
 
 //             +   CoroutineExceptionHandler { coroutineContext, throwable ->
 //                    Napier.e("MQTTDeviceManager::coroutineScope error $throwable @${coroutineContext[CoroutineName]?.name}")

@@ -17,6 +17,7 @@ import com.yunext.virtuals.ui.common.HDStateScreenModel
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.screen.logger.data.UIType
 import com.yunext.virtuals.ui.screen.logger.data.toSign
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
@@ -66,6 +67,7 @@ internal class LogScreenModel(initialState: LogState) : HDStateScreenModel<LogSt
         LogRepository
     }
     private var doSearchJob: Job? = null
+    private var doLoadMoreJob: Job? = null
 
     init {
         doSearch(initialState.searchCondition, "LogScreenModel::init")
@@ -81,9 +83,9 @@ internal class LogScreenModel(initialState: LogState) : HDStateScreenModel<LogSt
 
     fun doLoadMore() {
         HDLogger.d("LogScreenModel", "doLoadMore")
-        doSearchJob?.cancel()
-        doSearchJob = null
-        doSearchJob = screenModelScope.launch {
+        doLoadMoreJob?.cancel()
+        doLoadMoreJob = null
+        doLoadMoreJob = screenModelScope.launch {
             try {
                 val deviceState = state.value.device
                 val device =
@@ -117,7 +119,7 @@ internal class LogScreenModel(initialState: LogState) : HDStateScreenModel<LogSt
                     pullState = PullState.Idle
                 )
             } catch (e: Exception) {
-                toast(e.message?:"doLoadMore error")
+                toast(e.message ?: "doLoadMore error")
             } finally {
                 mutableState.value = state.value.copy(pullState = PullState.Idle)
             }
@@ -149,7 +151,7 @@ internal class LogScreenModel(initialState: LogState) : HDStateScreenModel<LogSt
     }
 
     private fun doSearch(searchCondition: SearchCondition, tag: String) {
-        HDLogger.d("LogScreenModel", "doSearch $searchCondition @$tag")
+        HDLogger.d("LogScreenModel", "=>doSearch $searchCondition @$tag")
         val deviceState = state.value.device
         val device =
             deviceManager.deviceStoreMapStateFlow.value.filterOrNull(deviceState.communicationId)?.device
@@ -165,6 +167,7 @@ internal class LogScreenModel(initialState: LogState) : HDStateScreenModel<LogSt
                 mutableState.value = state.value.copy(
                     searchCondition = searchCondition
                 )
+                HDLogger.d("LogScreenModel", "doSearch 555555")
                 val list = withContext(Dispatchers.IO) {
                     //delay(1000)
                     logRepository.search(
@@ -177,17 +180,22 @@ internal class LogScreenModel(initialState: LogState) : HDStateScreenModel<LogSt
                         pageSize = searchCondition.pageSize
                     )
                 }
+                HDLogger.d("LogScreenModel", "doSearch 666666 ${list.size}")
                 mutableState.value = state.value.copy(
 //                    msg = "共${searchCondition.pageNumber} ${list.size}条数据",
                     list = list
                 )
             } catch (e: Exception) {
-                e.printStackTrace()
-                toast(e.message?:"doSearch error")
+//                e.printStackTrace()
+                HDLogger.e("LogScreenModel", "error: ${e.message} e=${e} ,check e  = ${e is CancellationException}")
+                //toast(e.message ?: "doSearch error")
+                if (e is CancellationException) {
+                    HDLogger.d("LogScreenModel", "doSearch 8888 ${e.message}")
+                    throw e
+                }
             } finally {
                 mutableState.value = state.value.copy(pullState = PullState.Idle)
             }
-
 
         }
 

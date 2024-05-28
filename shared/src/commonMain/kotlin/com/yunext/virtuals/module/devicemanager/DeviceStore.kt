@@ -57,6 +57,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 /**
@@ -304,33 +305,49 @@ class DeviceStore(
     }
 
     override fun publish(message: ProtocolMQTTMessage) {
-        li("::publish $message")
+        li("[::publish] $message")
         coroutineScope.launch {
-            require(device is TwinsDevice){
+
+            li("[::publish] ${device is TwinsDevice} 000000 ")
+            require(device is TwinsDevice) {
                 " throw UnSupportDeviceException(device::class)"
             }
+            li("[::publish] 1111111 ")
             val topic: String = device.generateTopic(projectInfo, message.topic)
             val qos = message.qos
             val retention = message.retain == 1
             val payload = device.providerMqttConvertor().encode(message)
-            val result = mqttClient.hdMqttPublishSuspend(
-                topic,
-                payload,
-                qos = qos,
-                retained = retention
-            )
             coroutineScope.launch(Dispatchers.IO) {
-                logRepository.add(UpLog(
-                    id= 0,
-                    timestamp = currentTime(),
-                    deviceId = device.id,
-                    clientId = mqttClient.hdClientId ,//?:device.createMqttParam(projectInfo).clientId,
-                    topic =topic,
-                    cmd = message.cmd.cmd,
-                    payload = payload.decodeToString(),
-                    state = result.success
-                ))
+                try {
+                    li("[::publish] 333333   hdMqttPublishSuspend a")
+                    val result =  mqttClient.hdMqttPublishSuspend(
+                        topic,
+                        payload,
+                        qos = qos,
+                        retained = retention
+                    )
+                    li("[::publish] 333333   hdMqttPublishSuspend z:${result.success}")
+                    li("[::publish] 333333   add a")
+                    logRepository.add(
+                        UpLog(
+                            id = 0,
+                            timestamp = currentTime(),
+                            deviceId = device.id,
+                            clientId = mqttClient.hdClientId,//?:device.createMqttParam(projectInfo).clientId,
+                            topic = topic,
+                            cmd = message.cmd.cmd,
+                            payload = payload.decodeToString(),
+                            state = result.success
+                        )
+                    )
+                    li("[::publish] 333333   add z")
+                } catch (e: Exception) {
+                    li("[::publish] error $e")
+                }
             }
+
+        }.invokeOnCompletion {
+            li("[::publish] invokeOnCompletion $it")
         }
     }
 
@@ -517,19 +534,29 @@ class DeviceStore(
                         "time" == propertyValue.key.identifier && propertyValue is DatePropertyValue -> {
                             // 处理input
                             val size = input.size
-                            DatePropertyValue.createValue(propertyValue.key, currentTime().toString())
+                            DatePropertyValue.createValue(
+                                propertyValue.key,
+                                currentTime().toString()
+                            )
                         }
 
                         "time2" == propertyValue.key.identifier && propertyValue is DatePropertyValue -> {
                             // 处理input
-                            DatePropertyValue.createValue(propertyValue.key, currentTime().toString())
+                            DatePropertyValue.createValue(
+                                propertyValue.key,
+                                currentTime().toString()
+                            )
                         }
 
                         else -> propertyValue
                     }
                 }
-                val payload = TslValueParser.serviceToJson(serviceKey,input,outputValue).encodeToByteArray()
-                publishInternal(ReplyServiceMQTTMessage(payload, identifier), "::handleServiceInternal")
+                val payload =
+                    TslValueParser.serviceToJson(serviceKey, input, outputValue).encodeToByteArray()
+                publishInternal(
+                    ReplyServiceMQTTMessage(payload, identifier),
+                    "::handleServiceInternal"
+                )
             }
 
             else -> {
