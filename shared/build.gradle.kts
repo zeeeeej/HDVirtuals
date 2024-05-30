@@ -66,6 +66,8 @@ kotlin {
 
             implementation(libs.kmp.datetime.picker)
 
+            implementation (libs.zeeeeej.zhongguohong)
+
         }
 
 

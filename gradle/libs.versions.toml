@@ -47,6 +47,8 @@ kmqtt = "0.4.6"
 android-lifecycle = "2.7.0"
 firebaseCrashlyticsBuildtools = "2.9.9"
 napier = "2.7.1"
+zeeeeej = "0.0.2"
+maven-publish = "0.28.0"
 
 
 
@@ -156,6 +158,7 @@ firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "fireb
 # Log
 # https://github.com/AAkira/Napier
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+zeeeeej-zhongguohong = { module = "io.github.zeeeeej:zhongguohong", version.ref = "zeeeeej" }
 
 [plugins]
 cocoapods = { id = "native.cocoapods", version.ref = "kotlin" }
@@ -169,4 +172,5 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 # sqlDelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
 sqlDelight2 = { id = "app.cash.sqldelight", version.ref = "sqlDelight2" }
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
 
