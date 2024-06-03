@@ -6,21 +6,23 @@ android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.8.2"
 androidx-appcompat = "1.6.1"
-kmpDateTimePicker = "1.0.2"
-legacy-support-v4 = "1.0.0"
-support-v4 = "30.4.1"
 androidx-constraintlayout = "2.1.4"
 androidx-core-ktx = "1.12.0"
 androidx-espresso-core = "3.5.1"
 androidx-material = "1.11.0"
 androidx-test-junit = "1.1.5"
-compose = "1.6.2"
-compose-plugin = "1.6.0"
+compose-plugin = "1.6.10"
 junit = "4.13.2"
-kotlin = "1.9.22"
+kotlin = "2.0.0"
 ktor = "2.3.8"
 logback = "1.5.3"
-ksp = "1.9.22-1.0.17" # ksp
+#
+legacy-support-v4 = "1.0.0"
+support-v4 = "30.4.1"
+
+#compose = "1.6.7"
+kmpDateTimePicker = "1.0.2"
+ksp = "2.0.0-1.0.21" # ksp
 kotlinpoet-ksp = "1.12.0"
 kotlinpoet = "1.15.2"
 nexus-publish = "2.0.0-rc-1" # publish lib
@@ -71,8 +73,8 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacy-support-v4" }
 android-support-v4 = { module = "com.android.support:support-v4", version.ref = "support-v4" }
 # compose 有BOM 还需要吗？
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+#compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+#compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 # ktor
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
@@ -168,6 +170,7 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" } # 2.0.0
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 # sqlDelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }

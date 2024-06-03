@@ -1,20 +1,30 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
     targetHierarchy.default()
     jvm()
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+//        compilations.all {
+//            kotlinOptions {
+//                jvmTarget = "1.8"
+//            }
+//        }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions{
+            @OptIn(ExperimentalKotlinGradlePluginApi::class)
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
     listOf(
@@ -54,7 +64,7 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.android.lifecycle.service)
-            implementation(libs.android.lifecycle.common.java8)
+//            implementation(libs.android.lifecycle.common.java8)
             implementation(libs.android.lifecycle.process)
             implementation(libs.android.lifecycle.compiler)
             implementation(libs.android.lifecycle.runtime.ktx)
@@ -71,4 +81,26 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+        }
+    }
+    buildFeatures{
+        compose = true
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    dependencies {
+        debugImplementation(compose.uiTooling)
+    }
+
+
 }

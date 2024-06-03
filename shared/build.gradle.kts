@@ -1,16 +1,24 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
-            }
+//        compilations.all {
+//            kotlinOptions {
+//                jvmTarget = "11"
+//            }
+//        }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
@@ -66,13 +74,13 @@ kotlin {
 
             implementation(libs.kmp.datetime.picker)
 
-            implementation (libs.zeeeeej.zhongguohong)
+//            implementation (libs.zeeeeej.zhongguohong)
 
         }
 
 
         androidMain.dependencies {
-            implementation(libs.compose.ui.tooling.preview)
+            implementation(compose.uiTooling)
             implementation(libs.androidx.activity.compose)
 //            implementation(libs.voyager.hilt)
             api(libs.kotlinx.coroutines.android)

@@ -16,7 +16,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun hdPainterResource(resName:String)  {
-    org.jetbrains.compose.resources.painterResource(DrawableResource(resName))
+//    org.jetbrains.compose.resources.painterResource(DrawableResource(resName))
 }
 
 internal object ItemDefaults {

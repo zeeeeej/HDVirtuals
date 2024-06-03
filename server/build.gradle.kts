@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.ktor)
     application
+//    alias(libs.plugins.compose.compiler)
+//    alias(libs.plugins.jetbrainsCompose)
 }
 
 group = "com.yunext.virtuals"

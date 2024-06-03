@@ -1,10 +1,14 @@
 import com.android.build.gradle.internal.ide.kmp.KotlinAndroidSourceSetMarker.Companion.android
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     //id("module.publication")
     alias(libs.plugins.kotlinSerialization)
+//    alias(libs.plugins.compose.compiler)
+//    alias(libs.plugins.jetbrainsCompose)
 }
 
 kotlin {
@@ -13,9 +17,13 @@ kotlin {
     androidTarget {
         //publishLibraryVariants("release")
         compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+//            kotlinOptions {
+//                jvmTarget = "1.8"
+//            }
+        }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
     iosX64()
@@ -91,5 +99,9 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
