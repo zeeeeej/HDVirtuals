@@ -13,12 +13,18 @@ internal actual class DemoDriverFactory(private val memory: Boolean = false) {
     actual fun createDriver(): SqlDriver {
         // 参考 https://github.com/RackaApps/Reluct/blob/main/common/persistence/database/src/desktopMain/kotlin/work/racka/reluct/common/database/di/Platform.kt
         val driver = if (memory) {
-            JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+            println("===createDriver=== IN_MEMORY")
+            val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+            driver
         } else {
             val dbPath = File(System.getProperty("java.io.tmpdir"), DB_NAME)
-            JdbcSqliteDriver(url = "${JDBC_SCHEMA}${dbPath.absolutePath}")
+            val driver = JdbcSqliteDriver(url = "${JDBC_SCHEMA}${dbPath.absolutePath}")
+            if (!dbPath.exists()) {
+                println("===createDriver=== $dbPath")
+                DemoDatabase.Schema.create(driver)
+            }
+            driver
         }
-        DemoDatabase.Schema.create(driver)
         return driver
     }
 }

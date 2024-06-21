@@ -50,6 +50,7 @@ kotlin {
             implementation(projects.hdble)
             implementation(projects.hdui)
             implementation(projects.hdmqttVirtuals)
+            implementation(projects.hddomain)
 
             // voyager
             implementation(libs.voyager.navigator)

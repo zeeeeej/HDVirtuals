@@ -1,10 +1,21 @@
 package com.yunext.kmp.db.database
 
 import com.yunext.kmp.context.hdContext
+import com.yunext.kmp.database.DemoDatabase
+import com.yunext.kmp.database.DemoDatabaseQueries
 import com.yunext.kmp.db.createDatabase
 
-abstract class DemoDatabaseOwner {
-    protected val database = createDatabase(hdContext)
+internal interface DemoDatabaseOwner {
 
-    protected val queries = database.demoDatabaseQueries
+     val database:DemoDatabase
+
+     val queries:DemoDatabaseQueries
+
+    companion object:DemoDatabaseOwner{
+        override val database: DemoDatabase
+            get() =  createDatabase(hdContext)
+        override val queries: DemoDatabaseQueries
+            get() = database.demoDatabaseQueries
+
+    }
 }

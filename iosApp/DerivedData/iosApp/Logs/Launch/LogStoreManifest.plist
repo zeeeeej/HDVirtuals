@@ -3,70 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>logFormatVersion</key>
-	<integer>10</integer>
+	<integer>11</integer>
 	<key>logs</key>
-	<dict>
-		<key>657A0C3D-886B-468E-ABBA-474FD6E36D51</key>
-		<dict>
-			<key>auxiliaryLogUniqueIdentifier</key>
-			<string>594C12BC-1E75-493E-A2BB-5627ACB42BAC</string>
-			<key>auxiliaryObservable</key>
-			<dict>
-				<key>highLevelStatus</key>
-				<string>W</string>
-				<key>totalNumberOfAnalyzerIssues</key>
-				<integer>0</integer>
-				<key>totalNumberOfErrors</key>
-				<integer>0</integer>
-				<key>totalNumberOfTestFailures</key>
-				<integer>0</integer>
-				<key>totalNumberOfWarnings</key>
-				<integer>132</integer>
-			</dict>
-			<key>className</key>
-			<string>IDESchemeActionsInvocationRecord</string>
-			<key>documentTypeString</key>
-			<string>&lt;nil&gt;</string>
-			<key>domainType</key>
-			<string>com.apple.dt.IDE.LaunchSchemeAction</string>
-			<key>fileName</key>
-			<string>Run-iosApp-2024.05.27_16-43-13-+0800.xcresult</string>
-			<key>hasAuxiliaryLog</key>
-			<true/>
-			<key>hasConsoleLog</key>
-			<true/>
-			<key>hasPrimaryLog</key>
-			<true/>
-			<key>primaryObservable</key>
-			<dict>
-				<key>highLevelStatus</key>
-				<string>W</string>
-				<key>totalNumberOfAnalyzerIssues</key>
-				<integer>0</integer>
-				<key>totalNumberOfErrors</key>
-				<integer>0</integer>
-				<key>totalNumberOfTestFailures</key>
-				<integer>0</integer>
-				<key>totalNumberOfWarnings</key>
-				<integer>132</integer>
-			</dict>
-			<key>schemeIdentifier-containerName</key>
-			<string>iosApp project</string>
-			<key>schemeIdentifier-schemeName</key>
-			<string>iosApp</string>
-			<key>schemeIdentifier-sharedScheme</key>
-			<integer>1</integer>
-			<key>signature</key>
-			<string>Run iosApp</string>
-			<key>timeStartedRecording</key>
-			<real>738492193.68962705</real>
-			<key>timeStoppedRecording</key>
-			<real>0.0</real>
-			<key>title</key>
-			<string>Run iosApp</string>
-			<key>uniqueIdentifier</key>
-			<string>657A0C3D-886B-468E-ABBA-474FD6E36D51</string>
-		</dict>
-	</dict>
+	<dict/>
 </dict>
 </plist>

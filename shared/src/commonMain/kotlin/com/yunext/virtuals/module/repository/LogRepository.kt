@@ -6,7 +6,6 @@ import com.yunext.kmp.db.datasource.impl.LogDatasourceImpl
 import com.yunext.kmp.db.entity.LogEntity
 import com.yunext.virtuals.data.Log
 import com.yunext.virtuals.data.convert
-import com.yunext.virtuals.module.devicemanager.DeviceStore
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -31,8 +30,8 @@ interface LogRepository {
 
 }
 
-private class LogRepositoryImpl : LogRepository {
-    private val logDatasource: LogDatasource = LogDatasourceImpl()
+private class LogRepositoryImpl(private val logDatasource: LogDatasource = LogDatasourceImpl()) :
+    LogRepository {
     override suspend fun add(log: Log): Boolean {
         HDLogger.d("LogScreenModel::add", "log:$log")
         return suspendCancellableCoroutine { con ->
@@ -70,7 +69,7 @@ private class LogRepositoryImpl : LogRepository {
     override suspend fun deleteALl(deviceId: String): Boolean {
         return suspendCancellableCoroutine { con ->
             try {
-               logDatasource.clearByDevice(deviceId)
+                logDatasource.clearByDevice(deviceId)
                 con.resume(true)
             } catch (e: Exception) {
                 con.resumeWithException(e)

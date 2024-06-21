@@ -3,10 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>logFormatVersion</key>
-	<integer>10</integer>
+	<integer>11</integer>
 	<key>logs</key>
 	<dict>
-		<key>ACCD141A-E9A6-44FC-A290-8684CAD064F8</key>
+		<key>1410524E-C7F9-4100-A94D-6E7D151BC617</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -15,7 +15,7 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>ACCD141A-E9A6-44FC-A290-8684CAD064F8.xcactivitylog</string>
+			<string>1410524E-C7F9-4100-A94D-6E7D151BC617.xcactivitylog</string>
 			<key>hasPrimaryLog</key>
 			<true/>
 			<key>primaryObservable</key>
@@ -34,15 +34,15 @@
 			<key>signature</key>
 			<string>Resolve Packages</string>
 			<key>timeStartedRecording</key>
-			<real>738642729.85297501</real>
+			<real>740542331.90418196</real>
 			<key>timeStoppedRecording</key>
-			<real>738642732.21383595</real>
+			<real>740542335.17028904</real>
 			<key>title</key>
 			<string>Resolve Packages</string>
 			<key>uniqueIdentifier</key>
-			<string>ACCD141A-E9A6-44FC-A290-8684CAD064F8</string>
+			<string>1410524E-C7F9-4100-A94D-6E7D151BC617</string>
 		</dict>
-		<key>F1A98F97-89BF-403A-AD9D-BA55527E295D</key>
+		<key>62C0606E-2B04-40DF-9422-86F82C658471</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -51,7 +51,7 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>F1A98F97-89BF-403A-AD9D-BA55527E295D.xcactivitylog</string>
+			<string>62C0606E-2B04-40DF-9422-86F82C658471.xcactivitylog</string>
 			<key>hasPrimaryLog</key>
 			<true/>
 			<key>primaryObservable</key>
@@ -70,13 +70,13 @@
 			<key>signature</key>
 			<string>Resolve Packages</string>
 			<key>timeStartedRecording</key>
-			<real>738642726.99008906</real>
+			<real>740542335.71729004</real>
 			<key>timeStoppedRecording</key>
-			<real>738642729.31839097</real>
+			<real>740542338.55232596</real>
 			<key>title</key>
 			<string>Resolve Packages</string>
 			<key>uniqueIdentifier</key>
-			<string>F1A98F97-89BF-403A-AD9D-BA55527E295D</string>
+			<string>62C0606E-2B04-40DF-9422-86F82C658471</string>
 		</dict>
 	</dict>
 </dict>

@@ -38,7 +38,6 @@ val hdHttpClient by lazy {
 
         // https://ktor.io/docs/http-client-engines.html#cio
         // this: CIOEngineConfig
-//       engine {
 //           maxConnectionsCount = 1000
 //           endpoint {
 //               // this: EndpointConfig

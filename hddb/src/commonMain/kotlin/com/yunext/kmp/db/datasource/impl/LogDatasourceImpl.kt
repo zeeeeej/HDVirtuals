@@ -8,8 +8,8 @@ import com.yunext.kmp.db.datasource.LogDatasource
 import com.yunext.kmp.db.entity.LogEntity
 import com.yunext.kmp.db.entity.toEntity
 
-class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
-
+class LogDatasourceImpl: LogDatasource {
+    private val owner: DemoDatabaseOwner = DemoDatabaseOwner
     /**
      * UI展示的最近日志Id，防止查询时间内，有新的数据添加，加载更多会导致数据重复。
      * todo 线程同步？
@@ -24,7 +24,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
     }
 
     override fun findAll(): List<LogEntity> {
-        val hdLogs: List<Hd_log> = database.demoDatabaseQueries.selectAllLog().executeAsList()
+        val hdLogs: List<Hd_log> = owner.database.demoDatabaseQueries.selectAllLog().executeAsList()
         DBLog.d("LogDatasourceImpl::findAll size = $hdLogs")
         return hdLogs.map(Hd_log::toEntity)
     }
@@ -70,7 +70,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
         DBLog.d("LogDatasourceImpl::searchAll 1111 $sign")
         val list = when (sign) {
             LogDatasource.Sign.ALL -> {
-                queries.searchAllLog(
+                owner.queries.searchAllLog(
                     lastId = lastId,
                     deviceId = deviceId,
                     start = realStart,
@@ -83,7 +83,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
             }
 
             LogDatasource.Sign.FAIL -> {
-                queries.searchAllLogByState(
+                owner.queries.searchAllLogByState(
                     state = false,
                     lastId = lastId,
                     deviceId = deviceId,
@@ -95,7 +95,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
                 ).executeAsList()
             }
 
-            LogDatasource.Sign.SUCCESS -> queries.searchAllLogByState(
+            LogDatasource.Sign.SUCCESS -> owner.queries.searchAllLogByState(
                 state = true,
                 lastId = lastId,
                 deviceId = deviceId,
@@ -106,7 +106,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
                 offset = pageSize * (pageNumber - 1).toLong()
             ).executeAsList()
 
-            LogDatasource.Sign.ONLINE -> queries.searchAllLogByType(
+            LogDatasource.Sign.ONLINE -> owner.queries.searchAllLogByType(
                 type = LogEntity.Type.Online.type,
                 lastId = lastId,
                 deviceId = deviceId,
@@ -117,7 +117,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
                 offset = pageSize * (pageNumber - 1).toLong()
             ).executeAsList()
 
-            LogDatasource.Sign.UP -> queries.searchAllLogByType(
+            LogDatasource.Sign.UP -> owner.queries.searchAllLogByType(
                 type = LogEntity.Type.Up.type,
                 lastId = lastId,
                 deviceId = deviceId,
@@ -128,7 +128,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
                 offset = pageSize * (pageNumber - 1).toLong()
             ).executeAsList()
 
-            LogDatasource.Sign.DOWN -> queries.searchAllLogByType(
+            LogDatasource.Sign.DOWN -> owner.queries.searchAllLogByType(
                 type = LogEntity.Type.Down.type,
                 lastId = lastId,
                 deviceId = deviceId,
@@ -149,7 +149,7 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
     override fun add(logEntity: LogEntity) {
         DBLog.d("LogDatasourceImpl::add")
         val (_, timestamp, deviceId, clientId, type, topic, cmd, payload, state, onLine) = logEntity
-        queries.insertLog(
+        owner.queries.insertLog(
             timestamp = timestamp,
             device_id = deviceId,
             client_id = clientId,
@@ -168,16 +168,16 @@ class LogDatasourceImpl : LogDatasource, DemoDatabaseOwner() {
             "必须输入一个log id"
         }
         logId.forEach {
-            queries.deleteLogById(it)
+            owner.queries.deleteLogById(it)
         }
 
     }
 
     override fun clear() {
-        queries.deleteAllLog()
+        owner.queries.deleteAllLog()
     }
 
     override fun clearByDevice(deviceId: String) {
-        queries.deleteLogByDeviceId(deviceId)
+        owner.queries.deleteLogByDeviceId(deviceId)
     }
 }

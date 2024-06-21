@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.yunext.kmp.DDDController
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.common.util.hdMD5
 import com.yunext.kmp.common.util.hdUUID
@@ -42,6 +43,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.yunext.kmp.http.testKtor
 import com.yunext.kmp.resp.tsl.display
+import com.yunext.virtuals.ui.data.randomText
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -88,32 +90,39 @@ fun DemoScreen() {
             when (module) {
                 HDBle -> {
                     text = "todo ${module.moduleName}"
-                    // 测试tsl获取
-                    val dataSource = RemoteTslDatasourceImpl()
+//                    // 测试tsl获取
+//                    val dataSource = RemoteTslDatasourceImpl()
+//                    coroutineScope.launch {
+//                        val cid = "DEV:tcuf6vn2ohw4mvhb_twins_test_002_cid_8404"
+//                        val result = dataSource.getTsl(cid, "")
+//                        val display = when (result) {
+//                            is HDResult.Fail -> result.error.message ?: "error"
+//                            is HDResult.Success -> result.data.display
+//                        }
+//                        text = display
+//                        Napier.d("tsl", null, display)
+//                    }
+//                    // 测试coroutines
                     coroutineScope.launch {
-                        val cid = "DEV:tcuf6vn2ohw4mvhb_twins_test_002_cid_8404"
-                        val result = dataSource.getTsl(cid, "")
-                        val display = when (result) {
-                            is HDResult.Fail -> result.error.message ?: "error"
-                            is HDResult.Success -> result.data.display
-                        }
-                        text = display
-                        Napier.d("tsl", null, display)
+                        DDDController.addProduct()
                     }
-                    // 测试coroutines
                 }
 
                 HDCommon -> {
 
                     coroutineScope.launch {
-                        text = "md:${hdMD5(text)} ,random:${hdUUID(4)}"
+                        DDDController.deleteProduct()
                     }
+//                    coroutineScope.launch {
+//                        text = "md:${hdMD5(text)} ,random:${hdUUID(4)}"
+//                    }
 
 
                 }
 
                 HDContext -> {
                     coroutineScope.launch {
+
                         runCatching {
                             hdContext.context
                         }.onFailure {
@@ -128,6 +137,7 @@ fun DemoScreen() {
 
                 HDDb -> {
                     coroutineScope.launch {
+
                         launch {
                             text = "start test db"
                             delay(2000)
@@ -187,6 +197,28 @@ fun DemoScreen() {
                 HDSerial -> {
                     text = "todo ${module.moduleName}"
                 }
+
+                DDDAdd -> coroutineScope.launch {
+                    DDDController.addProduct()
+                }
+
+                DDDDelete -> coroutineScope.launch {
+                    DDDController.deleteProduct()
+                }
+
+                DDDEdit -> coroutineScope.launch {
+                    DDDController.parseTsl(
+                        """
+                            {
+                                "a":"${randomText(5)}"
+                            }
+                        """.trimIndent()
+                    )
+                }
+
+                DDDFind -> coroutineScope.launch {
+                    DDDController.findAllProduct()
+                }
             }
         }
         Row(
@@ -232,6 +264,7 @@ private fun LibModuleItem(module: LibModule, onClick: () -> Unit) {
 
 private val LibModules: Set<LibModule> by lazy {
     setOf(
+        DDDAdd, DDDDelete, DDDEdit, DDDFind,
         HDBle, HDCommon, HDContext, HDHttp, HDMqtt, HDResource, HDDb, HDSerial
     )
 }
@@ -251,6 +284,26 @@ private data object HDCommon : LibModule {
 private data object HDContext : LibModule {
     override val moduleName: String
         get() = ":hdcontext"
+}
+
+private data object DDDAdd : LibModule {
+    override val moduleName: String
+        get() = ":DDDAdd"
+}
+
+private data object DDDDelete : LibModule {
+    override val moduleName: String
+        get() = ":DDDDelete"
+}
+
+private data object DDDEdit : LibModule {
+    override val moduleName: String
+        get() = ":DDDEdit"
+}
+
+private data object DDDFind : LibModule {
+    override val moduleName: String
+        get() = ":DDDFind"
 }
 
 private data object HDBle : LibModule {

@@ -1,15 +1,15 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.sqlDelight2)
+    alias(libs.plugins.kotlinSerialization)
     //id("module.publication")
 }
 
 kotlin {
-    //targetHierarchy.default()
+    targetHierarchy.default()
     jvm()
     androidTarget {
-        publishLibraryVariants("release")
+        //publishLibraryVariants("release")
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
@@ -25,12 +25,17 @@ kotlin {
             dependencies {
                 //put your multiplatform dependencies here
                 implementation(projects.hdcontext)
-                implementation(projects.hdcommon)
-                implementation(libs.sqlite.stately.common)
-                implementation(libs.sqlite.stately.concurrency)
 
-                api(libs.sqlDelight2.runtime)
-                api(libs.sqlDelight2.adapter)
+                api(libs.kotlinx.datetime)
+                api(libs.kotlinx.coroutines.core)
+                api(libs.ktor.client.core)
+                api(libs.ktor.client.cio)
+                api(libs.ktor.client.content.negotiation)
+                api(libs.ktor.serialization.kotlinx.json)
+                api(libs.ktor.serialization.kotlinx.protobuf)
+                implementation(libs.ktor.client.logging)
+                implementation(libs.napier)
+
             }
         }
         val commonTest by getting {
@@ -40,36 +45,21 @@ kotlin {
         }
 
         androidMain.dependencies {
-            api(libs.sqlDelight2.driver.android)
+            api(libs.kotlinx.coroutines.android)
         }
 
         iosMain.dependencies {
-            api(libs.sqlDelight2.driver.native)
         }
 
-        jvmMain.dependencies {
-            api(libs.sqlDelight2.driver.sqlite)
-            implementation("org.slf4j:slf4j-nop:1.7.25")
+        jvmMain.dependencies{
         }
     }
 }
 
 android {
-    namespace = "com.yunext.kmp.db"
+    namespace = "com.yunext.kmp.domain"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
-}
-
-sqldelight {
-    databases {
-        create("DemoDatabase") {
-            packageName.set("com.yunext.kmp.database")
-            //dialect("app.cash.sqldelight:sqlite-3-24-dialect:2.0.1")
-        }
-        //linkSqlite = true
-
-    }
-
 }

@@ -24,7 +24,7 @@ INSERT INTO hd_user(player_number, full_name)
 VALUES ?;
 
 -- 日志
-CREATE TABLE hd_log (
+CREATE  TABLE IF NOT EXISTS  hd_log (
     lid INTEGER  AS Long NOT NULL PRIMARY KEY AUTOINCREMENT,
     timestamp INTEGER AS Long NOT NULL ,
     device_id TEXT NOT NULL,
