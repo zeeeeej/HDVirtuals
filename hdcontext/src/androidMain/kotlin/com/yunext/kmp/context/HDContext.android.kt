@@ -78,3 +78,5 @@ val HDContext.application: Application
     } catch (e: Throwable) {
         throw HDContextException("context cast application fail.", cause = e)
     }
+
+actual typealias Activity = Activity

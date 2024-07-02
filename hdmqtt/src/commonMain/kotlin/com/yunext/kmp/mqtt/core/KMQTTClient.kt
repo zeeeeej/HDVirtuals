@@ -16,6 +16,7 @@ import mqtt.packets.mqttv5.ReasonCode
 import mqtt.packets.mqttv5.SubscriptionOptions
 import socket.tls.TLSClientSettings
 
+@Deprecated("")
 internal class KMQTTClient : IHDMqttClient {
 
     override val tag: String

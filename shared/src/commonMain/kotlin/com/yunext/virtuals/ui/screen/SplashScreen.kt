@@ -46,18 +46,31 @@ internal class SplashScreen : Screen {
                 }
             }
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                AnimatedVisibility(show) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Hello Kotlin Multiplatform", modifier = Modifier.wrapContentSize())
-                    }
-                }
+            SplashPage(show)
+        }
+    }
 
-                Spacer(Modifier.height(12.dp))
-                HDImage(resource = {
-                    HDRes.drawable.ic_app
-                }, contentDescription = null)
+
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun SplashPage(
+    show: Boolean,
+    content: @Composable () -> Unit = {
+        HDImage(resource = {
+            HDRes.drawable.ic_app
+        }, contentDescription = null)
+    },
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        AnimatedVisibility(show) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("Hello Kotlin Multiplatform", modifier = Modifier.wrapContentSize())
             }
         }
+
+        Spacer(Modifier.height(12.dp))
+        content()
     }
 }

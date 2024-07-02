@@ -10,3 +10,5 @@ public actual class HDContext actual constructor() {
 
     }
 }
+
+actual class Activity

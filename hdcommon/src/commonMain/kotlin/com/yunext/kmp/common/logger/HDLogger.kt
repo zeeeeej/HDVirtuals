@@ -1,30 +1,45 @@
 package com.yunext.kmp.common.logger
 
-abstract class HDLoggerImpl(private val delegate: HDLogger) : HDLogger {
-    override var debug: Boolean
-        get() = delegate.debug
-        set(value) {
-            delegate.debug = value
-        }
 
-    override fun d(tag: String, msg: String) {
+interface XLog {
+    fun d(msg: String)
+
+    fun i(msg: String)
+
+    fun w(msg: String)
+
+    fun e(msg: String)
+}
+
+enum class XLogType{
+    D,I,W,E;
+}
+
+class HDLog(
+    private val globalTag: String,
+    private val debug: Boolean,
+    private val pre: String.(XLogType) -> String = {this},
+) : XLog {
+
+
+    override fun d(msg: String) {
         if (!debug) return
-        delegate.d(tag, msg)
+        HDLogger.d(globalTag, pre(msg,XLogType.D))
     }
 
-    override fun i(tag: String, msg: String) {
+    override fun i(msg: String) {
         if (!debug) return
-        delegate.i(tag, msg)
+        HDLogger.i(globalTag, pre(msg,XLogType.I))
     }
 
-    override fun w(tag: String, msg: String) {
+    override fun w(msg: String) {
         if (!debug) return
-        delegate.w(tag, msg)
+        HDLogger.w(globalTag, pre(msg,XLogType.W))
     }
 
-    override fun e(tag: String, msg: String) {
+    override fun e(msg: String) {
         if (!debug) return
-        delegate.e(tag, msg)
+        HDLogger.e(globalTag, pre(msg,XLogType.E))
     }
 
 

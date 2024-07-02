@@ -7,11 +7,9 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.view.WindowCompat
 import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.virtuals.bridge.OrientationType
 import com.yunext.virtuals.bridge.updateOrientationTypeFlow
@@ -39,12 +37,12 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    private val chen_jin_shi = false
+    private val Chen_Jin_Shi = false
     override fun onCreate(savedInstanceState: Bundle?) {
 
         //WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-        if (chen_jin_shi){
+        if (Chen_Jin_Shi){
             enableEdgeToEdge()
         }
 
@@ -53,9 +51,7 @@ class MainActivity : ComponentActivity() {
                 Surface {
                     App()
                 }
-
             }
-
         }
 //        launcher.launch(   android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
 

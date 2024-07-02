@@ -69,8 +69,9 @@ class DeviceListScreenModel(initialState: DeviceListState = DeviceListStateDefau
     }
 
     fun doGetAllDevice() {
+        HDLogger.d("DeviceListScreenModel","::doGetAllDevice")
         screenModelScope.launch {
-            mutableState.value = state.value.copy(effect = Effect.Processing)
+            // mutableState.value = state.value.copy(effect = Effect.Processing) // TODO 会导致页面闪一下
             try {
                 val list = withContext(Dispatchers.IO) { deviceUseCase.list() }
                  merge(list, deviceManager.deviceStoreMapStateFlow.value)

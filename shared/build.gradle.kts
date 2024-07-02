@@ -48,6 +48,7 @@ kotlin {
             implementation(projects.hdserial)
             implementation(projects.hddb)
             implementation(projects.hdble)
+            implementation(projects.hdrtc)
             implementation(projects.hdui)
             implementation(projects.hdmqttVirtuals)
             implementation(projects.hddomain)

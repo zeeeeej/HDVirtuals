@@ -8,10 +8,10 @@ import com.yunext.kmp.common.logger.HDLogger
 import com.yunext.kmp.context.application
 import com.yunext.kmp.context.hdContext
 
-actual fun gotoSetting() {
-    HDLogger.d("DemoScreen", "gotoSetting")
-    hdContext.application.gotoSetting()
-}
+//actual fun gotoSetting() {
+//    HDLogger.d("DemoScreen", "gotoSetting")
+//    hdContext.application.gotoSetting()
+//}
 
 private fun Context.gotoSetting() {
     try {

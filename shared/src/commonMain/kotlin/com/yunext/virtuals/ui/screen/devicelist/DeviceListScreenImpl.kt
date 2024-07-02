@@ -39,6 +39,8 @@ import com.yunext.virtuals.ui.common.TwinsEmptyViewForDevice
 import com.yunext.virtuals.ui.common.dialog.CHAlertDialog
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.screen.LocalPaddingValues
+import com.yunext.virtuals.ui.screen.debug.DebugBle
+import com.yunext.virtuals.ui.screen.debug.DebugDialog
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @Composable
@@ -50,7 +52,7 @@ fun DeviceListScreenImpl(
     onDeviceSelected: (DeviceAndStateViewData) -> Unit,
     onDeviceDelete: (DeviceAndStateViewData) -> Unit,
     onActionAdd: () -> Unit,
-    onDisconnect:(DeviceAndStateViewData)->Unit
+    onDisconnect: (DeviceAndStateViewData) -> Unit,
 ) {
     /* 背景 */
     @OptIn(ExperimentalResourceApi::class)
@@ -123,9 +125,11 @@ fun DeviceListScreenImpl(
                     if (list.isEmpty()) {
                         TwinsEmptyViewForDevice()
                     } else {
-                        TwinsDeviceList(Modifier
+                        TwinsDeviceList(
+                            Modifier
 //                            .captionBarPadding()
-                            , list,onDeviceSelected,onDeviceDelete,onDisconnect)
+                            , list, onDeviceSelected, onDeviceDelete, onDisconnect
+                        )
                     }
 
 //                    PullRefreshIndicator(
@@ -180,81 +184,11 @@ fun DeviceListScreenImpl(
         }
 
 
-        DebugDialog()
-    }
-
-}
-
-@Composable
-private  fun DebugDialog() {
-    // 弹窗
-    Debug("TwinsHomePage-内容-弹窗")
-    var show by remember {
-        mutableStateOf(false)
-    }
-    var index by remember {
-        mutableStateOf(0)
-    }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Button(
-            onClick = {
-                index += 1
-                show = !show
-
-
-//                val a = A1("Greeting hello")
-//                val a = A3
-//                println("Greeting a = $a")
-//                val json = Json.encodeToString(A.serializer(), a)
-//                println("Greeting json = $json")
-//                val r = Json.decodeFromString(A.serializer(), json)
-//                println("Greeting r = $r")
-
-//                val abstractContext = SerializersModule {
-//                    polymorphic(A::class) {
-//                        subclass(A1::class)
-//                        subclass(A2::class)
-//                        // no need to register ProtocolWithAbstractClass.ErrorMessage
-//                    }
-//
-//                }
-//                val jsonER = Json {
-//                    serializersModule = abstractContext
-//                }
-//                val json = jsonER.encodeToString(A3)
-//                println("Greeting json = $json")
-//                val r = jsonER.decodeFromString(A1.serializer(),json)
-//                println("Greeting r = $r")
-
-            },
-            modifier = Modifier.Companion
-                .align(Alignment.BottomStart)
-                .padding(vertical = 16.dp)
-        ) {
-            Text(text = "Debug")
-        }
-        if (show) {
-//        if (index % 2 == 0) {
-////                CHLoadingDialog(dimAmount = 0.1f) {
-////                    show = false
-////                }
-//            NewsDialog() {
-//                show = false
-//            }
-//        } else {
-            //TODO("底部弹窗")
-            CHAlertDialog("haha", "天生我才必有用") {
-                show = false
-            }
-//        }
-
-//        AlertDialog(onDismissRequest = { show = false }, buttons = {
-//            Text(text = "I am dialog", modifier = Modifier.size(200.dp))
-//        })
-
-        }
+        //DebugDialog()
     }
 }
+
+
 
 
 

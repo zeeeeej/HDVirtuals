@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -240,7 +241,7 @@ fun TwinsLabelText(modifier: Modifier = Modifier, text: String) {
 }
 
 
-@OptIn(ExperimentalResourceApi::class)
+
 @Composable
 fun TwinsBackgroundBlock(
     modifier: Modifier = Modifier,
@@ -263,9 +264,12 @@ fun TwinsBackgroundBlock(
         Spacer(
             modifier = Modifier
                 .fillMaxSize()
-                .background(app_background_brush)
+                .drawBehind {
+                    drawRect(app_background_brush)
+                }
         )
     } else {
+        @OptIn(ExperimentalResourceApi::class)
         HDImage(
             resource = resource,
             contentScale = ContentScale.Crop,
@@ -350,7 +354,9 @@ fun EditTextBlock(
     hint: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    trailingIcon: @Composable (() -> Unit)? = null,
     onValueChange: (String) -> Unit,
+
 ) {
     TextField(
         value = text,
@@ -366,6 +372,7 @@ fun EditTextBlock(
                 style = Twins.twins_edit_text_hint.copy(textAlign = TextAlign.End)
             )
         },
+        trailingIcon = trailingIcon,
         singleLine = true,
         maxLines = 1,
         shape = RoundedCornerShape(12.dp),

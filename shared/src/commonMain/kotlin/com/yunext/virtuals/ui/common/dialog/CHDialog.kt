@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yunext.kmp.resource.color.China
@@ -31,8 +32,11 @@ internal fun Modifier.debug(debug: Boolean, block: Modifier.() -> Modifier): Mod
 internal fun Modifier.debugShape(debug: Boolean) = debug(debug) {
     border(
         1.dp, DialogDefaults.DEFAULT_DEBUG_COLOR, shape = DialogDefaults.DEFAULT_SHAPE
+    ). clip(
+        DialogDefaults.DEFAULT_SHAPE
     )
 }
+
 
 @Composable
 fun CHDialog(

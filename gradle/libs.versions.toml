@@ -49,6 +49,8 @@ firebaseCrashlyticsBuildtools = "2.9.9"
 napier = "2.7.1"
 zeeeeej = "0.0.2"
 maven-publish = "0.28.0"
+androidx-bluetooth = "1.0.0-alpha02"
+fastble = "2.4.0"
 
 
 
@@ -155,10 +157,17 @@ android-lifecycle-compiler = { module = "androidx.lifecycle:lifecycle-compiler",
 android-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "android-lifecycle" }
 android-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "android-lifecycle" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+
 # Log
 # https://github.com/AAkira/Napier
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+
 zeeeeej-zhongguohong = { module = "io.github.zeeeeej:zhongguohong", version.ref = "zeeeeej" }
+
+# Bluetooth https://developer.android.com/reference/androidx/bluetooth/package-summary
+androidx-bluetooth = { module = "androidx.bluetooth:bluetooth", version.ref = "androidx-bluetooth" }
+# FastBle https://github.com/Jasonchenlijian/FastBle
+fastble = { module = "com.github.Jasonchenlijian:FastBle", version.ref = "fastble" }
 
 [plugins]
 cocoapods = { id = "native.cocoapods", version.ref = "kotlin" }

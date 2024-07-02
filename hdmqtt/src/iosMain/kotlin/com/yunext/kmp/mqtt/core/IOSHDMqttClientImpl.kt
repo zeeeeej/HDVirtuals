@@ -11,6 +11,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
+@Deprecated("")
 class IOSHDMqttClientImpl(hdContext: HDContext) : IHDMqttClient {
     private val kmqttClient = KMQTTClient()
     private val coroutineScope: CoroutineScope =
