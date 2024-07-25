@@ -54,8 +54,11 @@ internal fun DeviceDetailContentWithViewPager(
     onPropertyListener: OnPropertyListener,
     onEventListener: OnEventListener,
     onServiceListener: OnServiceListener,
+    debug:Boolean = false,
 ) {
-    HDDebugText("${propertyList.size}/${eventList.size}/${serviceList.size}")
+    if (debug){
+        HDDebugText("${propertyList.size}/${eventList.size}/${serviceList.size}")
+    }
     Column {
         val tabs by remember {
             mutableStateOf(deviceDetailTabs)

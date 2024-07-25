@@ -65,7 +65,7 @@ import com.yunext.virtuals.ui.screen.LocalPaddingValues
 import com.yunext.virtuals.ui.theme.Twins
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-private object TwinsTitleDefaults {
+internal object TwinsTitleDefaults {
     val height = 44.dp
 }
 
@@ -369,7 +369,8 @@ fun EditTextBlock(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = hint,
-                style = Twins.twins_edit_text_hint.copy(textAlign = TextAlign.End)
+                maxLines = 1,
+                style = Twins.twins_edit_text_hint.copy(textAlign = TextAlign.End,)
             )
         },
         trailingIcon = trailingIcon,

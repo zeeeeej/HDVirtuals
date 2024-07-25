@@ -1,12 +1,13 @@
 package yunext.kotlin.bluetooth.ble.slave
 
 import yunext.kotlin.bluetooth.ble.core.XBleCharacteristics
+import yunext.kotlin.bluetooth.ble.core.XBleDescriptor
 import yunext.kotlin.bluetooth.ble.core.XBleDevice
 import yunext.kotlin.bluetooth.ble.core.XBleEvent
 import yunext.kotlin.bluetooth.ble.core.XBleService
 
 
-sealed interface BleSlaveServerEvent:XBleEvent {
+sealed interface BleSlaveServerEvent : XBleEvent {
     val device: XBleDevice
 }
 
@@ -29,11 +30,12 @@ class BleSlaveOnExecuteWrite(
     requestId: Int,
     execute: Boolean,
 ) : BleSlaveServerEvent
+
 class BleSlaveOnDescriptorReadRequest(
     override val device: XBleDevice,
-    requestId: Int,
-    offset: Int,
-//    descriptor: BluetoothGattDescriptor?,
+    val requestId: Int,
+    val offset: Int,
+    val descriptor: XBleDescriptor?,
 ) : BleSlaveServerEvent
 
 class BleSlaveOnDescriptorWriteRequest(
@@ -41,29 +43,29 @@ class BleSlaveOnDescriptorWriteRequest(
     val requestId: Int,
 //    descriptor: BluetoothGattDescriptor?,
     val preparedWrite: Boolean,
-    val  responseNeeded: Boolean,
-    val  offset: Int,
+    val responseNeeded: Boolean,
+    val offset: Int,
     val value: ByteArray?,
 ) : BleSlaveServerEvent
 
 class BleSlaveOnCharacteristicWriteRequest(
     override val device: XBleDevice,
-    requestId: Int,
-    characteristic: XBleCharacteristics,
-    preparedWrite: Boolean,
-    responseNeeded: Boolean,
-    offset: Int,
-    value: ByteArray?,
+    val requestId: Int,
+    val characteristic: XBleCharacteristics,
+    val preparedWrite: Boolean,
+    val responseNeeded: Boolean,
+    val offset: Int,
+    val value: ByteArray?,
 ) : BleSlaveServerEvent
 
 class BleSlaveOnNotificationSent(
     override val device: XBleDevice,
-    status: Int
+    status: Int,
 ) : BleSlaveServerEvent
 
 class BleSlaveOnMtuChanged(
     override val device: XBleDevice,
-    mtu: Int
+    mtu: Int,
 ) : BleSlaveServerEvent
 
 class BleSlaveOnPhyRead(
@@ -82,5 +84,5 @@ class BleSlaveOnPhyUpdate(
 
 class BleSlaveOnServiceAdded(
     override val device: XBleDevice,
-    service: XBleService
+    service: XBleService,
 ) : BleSlaveServerEvent

@@ -7,7 +7,7 @@ actual class HDBleSlave internal actual constructor(hdContext: HDContext,configu
     BleSlave {
     override val configuration: SlaveConfiguration
         get() = TODO("Not yet implemented")
-    override val address: String
+    override val broadcastAddress: String
         get() = TODO("Not yet implemented")
     override val deviceName: String
         get() = TODO("Not yet implemented")

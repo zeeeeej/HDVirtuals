@@ -19,18 +19,18 @@ import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.processing
 import com.yunext.virtuals.ui.screen.adddevice.AddDeviceScreen
-import com.yunext.virtuals.ui.screen.configwifi.ConfigWiFiScreen
 import com.yunext.virtuals.ui.screen.rtctest.RTCSelectedDialog
-import com.yunext.virtuals.ui.screen.debug.DebugBle
 import com.yunext.virtuals.ui.screen.debug.DebugMqttBlock
 import com.yunext.virtuals.ui.screen.devicedetail.screennormal.DeviceDetailScreen
 import com.yunext.virtuals.ui.screen.devicedetail.screenvoyager.VoyagerDeviceDetailScreen
-import com.yunext.virtuals.ui.screen.rtctest.RTCTestScreen
+import com.yunext.virtuals.ui.screen.rtctest.DebugBle
+import com.yunext.virtuals.ui.screen.rtctest.RTCScreen
 
 
 private const val UseVoyagerTab = false
 
 class DeviceListScreen : Screen {
+    private val debugBle = true
 
     @Composable
     override fun Content() {
@@ -74,10 +74,11 @@ class DeviceListScreen : Screen {
                     confirmDisconnectDevice = it
                 }
             )
-
-            DebugBle {
+            if (debugBle) {
+                DebugBle {
 //                navigator.push(ConfigWiFiScreen())
-                dialogForRTC = true
+                    dialogForRTC = true
+                }
             }
         }
 
@@ -113,7 +114,7 @@ class DeviceListScreen : Screen {
 
         if (dialogForRTC) {
             RTCSelectedDialog() {
-                navigator.push(RTCTestScreen(it))
+                navigator.push(RTCScreen(it))
                 dialogForRTC = false
             }
         }

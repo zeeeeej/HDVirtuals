@@ -5,9 +5,19 @@ import yunext.kotlin.bluetooth.ble.core.XBleCharacteristics
 import yunext.kotlin.bluetooth.ble.core.XBleDevice
 import yunext.kotlin.bluetooth.ble.core.XBleDownPayload
 import yunext.kotlin.bluetooth.ble.core.XBleService
+import yunext.kotlin.bluetooth.ble.logger.BleRecordCallback
 
 actual class HDBleMaster internal actual constructor(hdContext: HDContext):BleMaster {
-    override fun init() {
+    override val connectedStatus: BleMasterConnectedStatus
+        get() = TODO("Not yet implemented")
+    override val scanningStatus: BleMasterScanningStatus
+        get() = TODO("Not yet implemented")
+
+    override fun init(
+        onConnectedChanged: OnXBleMasterConnectedStatusChanged,
+        onScanningStatusChanged: OnXBleMasterScanningStatusChanged,
+        recordCallback: BleRecordCallback,
+    ) {
         TODO("Not yet implemented")
     }
 
@@ -24,16 +34,14 @@ actual class HDBleMaster internal actual constructor(hdContext: HDContext):BleMa
     }
 
     override fun enableNotify(
-        device: XBleDevice,
         service: XBleService,
         characteristic: XBleCharacteristics,
-        callback: XBleMasterEnableNotifyCallback,
+        callback: XBleMasterNotifyCallback,
     ) {
         TODO("Not yet implemented")
     }
 
     override fun notify(
-        device: XBleDevice,
         service: XBleService,
         characteristic: XBleCharacteristics,
         callback: XBleMasterNotifyCallback,
@@ -42,7 +50,6 @@ actual class HDBleMaster internal actual constructor(hdContext: HDContext):BleMa
     }
 
     override fun read(
-        device: XBleDevice,
         service: XBleService,
         characteristic: XBleCharacteristics,
         callback: XBleMasterReadCallback,
@@ -51,7 +58,6 @@ actual class HDBleMaster internal actual constructor(hdContext: HDContext):BleMa
     }
 
     override fun write(
-        device: XBleDevice,
         service: XBleService,
         characteristic: XBleCharacteristics,
         data: XBleDownPayload,
@@ -60,7 +66,7 @@ actual class HDBleMaster internal actual constructor(hdContext: HDContext):BleMa
         TODO("Not yet implemented")
     }
 
-    override fun disconnect(device: XBleDevice) {
+    override fun disconnect() {
         TODO("Not yet implemented")
     }
 

@@ -7,6 +7,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,12 +34,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -59,7 +64,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -86,6 +93,7 @@ import com.yunext.kmp.resource.color.app_textColor_999999
 import com.yunext.kmp.resource.color.app_zi
 import com.yunext.kmp.ui.compose.CHItemShadowShape
 import com.yunext.kmp.ui.compose.Debug
+import com.yunext.kmp.ui.compose.hdBackground
 import com.yunext.kmp.ui.compose.hdClip
 import com.yunext.kmp.ui.compose.hdBorder
 import com.yunext.virtuals.data.DownLog
@@ -186,9 +194,7 @@ internal fun InternalLogPage(
                     onTabSelected.invoke(tabs[page])
                 }, onLoadMore = {
                     onLoadMore()
-                }) {
-                    // todo
-                }
+                }, onItemSelected = {})
 
 
             }
@@ -222,6 +228,7 @@ private fun LogPage(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onItemSelected: (Log) -> Unit,
+    debug: Boolean = false,
 ) {
     Debug { "[recompose_test_01] LogPage ${list.size} " }
 
@@ -446,13 +453,16 @@ private fun LogPage(
                 }
             }
 
-            Text(
-                "isBottomed=$canLoadMore\npullState：$pullState \nisMoveUp:",
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .background(app_brush_item_content_spec)
-                    .hdClip(RoundedCornerShape(12.dp))
-            )
+            if (debug) {
+                Text(
+                    "isBottomed=$canLoadMore\npullState：$pullState \nisMoveUp:",
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .background(app_brush_item_content_spec)
+                        .hdClip(RoundedCornerShape(12.dp))
+                )
+            }
+
         }
 
         PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
@@ -463,9 +473,21 @@ private fun LogPage(
 
 @Composable
 private fun ScrollToTopButton(modifier: Modifier, onClick: () -> Unit) {
-    Button(modifier = modifier, onClick = onClick) {
-        Text("回到顶部")
+    Row(modifier.padding(16.dp)
+        .shadow(2.dp, CircleShape)
+        .hdBackground {
+            Color.LightGray
+        }
+        .clickable(onClick = onClick)
+        .padding(horizontal = 12.dp, vertical = 8.dp)
+        .clip(CircleShape)
+
+    ) {
+        Text(text = "回到顶部", modifier = Modifier)
+        Image(Icons.Default.KeyboardArrowUp, null)
     }
+
+
 }
 
 //<editor-fold desc="Log Item 布局">

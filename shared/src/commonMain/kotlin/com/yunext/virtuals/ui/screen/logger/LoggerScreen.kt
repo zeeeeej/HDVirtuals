@@ -163,6 +163,7 @@ internal fun LoggerScreenImpl(
     onLoadMore: () -> Unit,
     onPullStateChanged: (PullState) -> Unit,
     onToast: (String) -> Unit,
+    debug:Boolean = false
 
     ) {
     Debug { "[recompose_test_01] LoggerScreenImpl ${list.size} " }

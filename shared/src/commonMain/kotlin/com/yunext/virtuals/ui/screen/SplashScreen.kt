@@ -23,6 +23,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.yunext.kmp.resource.HDRes
 import com.yunext.virtuals.ui.common.HDImage
 import com.yunext.virtuals.ui.screen.devicelist.DeviceListScreen
+import com.yunext.virtuals.ui.screen.rtctest.BleMenu
+import com.yunext.virtuals.ui.screen.rtctest.RTCScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi

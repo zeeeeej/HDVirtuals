@@ -21,8 +21,9 @@ import android.bluetooth.le.AdvertisingSetParameters.TX_POWER_MAX
 import android.bluetooth.le.PeriodicAdvertisingParameters
 import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.RequiresApi
-import com.clj.fastble.callback.BleReadCallback
 import com.yunext.kmp.common.logger.HDLog
 import com.yunext.kmp.common.logger.XLog
 import com.yunext.kmp.context.HDContext
@@ -35,6 +36,7 @@ import yunext.kotlin.bluetooth.ble.core.XBleException
 import yunext.kotlin.bluetooth.ble.core.XBleService
 import yunext.kotlin.bluetooth.ble.core.XCharacteristicsProperty
 import yunext.kotlin.bluetooth.ble.core.asCharacteristics
+import yunext.kotlin.bluetooth.ble.core.asDescriptor
 import yunext.kotlin.bluetooth.ble.core.asDevice
 import yunext.kotlin.bluetooth.ble.core.asService
 import yunext.kotlin.bluetooth.ble.core.generateBleService
@@ -44,7 +46,6 @@ import yunext.kotlin.bluetooth.ble.core.toProperty
 import yunext.kotlin.bluetooth.ble.display
 import yunext.kotlin.bluetooth.ble.logger.BleRecordCallback
 import yunext.kotlin.bluetooth.ble.logger.RecordHelper
-import yunext.kotlin.bluetooth.ble.logger.XBleRecord
 import yunext.kotlin.bluetooth.ble.logger.XBleRecordType
 import yunext.kotlin.bluetooth.ble.util.uuidFromShort
 import java.util.UUID
@@ -89,8 +90,8 @@ internal class AndroidBleSlaveImpl(
         serviceList = map.values.toList()
     }
 
-    override val address: String
-        get() = configuration.address
+    override val broadcastAddress: String
+        get() = configuration.broadcastAddress
 
     override val deviceName: String
         get() = configuration.deviceName
@@ -116,10 +117,8 @@ internal class AndroidBleSlaveImpl(
     private var statusCallback: BleSlaveStatusCallback? = null
     private var recordCallback: BleRecordCallback? = null
 
-
     private val advertisingSetCallback =
-        @RequiresApi(Build.VERSION_CODES.O)
-        object : AdvertisingSetCallback() {
+        @RequiresApi(Build.VERSION_CODES.O) object : AdvertisingSetCallback() {
             override fun onScanResponseDataSet(advertisingSet: AdvertisingSet?, status: Int) {
                 super.onScanResponseDataSet(advertisingSet, status)
                 log.i("[advertisingSetCallback]onScanResponseDataSet advertisingSet:${advertisingSet?.hashCode()} status:$status")
@@ -207,19 +206,25 @@ internal class AndroidBleSlaveImpl(
 
 //            if (retryBroadcast.compareAndSet(true,false))
             if (retryBroadcast.get()) {
+
                 initServices {
-                    serviceList.map {
+                    val map = serviceList.map {
                         createService(it)
                     }
+//                    servicesList.clear()
+//                    servicesList.addAll(map.map {
+//                        it.asService()
+//                    })
+                    map
                 }
             } else {
                 log.e("重新广播！！！")
-                stopBroadcast()
+
+                stopBroadcastInternal()
                 startBroadcastInternal()
+                Thread.sleep(100)
                 retryBroadcast.set(true)
             }
-
-
         }
 
         override fun onStartFailure(errorCode: Int) {
@@ -275,12 +280,24 @@ internal class AndroidBleSlaveImpl(
 //        }
 //    }
 
+    private val handler = Handler(Looper.getMainLooper()){
+        when(it.what){
+            Msg.BROADCAST_TIME_OUT.what->{
+                stopBroadcastInternal()
+            }
+        }
+        false
+    }
+
+    private fun doAction(block: () -> Unit) {
+        handler.post(block)
+    }
 
     /**
      * 服务回调
      */
     @OptIn(ExperimentalStdlibApi::class)
-    private val bluetoothGattServerCallback = object : BluetoothGattServerCallback() {
+    private fun bluetoothGattServerCallback() = object : BluetoothGattServerCallback() {
 
         @SuppressLint("MissingPermission")
         override fun onConnectionStateChange(
@@ -290,7 +307,8 @@ internal class AndroidBleSlaveImpl(
         ) {
             super.onConnectionStateChange(device, status, newState)
             log.i("[bluetoothGattServerCallback]onConnectionStateChange device=${device?.display} status=$status newState=$newState")
-            val d = device ?: return
+            doAction {
+                val d = device ?: return@doAction
 //            val callbackBlock: (Boolean) -> Unit = {
 //                callServerCallback {
 //                    this(
@@ -300,64 +318,65 @@ internal class AndroidBleSlaveImpl(
 //                    )
 //                }
 //            }
-            val last = connectStatus
+                val last = connectStatus
 
-            when (newState) {
-                BluetoothProfile.STATE_CONNECTED -> {
-                    log.d("[bluetoothGattServerCallback]onConnectionStateChange 有新的客户端连接...last:${last} ,now:${device.address} ")
+                when (newState) {
+                    BluetoothProfile.STATE_CONNECTED -> {
+                        log.d("[bluetoothGattServerCallback]onConnectionStateChange 有新的客户端连接...last:${last} ,now:${device.address} ")
 
-                    // 连接成功后，需要调用connect
-                    bluetoothGattServer?.connect(d, false)
+                        // 连接成功后，需要调用connect
+                        bluetoothGattServer?.connect(d, false)
 
-                    when (last) {
-                        is ConnectStatus.Connected -> {
-                            if (last.device.address != device.address) {
-                                log.w("[onDeviceConnected] 已经被${last}连接，取消当前${device.address}连接。")
-                                bluetoothGattServer?.cancelConnection(d)
-                            } else {
-                                // same device connected. ignore
-                                log.w("[onDeviceConnected] 已经连接")
+                        when (last) {
+                            is ConnectStatus.Connected -> {
+                                if (last.device.address != device.address) {
+                                    log.w("[onDeviceConnected] 已经被${last}连接，取消当前${device.address}连接。")
+                                    bluetoothGattServer?.cancelConnection(d)
+                                } else {
+                                    // same device connected. ignore
+                                    log.w("[onDeviceConnected] 已经连接")
+                                }
                             }
-                        }
 
-                        ConnectStatus.Disconnected -> {
-                            // 无设备连接
-                            log.d("[onDeviceConnected] 当前可连接")
-                            // 停止广播
-                            stopBroadcast()
-                            // 更新连接状态
-                            onConnectedChanged(
-                                ConnectStatus.Connected(device = d.asDevice()),
-                                device
-                            )
-                        }
-                    }
-                }
-
-                BluetoothProfile.STATE_DISCONNECTED -> {
-                    log.w("[bluetoothGattServerCallback]onConnectionStateChange 已断开")
-
-                    bluetoothGattServer?.cancelConnection(d)
-
-                    when (last) {
-                        is ConnectStatus.Connected -> {
-                            if (last.device.address == d.address) {
-                                disconnect()
-                                stopBroadcast()
-                                startBroadcastInternal()
+                            ConnectStatus.Disconnected -> {
+                                // 无设备连接
+                                log.d("[onDeviceConnected] 当前可连接")
+                                // 停止广播
+                                stopBroadcastInternal()
+                                // 更新连接状态
+                                onConnectedChanged(
+                                    ConnectStatus.Connected(device = d.asDevice()),
+                                    device
+                                )
                             }
-                        }
-
-                        ConnectStatus.Disconnected -> {
-                            // all ready disconnect. ignore
-                            log.w("[onDeviceConnected] 已经断开")
                         }
                     }
 
-                }
+                    BluetoothProfile.STATE_DISCONNECTED -> {
+                        log.w("[bluetoothGattServerCallback]onConnectionStateChange 已断开")
 
-                else -> {
-                    log.w("[bluetoothGattServerCallback]onConnectionStateChange 未知情况")
+                        bluetoothGattServer?.cancelConnection(d)
+
+                        when (last) {
+                            is ConnectStatus.Connected -> {
+                                if (last.device.address == d.address) {
+                                    // 停止广播 注意得把services清空,见[initService]
+                                    stopBroadcast()
+                                    startBroadcastInternal()
+                                }
+                            }
+
+                            ConnectStatus.Disconnected -> {
+                                // all ready disconnect. ignore
+                                log.w("[onDeviceConnected] 已经断开")
+                            }
+                        }
+
+                    }
+
+                    else -> {
+                        log.w("[bluetoothGattServerCallback]onConnectionStateChange 未知情况")
+                    }
                 }
             }
         }
@@ -370,15 +389,17 @@ internal class AndroidBleSlaveImpl(
         ) {
             super.onCharacteristicReadRequest(device, requestId, offset, characteristic)
             log.i("[onCharacteristicReadRequest] ${device?.display} requestId:${requestId} offset:$offset characteristic:${characteristic.uuid.toString()}")
-            val d = device ?: return
-            onServerChanged(
-                BleSlaveOnCharacteristicReadRequest(
-                    d.asDevice(),
-                    requestId,
-                    offset,
-                    characteristic.asCharacteristics()
-                ), device
-            )
+            doAction {
+                val d = device ?: return@doAction
+                onServerChanged(
+                    BleSlaveOnCharacteristicReadRequest(
+                        d.asDevice(),
+                        requestId = requestId,
+                        offset,
+                        characteristic.asCharacteristics()
+                    ), device
+                )
+            }
         }
 
         override fun onExecuteWrite(
@@ -388,14 +409,16 @@ internal class AndroidBleSlaveImpl(
         ) {
             super.onExecuteWrite(device, requestId, execute)
             log.i("[onExecuteWrite] ${device?.display} requestId:$requestId execute:$execute")
-            val d = device ?: return
-            onServerChanged(
-                BleSlaveOnExecuteWrite(
-                    d.asDevice(),
-                    requestId,
-                    execute,
-                ), device
-            )
+            doAction {
+                val d = device ?: return@doAction
+                onServerChanged(
+                    BleSlaveOnExecuteWrite(
+                        d.asDevice(),
+                        requestId,
+                        execute,
+                    ), device
+                )
+            }
 
         }
 
@@ -407,15 +430,18 @@ internal class AndroidBleSlaveImpl(
         ) {
             super.onDescriptorReadRequest(device, requestId, offset, descriptor)
             log.i("[onDescriptorReadRequest] ${device?.display} requestId:$requestId offset:$offset descriptor:${descriptor?.uuid}")
-            val d = device ?: return
-            onServerChanged(
+            doAction {
+                val d = device ?: return@doAction
+                onServerChanged(
 
-                BleSlaveOnDescriptorReadRequest(
-                    d.asDevice(),
-                    requestId,
-                    offset,
-                ), device
-            )
+                    BleSlaveOnDescriptorReadRequest(
+                        d.asDevice(),
+                        requestId,
+                        offset,
+                        descriptor = descriptor?.asDescriptor()
+                    ), device
+                )
+            }
 
         }
 
@@ -434,18 +460,20 @@ internal class AndroidBleSlaveImpl(
             log.i(
                 "[onCharacteristicWriteRequest] requestId:$requestId ${characteristic.uuid} preparedWrite:$preparedWrite responseNeeded:$responseNeeded offset:$offset value:${value?.toHexString()}"
             )
-            val d = device ?: return
-            onServerChanged(
-                BleSlaveOnCharacteristicWriteRequest(
-                    d.asDevice(),
-                    requestId,
-                    characteristic = characteristic.asCharacteristics(),
-                    preparedWrite,
-                    responseNeeded,
-                    offset,
-                    value
-                ), device
-            )
+            doAction {
+                val d = device ?: return@doAction
+                onServerChanged(
+                    BleSlaveOnCharacteristicWriteRequest(
+                        d.asDevice(),
+                        requestId,
+                        characteristic = characteristic.asCharacteristics(),
+                        preparedWrite,
+                        responseNeeded,
+                        offset,
+                        value
+                    ), device
+                )
+            }
 
         }
 
@@ -463,50 +491,56 @@ internal class AndroidBleSlaveImpl(
                 device, requestId, descriptor, preparedWrite, responseNeeded, offset, value
             )
             log.i("[onDescriptorWriteRequest] ${device.display} requestId:${requestId} descriptor:${descriptor?.uuid} preparedWrite:$preparedWrite responseNeeded:$responseNeeded offset:$offset value:${value?.toHexString()}")
-            val d = device ?: return
+            doAction {
+                val d = device ?: return@doAction
 
-            onServerChanged(
-                BleSlaveOnDescriptorWriteRequest(
-                    d.asDevice(),
-                    requestId,
+                onServerChanged(
+                    BleSlaveOnDescriptorWriteRequest(
+                        d.asDevice(),
+                        requestId,
 //                       descriptor,
-                    preparedWrite,
-                    responseNeeded,
-                    offset,
-                    value
+                        preparedWrite,
+                        responseNeeded,
+                        offset,
+                        value
 
-                ), device
-            )
+                    ), device
+                )
 
 
 //            bluetoothGattServer?.run {
 //                sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
 //            }
+            }
         }
 
         override fun onNotificationSent(device: BluetoothDevice?, status: Int) {
             super.onNotificationSent(device, status)
             log.i("[onNotificationSent] ${device.display} status:$status")
-            val d = device ?: return
-            onServerChanged(
-                BleSlaveOnNotificationSent(
-                    d.asDevice(),
-                    status
-                ), device
-            )
+            doAction {
+                val d = device ?: return@doAction
+                onServerChanged(
+                    BleSlaveOnNotificationSent(
+                        d.asDevice(),
+                        status
+                    ), device
+                )
+            }
 
         }
 
         override fun onMtuChanged(device: BluetoothDevice?, mtu: Int) {
             super.onMtuChanged(device, mtu)
             log.i("[onMtuChanged] ${device.display} mtu:$mtu")
-            val d = device ?: return
-            onServerChanged(
-                BleSlaveOnMtuChanged(
-                    d.asDevice(),
-                    mtu
-                ), device
-            )
+            doAction {
+                val d = device ?: return@doAction
+                onServerChanged(
+                    BleSlaveOnMtuChanged(
+                        d.asDevice(),
+                        mtu
+                    ), device
+                )
+            }
 
         }
 
@@ -518,13 +552,15 @@ internal class AndroidBleSlaveImpl(
         ) {
             super.onPhyRead(device, txPhy, rxPhy, status)
             log.i("[onPhyRead]${device.display} txPhy:$txPhy rxPhy:$rxPhy status:$status")
-            val d = device ?: return
-            onServerChanged(
-                BleSlaveOnPhyRead(
-                    d.asDevice(),
-                    txPhy, rxPhy, status
-                ), device
-            )
+            doAction {
+                val d = device ?: return@doAction
+                onServerChanged(
+                    BleSlaveOnPhyRead(
+                        d.asDevice(),
+                        txPhy, rxPhy, status
+                    ), device
+                )
+            }
 
         }
 
@@ -536,28 +572,30 @@ internal class AndroidBleSlaveImpl(
         ) {
             super.onPhyUpdate(device, txPhy, rxPhy, status)
             log.i("[onPhyUpdate]${device.display} txPhy:$txPhy rxPhy:$rxPhy status:$status")
-            val d = device ?: return
-            onServerChanged(
-                BleSlaveOnPhyUpdate(
-                    d.asDevice(),
-                    txPhy, rxPhy, status
-                ), device
-            )
+            doAction {
+                val d = device ?: return@doAction
+                onServerChanged(
+                    BleSlaveOnPhyUpdate(
+                        d.asDevice(),
+                        txPhy, rxPhy, status
+                    ), device
+                )
+            }
 
         }
 
         override fun onServiceAdded(status: Int, service: BluetoothGattService) {
             super.onServiceAdded(status, service)
             log.i("[onServiceAdded] status:$status service:${service.uuid}/${service.characteristics}")
-            log.d("【添加服务成功！】")
-            log.d("------------------------")
-            onServerChanged(
-                BleSlaveOnServiceAdded(
-                    generateXBleDevice("", address = configuration.address), service.asService()
-                ), null
-            )
-
-
+            doAction {
+                log.d("【添加服务成功！】")
+                log.d("------------------------")
+                onServerChanged(
+                    BleSlaveOnServiceAdded(
+                        generateXBleDevice("", address = configuration.broadcastAddress), service.asService()
+                    ), null
+                )
+            }
         }
     }
 
@@ -590,13 +628,13 @@ internal class AndroidBleSlaveImpl(
 
     private fun onConnectedChanged(status: ConnectStatus, device: BluetoothDevice?) {
         _connectStatus = status to device
-        statusCallback?.invoke(status.asEvent())
+        statusCallback?.invoke(status.asEvent(serviceList))
     }
 
     private fun onBroadcastingChanged(status: BroadcastStatus) {
         log.i("[onBroadcastingChanged]$status")
         _broadcasting = status
-        statusCallback?.invoke(status.asEvent())
+        statusCallback?.invoke(status.asEvent(serviceList))
     }
 
     private fun onServerChanged(status: BleSlaveServerEvent, device: BluetoothDevice?) {
@@ -634,6 +672,7 @@ internal class AndroidBleSlaveImpl(
     private val retryBroadcast = AtomicBoolean(false)
     override fun startBroadcast() {
         log.i("[startBroadcast] content:$deviceName")
+        disconnectInternal(false)
         retryBroadcast.set(false)
         startBroadcastInternal()
     }
@@ -641,10 +680,14 @@ internal class AndroidBleSlaveImpl(
     private fun startBroadcastInternal() {
         log.i("[startBroadcastInternal] content:$deviceName")
         val content = this.deviceName
-        val uuid = createUUID("AAAA")
+        val uuid = createUUIDByShort("AAAA")
         broadcastInternal(content, uuid)
     }
 
+    private enum class Msg(val what:Int){
+        BROADCAST_TIME_OUT(1)
+        ;
+    }
 
     /**
      * 开启广播
@@ -655,13 +698,16 @@ internal class AndroidBleSlaveImpl(
         serviceUUID: UUID,
     ) {
         log.i("[broadcastInternal] name:$name ")
+        val timeout = 180000
         onBroadcastingChanged(BroadcastStatus.Init(configuration))
+        handler.sendEmptyMessageDelayed(Msg.BROADCAST_TIME_OUT.what,timeout.toLong())
         //val payload = "123456789012345".toByteArray()
 //        val payload = ("12345678"+name).toByteArray()
 //        d("【准备广播】payload:${payload.size}")
 
         if (!adapter.isEnabled) {
-            throw XBleException("蓝牙已关闭！")
+            //throw XBleException("蓝牙已关闭！")
+            return
         }
         log.d("蓝牙状态 ok")
 //        adapter.setName(mac)
@@ -737,8 +783,7 @@ internal class AndroidBleSlaveImpl(
                 AdvertiseSettings.Builder()
                     .setAdvertiseMode(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
                     .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
-                    .setTimeout(180000)
-//                .setTimeout(18000)
+                    .setTimeout(timeout)
                     .setConnectable(true)
                     .build()
             val callback = advertiseCallback
@@ -779,9 +824,8 @@ internal class AndroidBleSlaveImpl(
         log.i("[initServices]")
         log.d("初始化广播服务..")
 
-
         val curBluetoothGattServer =
-            bluetoothManager.openGattServer(context, bluetoothGattServerCallback)
+            bluetoothManager.openGattServer(context, bluetoothGattServerCallback())
         val bluetoothGattServices = block()
         log.d("开始创建蓝牙服务...")
         var result: Boolean = true
@@ -799,15 +843,23 @@ internal class AndroidBleSlaveImpl(
             bluetoothGattServer = curBluetoothGattServer
             onBroadcastingChanged(BroadcastStatus.Broadcasting(configuration))
         } else {
-            curBluetoothGattServer.clearServices()
-            curBluetoothGattServer.close()
-            stopBroadcast()
+//            curBluetoothGattServer.clearServices()
+//            curBluetoothGattServer.close()
+            stopBroadcastInternal()
+            bluetoothGattServer = null
         }
     }
 
     @SuppressLint("MissingPermission")
     override fun stopBroadcast() {
-        log.i(" log.[stopBroadcast]")
+        handler.removeMessages(Msg.BROADCAST_TIME_OUT.what)
+        disconnect()
+        stopBroadcastInternal()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun stopBroadcastInternal() {
+        log.i(" [stopBroadcast] ${advertiseCallback?.hashCode()}")
         try {
             log.d("[stopBroadcast]stopAdvertising")
             val callback = advertiseCallback ?: return
@@ -838,20 +890,23 @@ internal class AndroidBleSlaveImpl(
     }
 
     override fun notifyChanged(request: BleSlaveRequest): Boolean {
-        log.i("[notifyChanged] status${connectStatus} request:$request")
+        log.i("[notifyChanged] status:${connectStatus} request:$request")
         if (!connectStatus.connected) return false
         workQueue.put(request)
         return true
     }
 
-    private fun tryGetCharacteristic(characteristic: XBleCharacteristics): BluetoothGattCharacteristic? {
+    private fun tryGetCharacteristic(
+        service: XBleService,
+        characteristic: XBleCharacteristics,
+    ): BluetoothGattCharacteristic? {
         val server = bluetoothGattServer ?: return null
         server.services?.forEach {
-            if (it.uuid.toString() == uuidFromShort(characteristic.serviceUUID)) {
+            if (it.uuid.toString() == (service.uuid)) {
                 val characteristicsList = it.characteristics
                 if (characteristicsList != null && characteristicsList.isNotEmpty()) {
                     characteristicsList.forEach { ch ->
-                        if (ch.uuid.toString() == uuidFromShort(characteristic.uuid)) {
+                        if (ch.uuid.toString() == (characteristic.uuid)) {
                             return ch
                         }
                     }
@@ -862,8 +917,9 @@ internal class AndroidBleSlaveImpl(
     }
 
     private fun notifyChangedInternal(request: BleSlaveRequest): Boolean {
+        log.i("[notifyChangedInternal] $request")
         val characteristic =
-            tryGetCharacteristic(request.notifyCharacteristic)
+            tryGetCharacteristic(request.service, request.notifyCharacteristic)
                 ?: throw XBleException("[BLE]XBleCharacteristics不存在： ${request.notifyCharacteristic}")
         return notifyChangedAndroid(
             notifyCharacteristic = characteristic,
@@ -906,13 +962,19 @@ internal class AndroidBleSlaveImpl(
         )
     }
 
-
     @SuppressLint("MissingPermission")
     override fun disconnect() {
+        disconnectInternal(true)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun disconnectInternal(onConnectedChanged: Boolean) {
         log.i("[disconnect]")
         try {
             val (_, device) = _connectStatus
-            onConnectedChanged(ConnectStatus.Disconnected, null)
+            if (onConnectedChanged) {
+                onConnectedChanged(ConnectStatus.Disconnected, null)
+            }
             val devicesGattServer =
                 bluetoothManager.getConnectedDevices(BluetoothProfile.GATT_SERVER)
             val devices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT)
@@ -939,6 +1001,7 @@ internal class AndroidBleSlaveImpl(
 
     override fun clear() {
         log.i("[clear]")
+        handler.removeCallbacksAndMessages(null)
         stopBroadcast()
         disconnect()
         this.serverCallback = null
@@ -952,17 +1015,18 @@ internal class AndroidBleSlaveImpl(
         }
     }
 
-    private fun createUUID(short: String): UUID = UUID.fromString(uuidFromShort(short))
+    private fun createUUIDByShort(short: String): UUID = UUID.fromString(uuidFromShort(short))
 
+//    private var servicesList :MutableList<XBleService> = mutableListOf()
     private fun createService(broadcastService: XBleService): BluetoothGattService {
         log.i("[createService]初始化Service[${broadcastService.uuid}]")
-        val serviceUUID = createUUID(broadcastService.uuid)
+        val serviceUUID = UUID.fromString(broadcastService.uuid)
         val bluetoothGattService =
             BluetoothGattService(serviceUUID, BluetoothGattService.SERVICE_TYPE_PRIMARY)
         val characteristicList = broadcastService.characteristics
         characteristicList.forEach { characteristic ->
             log.d("--初始化Characteristic[${characteristic.uuid}] ${characteristic.properties} ${characteristic.permissions}")
-            val characteristicUUID = createUUID(characteristic.uuid)
+            val characteristicUUID = UUID.fromString(characteristic.uuid)
             val permissions = characteristic.permissions
             var permissionValue = 0x00
             permissions.forEach { permission ->
@@ -981,7 +1045,7 @@ internal class AndroidBleSlaveImpl(
                 characteristicUUID, propertyValue, permissionValue
             )
             if (properties.contains(XCharacteristicsProperty.Notify)) {
-                val descriptorUUID = createUUID("2902")
+                val descriptorUUID = createUUIDByShort("2902")
                 val bluetoothGattDescriptor = BluetoothGattDescriptor(
                     descriptorUUID, BluetoothGattDescriptor.PERMISSION_WRITE
                 )
@@ -991,6 +1055,7 @@ internal class AndroidBleSlaveImpl(
             log.d("--初始化Characteristic[${characteristic.uuid}] 完毕")
         }
         log.d("初始化Service[${broadcastService.uuid}]完毕")
+
         return bluetoothGattService
     }
 

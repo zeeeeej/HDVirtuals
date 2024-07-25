@@ -39,7 +39,6 @@ import com.yunext.virtuals.ui.common.TwinsEmptyViewForDevice
 import com.yunext.virtuals.ui.common.dialog.CHAlertDialog
 import com.yunext.virtuals.ui.data.DeviceAndStateViewData
 import com.yunext.virtuals.ui.screen.LocalPaddingValues
-import com.yunext.virtuals.ui.screen.debug.DebugBle
 import com.yunext.virtuals.ui.screen.debug.DebugDialog
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 

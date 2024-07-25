@@ -26,7 +26,7 @@ data class XBleRecord(
                 XBleRecordType.W -> "W"
                 XBleRecordType.E -> "E"
             }
-        }$tag$msg"
+        }$tag$msg [${index}]"
     }
 }
 

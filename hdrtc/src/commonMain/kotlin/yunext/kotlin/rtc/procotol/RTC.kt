@@ -5,6 +5,7 @@ internal val rtcScope by lazy {
     RTCScopeImpl()
 }
 
+ const val RTC_ACCESS_KEY = "12xs8gmkwgrgxtye"
 fun <R> rtc(block: RTCScope.() -> R): R {
     return block(rtcScope)
 }

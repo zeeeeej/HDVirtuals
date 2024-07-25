@@ -21,15 +21,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.yunext.kmp.mqtt.interop.DebugInterOp
 import com.yunext.kmp.mqtt.interop.debugSendByteArrayWrapper
 import com.yunext.kmp.mqtt.virtuals.test.MQTTVirtualsDemo
-import com.yunext.virtuals.ui.common.dialog.CHAlertDialog
-import com.yunext.virtuals.ui.common.dialog.CHLoadingDialog
-import com.yunext.virtuals.ui.data.DeviceAndStateViewData
-import com.yunext.virtuals.ui.processing
-import com.yunext.virtuals.ui.screen.adddevice.AddDeviceScreen
-import com.yunext.virtuals.ui.screen.configwifi.ConfigWiFiScreen
-import com.yunext.virtuals.ui.screen.debug.DebugBle
-import com.yunext.virtuals.ui.screen.devicedetail.screennormal.DeviceDetailScreen
-import com.yunext.virtuals.ui.screen.devicedetail.screenvoyager.VoyagerDeviceDetailScreen
 import io.ktor.utils.io.core.toByteArray
 private val testHDMQTT2: MQTTVirtualsDemo by lazy { MQTTVirtualsDemo() }
 @Composable

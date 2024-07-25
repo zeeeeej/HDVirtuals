@@ -25,14 +25,21 @@ import com.yunext.virtuals.ui.common.dialog.DialogDefaults
 import com.yunext.virtuals.ui.common.dialog.debugShape
 
 @Composable
-internal fun RTCSelectedDialog(onSelect: (Boolean) -> Unit) {
+internal fun RTCSelectedDialog(onSelect: (BleMenu) -> Unit) {
     CHDialog {
         RTCTestPage(onSelect)
     }
 }
 
+enum class BleMenu{
+    Master,
+    Slave,
+    RTCTestCase
+    ;
+}
+
 @Composable
-private fun RTCTestPage(onSelect: (Boolean) -> Unit) {
+private fun RTCTestPage(onSelect: (BleMenu) -> Unit) {
 
     Box(
         Modifier
@@ -40,19 +47,24 @@ private fun RTCTestPage(onSelect: (Boolean) -> Unit) {
     ) {
 
         Column(Modifier.fillMaxSize()) {
-            Btn(Modifier.weight(1f).fillMaxWidth().clipToBounds(), "Master") {
-                onSelect(true)
-            }
-
             Text(
                 "请选择",
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 color = Color.Red,
                 fontWeight = FontWeight.Bold
             )
+            Btn(Modifier.weight(1f).fillMaxWidth().clipToBounds(), "Master") {
+                onSelect(BleMenu.Master)
+            }
+
+
 
             Btn(Modifier.weight(1f).fillMaxWidth().clipToBounds(), "Slave") {
-                onSelect(false)
+                onSelect(BleMenu.Slave)
+            }
+
+            Btn(Modifier.weight(1f).fillMaxWidth().clipToBounds(), "蓝牙温控器测试") {
+                onSelect(BleMenu.RTCTestCase)
             }
         }
 

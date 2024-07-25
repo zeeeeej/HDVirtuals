@@ -7,6 +7,7 @@ import com.clj.fastble.data.BleDevice
 class AndroidBleDevice internal constructor(
     override val deviceName: String?,
     override val address: String,
+
 ) : XBleDevice
 
 actual fun generateXBleDevice(deviceName: String, address: String): XBleDevice {
@@ -14,7 +15,7 @@ actual fun generateXBleDevice(deviceName: String, address: String): XBleDevice {
 }
 
 internal fun BleDevice.asDevice() = AndroidBleDevice(
-    deviceName = this.name, address = this.mac
+    deviceName = this.name, address = this.mac,
 )
 
 @SuppressLint("MissingPermission")

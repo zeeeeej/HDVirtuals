@@ -20,8 +20,8 @@ import com.yunext.virtuals.bridge.updateOrientationTypeFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-private val port_size = DpSize(600.dp, 800.dp)
-private val land_size = DpSize(800.dp, 600.dp)
+private val port_size = DpSize(900.dp, 1600.dp)
+private val land_size = DpSize(1600.dp, 900.dp)
 
 fun main() = application {
     val type by curOrientationType.collectAsState()

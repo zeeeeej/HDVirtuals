@@ -8,7 +8,7 @@ interface BleSlave {
 
     val configuration: SlaveConfiguration
 
-    val address: String
+    val broadcastAddress: String
 
     val deviceName: String
 
@@ -35,7 +35,7 @@ interface BleSlave {
 
 
 data class SlaveConfiguration(
-    val address: String,
+    val broadcastAddress: String,
     val deviceName: String,
     val services: List<XBleService>,
 )
@@ -50,7 +50,7 @@ sealed interface ConnectStatus {
 
 
 
-internal fun ConnectStatus.asEvent() = BleSlaveConfigurationConnectedDevice(this)
+internal fun ConnectStatus.asEvent(list:List<XBleService>) = BleSlaveConfigurationConnectedDevice(this, services =list )
 
  val ConnectStatus.text: String
     get() = when (this) {
@@ -85,6 +85,6 @@ val BroadcastStatus.text:String
         is BroadcastStatus.Started -> "添加服务中..."
     }
 
-internal fun BroadcastStatus.asEvent() = BleSlaveConfigurationBroadcasting(this)
+internal fun BroadcastStatus.asEvent(list:List<XBleService>) = BleSlaveConfigurationBroadcasting(this,list)
 //</editor-fold>
 

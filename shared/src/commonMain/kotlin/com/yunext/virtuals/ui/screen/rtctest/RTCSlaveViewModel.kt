@@ -11,23 +11,20 @@ import yunext.kotlin.bluetooth.ble.logger.XBleRecord
 import yunext.kotlin.bluetooth.ble.slave.BroadcastStatus
 import yunext.kotlin.bluetooth.ble.slave.ConnectStatus
 import yunext.kotlin.rtc.RTCSlave
-import yunext.kotlin.rtc.procotol.ParameterData
+import yunext.kotlin.rtc.procotol.RTC_ACCESS_KEY
+import yunext.kotlin.rtc.procotol.text
 import kotlin.random.Random
 
-data class ParameterDataVo(val key: String, val value: String)
-
-@OptIn(ExperimentalStdlibApi::class)
-fun ParameterDataVo.asParameterData() = ParameterData(
-    key = this.key.encodeToByteArray(), value
-    = this.value.hexToByteArray()
-)
+data class ParameterDataVo(val key: String, val value: String,val title:String)
 
 @Stable
 data class RTCSlaveState(
     val address: String = "",
+    val accessKey: String = "",
     val broadcasting: BroadcastStatus = BroadcastStatus.BroadcastStopped,
     val connected: ConnectStatus = ConnectStatus.Disconnected,
     val params: List<ParameterDataVo> = emptyList(),
+    val effect:SetPropertyEffect = SetPropertyEffect.Idle,
     val records: List<XBleRecord> = emptyList(),
 ) {
     companion object {
@@ -63,12 +60,13 @@ class RTCSlaveViewModel : HDStateScreenModel<RTCSlaveState>(RTCSlaveState.DEFAUL
                 mutableState.value = RTCSlaveState.DEFAULT
             }
             delay(500)
-            val slave = RTCSlave(address)
-            log.d("[config] address:$address ,创建新的rtcSlave:$slave")
+            val slave = RTCSlave(address,RTC_ACCESS_KEY)
+            delay(100)
+            log.d("[config] address:$address accessKey:${RTC_ACCESS_KEY},创建新的rtcSlave:$slave")
             launch {
                 slave.localPropertyMap.collectLatest {
                     val list = it.map { (k, v) ->
-                        ParameterDataVo(k.name, v.toHexString())
+                        ParameterDataVo(k.name, v.toHexString(),k.text)
                     }
                     mutableState.value = state.value.copy(
                         params = list,
@@ -78,7 +76,6 @@ class RTCSlaveViewModel : HDStateScreenModel<RTCSlaveState>(RTCSlaveState.DEFAUL
 
             launch {
                 slave.address.collectLatest {
-//                    HDLogger.d("[BLE]RTCSlaveViewModel","slave.address.collectLatest : $it")
                     mutableState.value = state.value.copy(
                         address = it,
                     )
@@ -86,8 +83,15 @@ class RTCSlaveViewModel : HDStateScreenModel<RTCSlaveState>(RTCSlaveState.DEFAUL
             }
 
             launch {
+                slave.accessKey.collectLatest {
+                    mutableState.value = state.value.copy(
+                        accessKey = it,
+                    )
+                }
+            }
+
+            launch {
                 slave.record.collectLatest {
-//                    HDLogger.d("[BLE]RTCSlaveViewModel","slave.address.collectLatest : $it")
                     mutableState.value = state.value.copy(
                         records = it,
                     )
@@ -124,8 +128,12 @@ class RTCSlaveViewModel : HDStateScreenModel<RTCSlaveState>(RTCSlaveState.DEFAUL
 
     }
 
+    fun changeAccessKey(key:String){
+        currentRtcSlave?.changeAccessKey(key)
+    }
+
     fun startBroadcast() {
-        log.d("[startBroadcast] currentRtcSlave:$currentRtcSlave ")
+        log.d("[startBroadcast] currentRtcSlave:$currentRtcSlave  address=${currentRtcSlave?.address?.value}")
         currentRtcSlave?.startBroadcasting()
     }
 

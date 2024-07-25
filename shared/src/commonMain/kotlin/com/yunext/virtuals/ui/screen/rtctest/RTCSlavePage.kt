@@ -139,25 +139,32 @@ internal fun RTCSlavePage(
         }
         var editing by remember { mutableStateOf(false) }
         var editingAddress by remember { mutableStateOf("") }
-        Row(
-            Modifier.fillMaxWidth().padding(start = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
 
-            Text(state.address.ifBlank { "请输入设备地址!" }, modifier = Modifier.clickable {
-                editing = true
-            })
-            Button(onClick = {
-                if (state.broadcasting.doing) {
-                    onStopBroadcast()
-                } else {
-                    onStartBroadcast()
+        Column(Modifier.padding(start = 16.dp)) {
+            AnimatedVisibility(state.accessKey.isNotEmpty()) {
+                Text("accessKey:" + state.accessKey, modifier = Modifier, color = Color.LightGray)
+            }
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("address:")
+                Text(state.address.ifBlank { "请输入设备地址!" }, modifier = Modifier.clickable {
+                    editing = true
+                })
+                Button(onClick = {
+                    if (state.broadcasting.doing) {
+                        onStopBroadcast()
+                    } else {
+                        onStartBroadcast()
+                    }
+                }, enabled = state.address.isNotEmpty()) {
+
+                    Text(if (state.broadcasting.doing) "停止广播" else "开始广播", color = Color.White)
                 }
-            }) {
-
-                Text(if (state.broadcasting.doing) "停止广播" else "开始广播", color = Color.White)
             }
         }
+
 
         AnimatedVisibility(editing) {
             TextField(
@@ -223,7 +230,7 @@ internal fun RTCSlavePage(
             style = TextStyle.Default.copy(fontSize = 22.sp, fontWeight = FontWeight.Bold)
         )
         AnimatedVisibility(showProperty) {
-            ParameterDataList(state.params) {
+            ParameterView(state.params,state.effect) {
                 onUpdateProperty(it)
             }
         }
@@ -281,65 +288,15 @@ internal fun RTCSlavePage(
 
 }
 
-@Composable
-private fun ParameterDataList(list: List<ParameterDataVo>, onChanged: (ParameterDataVo) -> Unit) {
-    Box(Modifier.fillMaxWidth().height(360.dp).debugShape(false).padding(start = 16.dp)) {
-//        LazyColumn {
-//            items(list, { it.key }) {
-//                ParameterDataItem(it, onChanged)
-//            }
-//        }
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(list, {
-                it.key
-            }) {
-                ParameterDataItem(it, onChanged)
-            }
-        }
-    }
-}
-
-@Composable
-fun ParameterDataItem(data: ParameterDataVo, onChanged: (ParameterDataVo) -> Unit) {
-    var text by remember(data) {
-        mutableStateOf(data.value)
-    }
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            data.key,
-            modifier = Modifier,
-            style = TextStyle.Default.copy(fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        )
-        EditTextBlock(
-            text = text, hint = "0xaa0xbb0xcc", onValueChange = {
-                text = it
-            }, modifier = Modifier.weight(1f).debugShape(true),
-            trailingIcon = {
-                Image(
-                    imageVector = Icons.Default.Done,
-                    contentDescription = null,
-                    modifier = Modifier.clickable {
-                        onChanged(data.copy(value = text))
-                    })
-            }
-        )
-
-
-    }
-}
 
 @Composable
 private fun SlaveLoggerView(records: List<XBleRecord>) {
     val rememberLazyListState = rememberLazyListState()
-    LaunchedEffect(records.size){
+    LaunchedEffect(records.size) {
         rememberLazyListState.scrollToItem(records.size)
     }
     Box(Modifier.fillMaxWidth().height(400.dp).hdBackground { Color.LightGray }) {
-        LazyColumn(Modifier.fillMaxWidth(),rememberLazyListState) {
+        LazyColumn(Modifier.fillMaxWidth(), rememberLazyListState) {
             items(records, { it.toString() }) {
                 RecordItem(it)
             }
